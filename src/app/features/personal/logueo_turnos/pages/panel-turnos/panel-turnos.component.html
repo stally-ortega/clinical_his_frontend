@@ -1,0 +1,69 @@
+<!-- Contenedor centralizado para el Módulo de Turnos -->
+<div class="turnos-container">
+  
+  <!-- Tarjeta principal Glassmorphism -->
+  <article class="turnos-panel glass-panel grain-overlay">
+    
+    <div class="panel-header">
+      <div class="user-avatar">
+        {{ authStore.usuario()?.nombres?.charAt(0) }}{{ authStore.usuario()?.apellidos?.charAt(0) }}
+      </div>
+      <div class="user-info">
+        <h2 class="user-name">Hola, {{ authStore.usuario()?.nombres }}</h2>
+        <span class="user-role">{{ authStore.usuario()?.rol }}</span>
+      </div>
+    </div>
+    
+    <div class="panel-time">
+      <p class="current-date">{{ timeObj | date:'fullDate' }}</p>
+      <p class="current-time">{{ timeObj | date:'shortTime' }}</p>
+    </div>
+
+    <!-- Error container -->
+    @if (turnosStore.error()) {
+      <div class="server-error" role="alert">
+        <span class="material-symbols-outlined">error</span>
+        {{ turnosStore.error() }}
+      </div>
+    }
+
+    <div class="panel-status">
+      @if (turnosStore.estadoActual() === 'FUERA_TURNO') {
+        <div class="status-indicator status--offline">
+          <span class="material-symbols-outlined">schedule</span>
+          <p class="status-message">Actualmente no estás en turno</p>
+        </div>
+        
+        <div class="panel-actions">
+          <app-button 
+            text="Iniciar Turno" 
+            icon="login" 
+            variant="primary" 
+            (onClick)="turnosStore.iniciar()"
+            [isLoading]="turnosStore.isLoading()"
+            class="turnos-btn--start">
+          </app-button>
+        </div>
+      } @else {
+        <div class="status-indicator status--online">
+          <div class="pulse-dot"></div>
+          <span class="material-symbols-outlined">verified</span>
+          <p class="status-message">¡Estás en Turno Activo!</p>
+        </div>
+        
+        <div class="panel-actions">
+          <app-button 
+            text="Finalizar Turno" 
+            icon="logout" 
+            variant="outline" 
+            (onClick)="turnosStore.finalizar()"
+            [isLoading]="turnosStore.isLoading()"
+            class="turnos-btn--end">
+          </app-button>
+        </div>
+      }
+    </div>
+
+  </article>
+
+</div>
