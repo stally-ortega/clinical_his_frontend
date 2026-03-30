@@ -28,7 +28,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/perfil/perfil.component').then(m => m.PerfilComponent),
       },
-      // Futura expansión: kardex, evoluciones, notas, turnos, tareas
+      {
+        path: 'kardex/:id',
+        loadChildren: () =>
+          import('./features/kardex/kardex.routes').then(m => m.KARDEX_ROUTES)
+      },
+      // Futura expansión: evoluciones, notas, turnos, tareas
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

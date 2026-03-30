@@ -53,10 +53,12 @@
 
       <!-- Actions -->
       <div class="card-actions">
-        <button class="card-action-btn">
-          <span class="material-symbols-outlined">assignment</span>
-          Kardex
-        </button>
+        <!-- Kardex - app-button con RouteLink -->
+        <app-button
+          text="Kardex"
+          variant="primary"
+          [routerLink]="['/app/kardex', paciente.id]">
+        </app-button>
         <button class="card-action-btn">
           <span class="material-symbols-outlined">description</span>
           Notas
