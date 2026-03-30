@@ -41,6 +41,10 @@ export const routes: Routes = [
         path: 'admin/ubicaciones',
         loadChildren: () => import('./features/admin/constructor_ubicaciones/constructor_ubicaciones.routes').then(m => m.ROUTES)
       },
+      {
+        path: 'admin/auditoria',
+        loadChildren: () => import('./features/admin/visor_auditoria/visor_auditoria.routes').then(m => m.ROUTES)
+      },
       // Futura expansión: evoluciones, notas, turnos, tareas
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]

@@ -1,0 +1,66 @@
+<div class="page-header">
+  <div>
+    <h2 class="page-title">Registro de Auditoría del Sistema</h2>
+    <p class="page-subtitle">Trazabilidad de eventos críticos, modificaciones EAV y accesos</p>
+  </div>
+</div>
+
+<div class="audit-dashboard">
+  @if (store.error()) {
+    <div class="server-error" role="alert">
+      <span class="material-symbols-outlined">error</span>
+      {{ store.error() }}
+    </div>
+  }
+
+  @if (store.isLoading() && store.logs().length === 0) {
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Consultando base de datos forense...</p>
+    </div>
+  }
+
+  <div class="table-container glass-panel grain-overlay">
+    <table class="audit-table">
+      <thead>
+        <tr>
+          <th>Fecha / Hora</th>
+          <th>Usuario (ID)</th>
+          <th>Acción</th>
+          <th>Módulo / Endpoint</th>
+          <th>Detalles Recopilados</th>
+          <th>IP Origen</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (log of store.logs(); track log.id) {
+          <tr [class.danger-row]="log.accion === 'DELETE' || log.accion === 'ERROR'">
+            <td class="col-date">{{ log.fecha_hora | date:'short' }}</td>
+            <td class="col-user">
+              <span class="user-badge" title="Identificador de BBDD">#{{ log.usuario_id }}</span>
+            </td>
+            <td class="col-action">
+              <span class="action-badge" [ngClass]="log.accion | lowercase">{{ log.accion }}</span>
+            </td>
+            <td class="col-module">{{ log.modulo_endpoint }}</td>
+            <td class="col-details">
+              <div class="details-content" [title]="log.detalles | json">
+                {{ (log.detalles | json) || 'N/A' }}
+              </div>
+            </td>
+            <td class="col-ip">{{ log.ip_address || 'Internal' }}</td>
+          </tr>
+        } @empty {
+          @if (!store.isLoading()) {
+            <tr>
+              <td colspan="6" class="empty-state">
+                <span class="material-symbols-outlined empty-icon">history_off</span>
+                <p>No se encontraron registros de auditoría que mostrar.</p>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
