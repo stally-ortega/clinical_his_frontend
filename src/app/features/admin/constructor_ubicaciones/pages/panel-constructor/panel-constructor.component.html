@@ -1,0 +1,100 @@
+<div class="page-header">
+  <div>
+    <h2 class="page-title">Constructor de Estructura Física (EAV)</h2>
+    <p class="page-subtitle">Nomenclaturas y Topología Hospitalaria</p>
+  </div>
+</div>
+
+<div class="constructor-grid">
+  <!-- Izquierda: Creación de Tipos de Ubicación -->
+  <aside class="panel-tipos glass-panel grain-overlay">
+    <h3 class="section-title">
+      <span class="material-symbols-outlined">category</span>
+      Diccionario de Nomenclaturas
+    </h3>
+    <p class="section-desc">Crea los bloques funcionales básicos. Ej: Piso, Servicio, Habitación, Cama.</p>
+
+    <form [formGroup]="formTipo" (ngSubmit)="crearTipo()" class="creator-form" novalidate>
+      <app-form-input controlName="nombre" label="Nuevo Tipo Físico" placeholder="Ej. Pabellón"></app-form-input>
+      <div class="form-actions">
+        <app-button text="Registrar Tipo" icon="add_box" type="submit" variant="primary" [disabled]="formTipo.invalid || store.isLoading()"></app-button>
+      </div>
+    </form>
+
+    <div class="tipos-list">
+      <h4>Tipos Registrados</h4>
+      @if (store.isLoading() && store.tiposDisponibles().length === 0) {
+        <p class="loading-text">Cargando diccionario...</p>
+      }
+      <div class="chips-container">
+        @for (tipo of store.tiposDisponibles(); track tipo.id) {
+          <span class="tipo-chip">{{ tipo.nombre }}</span>
+        } @empty {
+          <span class="empty-chip">Aún no hay nomenclaturas registradas.</span>
+        }
+      </div>
+    </div>
+  </aside>
+
+  <!-- Derecha: Armador de jerarquía global -->
+  <main class="panel-arbol glass-panel grain-overlay">
+    <h3 class="section-title">
+      <span class="material-symbols-outlined">account_tree</span>
+      Topología Global Jerárquica
+    </h3>
+
+    <form [formGroup]="formNomenclatura" (ngSubmit)="guardarEstructuraGlobal()" novalidate class="tree-form">
+      <div class="nomenclatura-head">
+        <app-form-input controlName="nombre_nomenclatura" label="Nombre de la Estructura Topológica" placeholder="Ej. Estructura Principal Sur"></app-form-input>
+      </div>
+
+      <div class="constructor-workspace">
+        <!-- Arbol Renderizado -->
+        <div class="hierarchy-tree">
+          @for (nivel of nivelesConstruccion(); track nivel.orden) {
+            <div class="hierarchy-node">
+              @if (nivel.orden > 1) {
+                <div class="node-connector"></div>
+              }
+              <div class="node-content">
+                <span class="node-order">{{ nivel.orden }}</span>
+                <span class="node-name">{{ nivel.nombre }}</span>
+                <button type="button" class="btn-remove" (click)="removerNivel($index)" title="Eliminar Nivel">
+                  <span class="material-symbols-outlined">close</span>
+                </button>
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-tree">
+              <span class="material-symbols-outlined">account_tree</span>
+              <p>Tu árbol está vacío. Empieza añadiendo el nivel más alto de la topología (Ej: Edificio o Sede).</p>
+            </div>
+          }
+        </div>
+
+        <!-- Selector para añadir Nivel -->
+        <div class="level-adder">
+          <app-form-input controlName="tipo_selector" label="Añadir Sub-Nivel a la Jerarquía" type="select" [options]="getTiposOptions()" placeholder="Seleccione nomenclatura..."></app-form-input>
+          <app-button type="button" text="Añadir Nivel" icon="subdirectory_arrow_right" variant="outline" (onClick)="agregarNivel()" [disabled]="!formNomenclatura.get('tipo_selector')?.value"></app-button>
+        </div>
+      </div>
+
+      <!-- Error Global -->
+      @if (store.error()) {
+        <div class="server-error" role="alert">
+          <span class="material-symbols-outlined">error</span>
+          {{ store.error() }}
+        </div>
+      }
+
+      <!-- Acciones de panel -->
+      <div class="global-actions">
+        <!-- Success State -->
+        @if (store.nomenclaturaActiva()) {
+          <span class="success-message">¡Estructura guardada exitosamente!</span>
+        }
+        <app-button text="Guardar Estructura Global" icon="save" type="submit" variant="primary" [isLoading]="store.isLoading()" [disabled]="formNomenclatura.invalid || nivelesConstruccion().length === 0 || store.isLoading()"></app-button>
+      </div>
+    </form>
+  </main>
+</div>

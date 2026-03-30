@@ -37,6 +37,10 @@ export const routes: Routes = [
         path: 'prescribir/:idPaciente',
         loadChildren: () => import('./features/clinical/medicamentos_prescripcion/medicamentos_prescripcion.routes').then(m => m.ROUTES)
       },
+      {
+        path: 'admin/ubicaciones',
+        loadChildren: () => import('./features/admin/constructor_ubicaciones/constructor_ubicaciones.routes').then(m => m.ROUTES)
+      },
       // Futura expansión: evoluciones, notas, turnos, tareas
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
