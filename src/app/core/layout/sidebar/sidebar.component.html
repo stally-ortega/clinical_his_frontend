@@ -19,39 +19,69 @@
 
   <!-- Navigation -->
   <nav class="sidebar-nav" [attr.aria-label]="'Navegación principal'">
-    <!-- Group: Clínico -->
-    <p class="nav-group-label">Clínico</p>
-    <a routerLink="/app/dashboard" routerLinkActive="active" class="nav-item" title="Dashboard">
-      <span class="material-symbols-outlined">dashboard</span>
-      <span class="nav-label">Dashboard</span>
-    </a>
-    <a routerLink="/app/pacientes" routerLinkActive="active" class="nav-item" title="Pacientes">
-      <span class="material-symbols-outlined">group</span>
-      <span class="nav-label">Pacientes</span>
-    </a>
-    <a routerLink="/app/kardex" routerLinkActive="active" class="nav-item" title="Kardex">
-      <span class="material-symbols-outlined">assignment</span>
-      <span class="nav-label">Kardex</span>
-    </a>
-    <a routerLink="/app/evoluciones" routerLinkActive="active" class="nav-item" title="Evoluciones">
-      <span class="material-symbols-outlined">timeline</span>
-      <span class="nav-label">Evoluciones</span>
-    </a>
-    <a routerLink="/app/notas" routerLinkActive="active" class="nav-item" title="Notas de Enfermería">
-      <span class="material-symbols-outlined">description</span>
-      <span class="nav-label">Notas Enf.</span>
-    </a>
+    @switch (authStore.usuario()?.role) {
+      @case ('ADMIN') {
+        <!-- Group: Clínico -->
+        <p class="nav-group-label">Clínico</p>
+        <a routerLink="/app/dashboard" routerLinkActive="active" class="nav-item" title="Dashboard">
+          <span class="material-symbols-outlined">dashboard</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a routerLink="/app/pacientes" routerLinkActive="active" class="nav-item" title="Pacientes">
+          <span class="material-symbols-outlined">group</span>
+          <span class="nav-label">Pacientes</span>
+        </a>
+        <a routerLink="/app/kardex" routerLinkActive="active" class="nav-item" title="Kardex">
+          <span class="material-symbols-outlined">assignment</span>
+          <span class="nav-label">Kardex</span>
+        </a>
+        <a routerLink="/app/evoluciones" routerLinkActive="active" class="nav-item" title="Evoluciones">
+          <span class="material-symbols-outlined">timeline</span>
+          <span class="nav-label">Evoluciones</span>
+        </a>
+        <a routerLink="/app/notas" routerLinkActive="active" class="nav-item" title="Notas de Enfermería">
+          <span class="material-symbols-outlined">description</span>
+          <span class="nav-label">Notas Enf.</span>
+        </a>
 
-    <!-- Group: Operación -->
-    <p class="nav-group-label">Operación</p>
-    <a routerLink="/app/turnos" routerLinkActive="active" class="nav-item" title="Turnos">
-      <span class="material-symbols-outlined">calendar_view_week</span>
-      <span class="nav-label">Turnos</span>
-    </a>
-    <a routerLink="/app/tareas" routerLinkActive="active" class="nav-item" title="Tareas">
-      <span class="material-symbols-outlined">pending_actions</span>
-      <span class="nav-label">Tareas</span>
-    </a>
+        <!-- Group: Operación -->
+        <p class="nav-group-label">Operación</p>
+        <a routerLink="/app/turnos" routerLinkActive="active" class="nav-item" title="Turnos">
+          <span class="material-symbols-outlined">calendar_view_week</span>
+          <span class="nav-label">Turnos</span>
+        </a>
+        <a routerLink="/app/tareas" routerLinkActive="active" class="nav-item" title="Tareas">
+          <span class="material-symbols-outlined">pending_actions</span>
+          <span class="nav-label">Tareas</span>
+        </a>
+      }
+      @case ('MEDICO') {
+        <p class="nav-group-label">Módulo Médico</p>
+        <a routerLink="/app/pacientes" routerLinkActive="active" class="nav-item" title="Pacientes">
+          <span class="material-symbols-outlined">group</span>
+          <span class="nav-label">Pacientes</span>
+        </a>
+        <a routerLink="/app/evoluciones" routerLinkActive="active" class="nav-item" title="Historia Clínica">
+          <span class="material-symbols-outlined">timeline</span>
+          <span class="nav-label">Historia Clínica</span>
+        </a>
+      }
+      @case ('ENFERMERA') {
+        <p class="nav-group-label">Módulo Enfermería</p>
+        <a routerLink="/app/pacientes" routerLinkActive="active" class="nav-item" title="Pacientes">
+          <span class="material-symbols-outlined">group</span>
+          <span class="nav-label">Pacientes</span>
+        </a>
+        <a routerLink="/app/kardex" routerLinkActive="active" class="nav-item" title="Kardex de Medicamentos">
+          <span class="material-symbols-outlined">assignment</span>
+          <span class="nav-label">Kardex de Medicamentos</span>
+        </a>
+        <a routerLink="/app/notas" routerLinkActive="active" class="nav-item" title="Notas de Enfermería">
+          <span class="material-symbols-outlined">description</span>
+          <span class="nav-label">Notas de Enfermería</span>
+        </a>
+      }
+    }
   </nav>
 
   <!-- Footer: solo botón de admitir -->

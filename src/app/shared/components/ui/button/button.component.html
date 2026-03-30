@@ -9,6 +9,9 @@
     <app-spinner></app-spinner>
     <span class="btn-text blurred">Cargando...</span>
   } @else {
+    @if (icon) {
+      <span class="material-symbols-outlined">{{ icon }}</span>
+    }
     <span class="btn-text">{{ text }}</span>
   }
 </button>

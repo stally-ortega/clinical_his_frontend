@@ -3,16 +3,29 @@
     <label class="form-label" [for]="controlName">{{ label }}</label>
   }
 
-  <input
-    [id]="controlName"
-    [type]="type"
-    class="form-input"
-    [formControlName]="controlName"
-    [placeholder]="placeholder"
-    [attr.inputmode]="onlyNumbers ? 'numeric' : 'text'"
-    (keydown)="onKeydown($event)"
-    (paste)="onPaste($event)"
-  />
+  @if (type === 'select') {
+    <select
+      [id]="controlName"
+      class="form-input"
+      [formControlName]="controlName"
+    >
+      <option value="" disabled selected>{{ placeholder || 'Seleccionar...' }}</option>
+      @for (opt of options; track opt.value) {
+        <option [value]="opt.value">{{ opt.label }}</option>
+      }
+    </select>
+  } @else {
+    <input
+      [id]="controlName"
+      [type]="type"
+      class="form-input"
+      [formControlName]="controlName"
+      [placeholder]="placeholder"
+      [attr.inputmode]="onlyNumbers ? 'numeric' : 'text'"
+      (keydown)="onKeydown($event)"
+      (paste)="onPaste($event)"
+    />
+  }
 
   @if (isInvalidAndTouched) {
     <span class="form-error">

@@ -11,6 +11,7 @@ import { SpinnerComponent } from '../spinner/spinner.component';
 })
 export class ButtonComponent {
   @Input() text = '';
+  @Input() icon = '';
   @Input() isLoading = false;
   @Input() type: 'button' | 'submit' = 'button';
   @Input() variant: 'primary' | 'outline' = 'primary';

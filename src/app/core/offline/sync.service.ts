@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { db } from './dexie.db';
-import { KardexService } from '../../features/kardex/services/kardex.service';
+import { KardexService } from '../../features/clinical/kardex/services/kardex.service';
 import { firstValueFrom } from 'rxjs';
 
 /** Payload esperado en el queue para sincronizar dosis */

@@ -1,0 +1,79 @@
+<div class="page-header">
+  <div>
+    <h2 class="page-title">Directorio de Pacientes</h2>
+    <p class="page-subtitle">Pacientes con estado ACTIVO en el sistema</p>
+  </div>
+  <app-button text="Nuevo Paciente" icon="add" variant="primary" (onClick)="goToCrear()"></app-button>
+</div>
+
+<!-- Loading State -->
+@if (store.isLoading()) {
+  <div class="loading-state">
+    <div class="loading-spinner"></div>
+    <p>Cargando pacientes...</p>
+  </div>
+}
+
+<!-- Grid de Pacientes -->
+<div class="pacientes-grid">
+  @for (paciente of store.pacientes(); track paciente.id) {
+    <article class="paciente-card grain-overlay">
+      <!-- Card header -->
+      <div class="card-top">
+        <div class="patient-avatar">
+          {{ paciente.nombres.charAt(0) }}{{ paciente.apellidos.charAt(0) }}
+        </div>
+        <span class="status-chip status-chip--active">{{ paciente.estado }}</span>
+      </div>
+
+      <!-- Patient name & info -->
+      <div class="card-body">
+        <h3 class="patient-name">{{ paciente.apellidos }}, {{ paciente.nombres }}</h3>
+        <p class="patient-condition">C.C. {{ paciente.documento }}</p>
+      </div>
+
+      <!-- Vitals grid -->
+      <div class="vitals-grid">
+        <div class="vital">
+          <p class="vital-label">Edad</p>
+          <p class="vital-value">{{ paciente.edad }}a</p>
+        </div>
+        <div class="vital vital--border">
+          <p class="vital-label">Sexo</p>
+          <p class="vital-value">{{ paciente.sexo }}</p>
+        </div>
+        <div class="vital">
+          <p class="vital-label">Ingreso</p>
+          <p class="vital-value">{{ paciente.fecha_ingreso | date:'dd/MM' }}</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="card-actions">
+        <!-- Kardex - app-button con RouteLink -->
+        <app-button
+          text="Kardex"
+          variant="primary"
+          [routerLink]="['/app/kardex', paciente.id]">
+        </app-button>
+        <app-button text="Notas" icon="description" variant="outline"></app-button>
+        <!-- Ver Historia Clínica – usa app-button con routerLink -->
+        <app-button
+          text="Ver Historia"
+          variant="outline"
+          [routerLink]="['/app/pacientes', paciente.id, 'historia']">
+        </app-button>
+        <app-button icon="chevron_right" variant="primary"></app-button>
+      </div>
+    </article>
+  } @empty {
+    @if (!store.isLoading()) {
+      <div class="empty-state">
+        <span class="material-symbols-outlined empty-icon">person_add</span>
+        <h3>Sin pacientes registrados</h3>
+        <p>Comienza admitiendo al primer paciente del turno.</p>
+        <app-button text="Admitir Primer Paciente" icon="add" variant="primary" (onClick)="goToCrear()"></app-button>
+      </div>
+    }
+  }
+</div>

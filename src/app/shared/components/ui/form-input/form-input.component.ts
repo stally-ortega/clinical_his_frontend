@@ -21,6 +21,8 @@ export class FormInputComponent implements OnInit {
   @Input() label = '';
   @Input() type = 'text';
   @Input() placeholder = '';
+  /** Opciones para cuando type = 'select' */
+  @Input() options: { value: string | number; label: string }[] = [];
   /** Si true, bloquea caracteres no numéricos en el input (para documentos) */
   @Input() onlyNumbers = false;
 

@@ -15,7 +15,7 @@ import { AuthStore } from '../../../store/auth.store';
   }
 })
 export class SidebarComponent {
-  private store = inject(AuthStore);
+  public authStore = inject(AuthStore);
   private router = inject(Router);
 
   /** Estado de colapso: recibido del layout padre */

@@ -21,17 +21,17 @@ export const routes: Routes = [
       {
         path: 'pacientes',
         loadChildren: () =>
-          import('./features/pacientes/pacientes.routes').then(m => m.PACIENTES_ROUTES)
+          import('./features/clinical/pacientes/pacientes.routes').then(m => m.PACIENTES_ROUTES)
       },
       {
         path: 'perfil',
         loadComponent: () =>
-          import('./features/perfil/perfil.component').then(m => m.PerfilComponent),
+          import('./features/personal/mi-perfil/perfil.component').then(m => m.PerfilComponent),
       },
       {
         path: 'kardex/:id',
         loadChildren: () =>
-          import('./features/kardex/kardex.routes').then(m => m.KARDEX_ROUTES)
+          import('./features/clinical/kardex/kardex.routes').then(m => m.KARDEX_ROUTES)
       },
       // Futura expansión: evoluciones, notas, turnos, tareas
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
