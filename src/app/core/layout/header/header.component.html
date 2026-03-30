@@ -1,0 +1,38 @@
+<!-- Header – TopNavBar Clinical Ethereal (limpio, sin textos de título) -->
+<header class="header grain-overlay">
+
+  <!-- Mobile: botón hamburger (solo visible en < 768px via CSS) -->
+  <button class="icon-btn mobile-menu-btn" (click)="onMobileMenuToggle()" aria-label="Abrir menú de navegación">
+    <span class="material-symbols-outlined">menu</span>
+  </button>
+
+  <!-- Search pill -->
+  <div class="search-pill" role="search">
+    <span class="material-symbols-outlined search-icon">search</span>
+    <span class="search-placeholder">Buscar paciente, sala...</span>
+  </div>
+
+  <!-- Right section -->
+  <div class="header-right">
+    <button class="icon-btn" aria-label="Notificaciones">
+      <span class="material-symbols-outlined">notifications</span>
+    </button>
+
+    <div class="header-divider" role="separator"></div>
+
+    <!-- User chip – CLICKEABLE → navega a perfil -->
+    @if (store.usuario(); as user) {
+      <button class="user-chip" (click)="onUserChipClick()" [title]="'Ver perfil de ' + user.nombres" aria-label="Panel de usuario">
+        <div class="user-avatar" aria-hidden="true">{{ user.nombres.charAt(0) }}{{ user.apellidos.charAt(0) }}</div>
+        <div class="user-info">
+          <p class="user-name">{{ user.nombres }}</p>
+          <p class="user-role">{{ user.rol }}</p>
+        </div>
+      </button>
+    }
+
+    <button class="icon-btn icon-btn--logout" (click)="onLogout()" title="Cerrar sesión" aria-label="Cerrar sesión">
+      <span class="material-symbols-outlined">logout</span>
+    </button>
+  </div>
+</header>

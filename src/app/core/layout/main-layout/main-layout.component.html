@@ -1,0 +1,35 @@
+<div class="layout-container" [class.sidebar-collapsed]="sidebarCollapsed()">
+
+  <!-- Overlay mobile (cierra sidebar al tocar fuera) -->
+  @if (mobileMenuOpen()) {
+    <div class="sidebar-overlay" (click)="closeMobileMenu()"></div>
+  }
+
+  <!--
+    CSS Grid layout:
+    ┌──────────┬──────────────────────────┐
+    │          │  HEADER (full-width)     │  ← grid-column: 1/-1, pero sidebar z:50 lo tapa por encima
+    │ SIDEBAR  ├──────────────────────────┤
+    │ z:50     │  MAIN CONTENT            │
+    │ row:1-2  │                          │
+    └──────────┴──────────────────────────┘
+    El sidebar ocupa grid-row 1 y 2 con z-index 50, por eso su esquina
+    redondeada "recorta" el fondo blanco del header — sin hueco vacío.
+  -->
+  <app-sidebar
+    class="layout-sidebar"
+    [class.mobile-open]="mobileMenuOpen()"
+    [isCollapsed]="sidebarCollapsed()"
+    (collapseToggle)="onSidebarToggle()">
+  </app-sidebar>
+
+  <app-header
+    class="layout-header"
+    (mobileMenuToggle)="onMobileMenuToggle()">
+  </app-header>
+
+  <main class="layout-main">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

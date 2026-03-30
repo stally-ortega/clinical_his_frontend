@@ -1,0 +1,53 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--radius-full);   // Hyper-Rounded rule
+  font-family: var(--font-headline);
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s, background-color 0.2s;
+  white-space: nowrap;
+  border: none;
+  text-decoration: none;
+  line-height: 1;
+
+  &:hover:not(:disabled) { transform: translateY(-1px); }
+  &:active:not(:disabled) { transform: translateY(0); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  // Primary: gradient from primary to primary-dim (Stitch Signature Gradient)
+  &--primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dim));
+    color: var(--on-primary);
+    box-shadow: 0 4px 20px rgba(0, 106, 106, 0.25);
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 6px 28px rgba(0, 106, 106, 0.35);
+    }
+  }
+
+  // Outline: ghost button con borde primario
+  &--outline {
+    background: rgba(0, 106, 106, 0.06);
+    color: var(--primary);
+    border: 1px solid rgba(0, 106, 106, 0.2);
+    box-shadow: none;
+
+    &:hover:not(:disabled) {
+      background: rgba(0, 106, 106, 0.1);
+    }
+  }
+
+  // Secondary: filled con surface-container (sin borde)
+  &--secondary {
+    background: var(--surface-container-high);
+    color: var(--on-surface);
+    box-shadow: none;
+  }
+}

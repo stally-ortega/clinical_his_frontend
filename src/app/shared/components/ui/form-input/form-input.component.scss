@@ -1,0 +1,58 @@
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  &--error .form-input {
+    border-color: var(--error) !important;
+    background: rgba(172, 52, 52, 0.04);
+  }
+}
+
+.form-label {
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.85rem 1.1rem;
+  background: var(--surface-container-highest); // Material 3 soft-filled
+  border: 1px solid transparent;
+  border-radius: 1.5rem;  // Design.md: 24px corner radius for input fields
+  color: var(--on-surface);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  outline: none;
+
+  &::placeholder {
+    color: var(--outline);
+  }
+
+  &:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(0, 106, 106, 0.1);
+    background: var(--surface-container-lowest);
+  }
+
+  &:hover:not(:focus) {
+    background: var(--surface-container-high);
+  }
+}
+
+.form-error {
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  color: var(--error);
+  animation: fade-in 0.2s ease;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

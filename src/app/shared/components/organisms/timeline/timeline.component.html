@@ -1,0 +1,52 @@
+<!-- Timeline Organism – Clinical Ethereal -->
+<div class="timeline" role="feed" aria-label="Historial clínico">
+
+  @if (eventos.length === 0) {
+    <div class="timeline-empty">
+      <span class="material-symbols-outlined timeline-empty__icon">history</span>
+      <p class="timeline-empty__text">Sin registros en el historial clínico.</p>
+    </div>
+  }
+
+  @for (evento of eventos; track evento.id) {
+    <div class="timeline-item" [class.timeline-item--evolucion]="evento.tipo === 'EVOLUCION'"
+         [class.timeline-item--nota]="evento.tipo === 'NOTA'">
+
+      <!-- Node del eje vertical -->
+      <div class="timeline-node" [attr.aria-label]="evento.tipo === 'EVOLUCION' ? 'Evolución médica' : 'Nota de enfermería'">
+        <span class="material-symbols-outlined timeline-node__icon">
+          {{ evento.tipo === 'EVOLUCION' ? 'medical_services' : 'description' }}
+        </span>
+      </div>
+
+      <!-- Línea vertical (pseudo-element en SCSS) -->
+      <div class="timeline-connector" aria-hidden="true"></div>
+
+      <!-- Tarjeta del evento -->
+      <article class="timeline-card grain-overlay glass-panel">
+        <!-- Badge de tipo -->
+        <span class="timeline-badge" [class.timeline-badge--evolucion]="evento.tipo === 'EVOLUCION'"
+              [class.timeline-badge--nota]="evento.tipo === 'NOTA'">
+          {{ evento.tipo === 'EVOLUCION' ? 'Evolución' : 'Nota Enf.' }}
+        </span>
+
+        <!-- Meta -->
+        <div class="timeline-meta">
+          <span class="timeline-meta__autor">
+            <span class="material-symbols-outlined" aria-hidden="true">person</span>
+            {{ evento.autor }}
+          </span>
+          <time class="timeline-meta__fecha" [dateTime]="evento.fecha">
+            {{ evento.fecha | date:'dd MMM yyyy, HH:mm':'':'es' }}
+          </time>
+        </div>
+
+        <!-- Contenido -->
+        <h3 class="timeline-card__titulo">{{ evento.titulo }}</h3>
+        <p class="timeline-card__descripcion">{{ evento.descripcion }}</p>
+      </article>
+
+    </div>
+  }
+
+</div>

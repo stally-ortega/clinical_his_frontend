@@ -1,0 +1,64 @@
+<!-- Sidebar – Clinical Ethereal, collapsible -->
+<aside class="sidebar grain-overlay">
+
+  <!-- Brand + Toggle -->
+  <div class="sidebar-brand">
+    <div class="brand-icon" (click)="toggleCollapse()" title="{{ isCollapsed() ? 'Expandir menú' : 'Contraer menú' }}">
+      <span class="material-symbols-outlined">health_and_safety</span>
+    </div>
+    <div class="brand-text">
+      <h1 class="brand-title">Clinical HIS</h1>
+      <p class="brand-sub">Medical Center</p>
+    </div>
+    <button class="collapse-btn" (click)="toggleCollapse()" [title]="isCollapsed() ? 'Expandir menú' : 'Contraer menú'">
+      <span class="material-symbols-outlined">
+        {{ isCollapsed() ? 'chevron_right' : 'chevron_left' }}
+      </span>
+    </button>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="sidebar-nav" [attr.aria-label]="'Navegación principal'">
+    <!-- Group: Clínico -->
+    <p class="nav-group-label">Clínico</p>
+    <a routerLink="/app/dashboard" routerLinkActive="active" class="nav-item" title="Dashboard">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a routerLink="/app/pacientes" routerLinkActive="active" class="nav-item" title="Pacientes">
+      <span class="material-symbols-outlined">group</span>
+      <span class="nav-label">Pacientes</span>
+    </a>
+    <a routerLink="/app/kardex" routerLinkActive="active" class="nav-item" title="Kardex">
+      <span class="material-symbols-outlined">assignment</span>
+      <span class="nav-label">Kardex</span>
+    </a>
+    <a routerLink="/app/evoluciones" routerLinkActive="active" class="nav-item" title="Evoluciones">
+      <span class="material-symbols-outlined">timeline</span>
+      <span class="nav-label">Evoluciones</span>
+    </a>
+    <a routerLink="/app/notas" routerLinkActive="active" class="nav-item" title="Notas de Enfermería">
+      <span class="material-symbols-outlined">description</span>
+      <span class="nav-label">Notas Enf.</span>
+    </a>
+
+    <!-- Group: Operación -->
+    <p class="nav-group-label">Operación</p>
+    <a routerLink="/app/turnos" routerLinkActive="active" class="nav-item" title="Turnos">
+      <span class="material-symbols-outlined">calendar_view_week</span>
+      <span class="nav-label">Turnos</span>
+    </a>
+    <a routerLink="/app/tareas" routerLinkActive="active" class="nav-item" title="Tareas">
+      <span class="material-symbols-outlined">pending_actions</span>
+      <span class="nav-label">Tareas</span>
+    </a>
+  </nav>
+
+  <!-- Footer: solo botón de admitir -->
+  <div class="sidebar-footer">
+    <button class="btn-admit" (click)="onAdmitPatient()" title="Admitir paciente">
+      <span class="material-symbols-outlined">add</span>
+      <span class="nav-label">Admitir Paciente</span>
+    </button>
+  </div>
+</aside>

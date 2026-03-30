@@ -1,0 +1,260 @@
+// Paciente Create – Clinical Ethereal style
+.page-header {
+  margin-bottom: 2rem;
+
+  .title-with-back {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+}
+
+.btn-back {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(174, 179, 181, 0.20);
+  background: rgba(255, 255, 255, 0.70);
+  color: var(--on-surface-variant);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba(135, 237, 237, 0.20);
+    color: var(--primary);
+    border-color: rgba(0, 106, 106, 0.2);
+  }
+
+  .material-symbols-outlined { font-size: 22px; }
+}
+
+.page-title {
+  font-family: var(--font-headline);
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  font-weight: 800;
+  color: #164e63;
+  margin: 0;
+  letter-spacing: -0.03em;
+}
+
+.page-subtitle {
+  color: var(--on-surface-variant);
+  font-size: 0.875rem;
+  margin: 0.2rem 0 0;
+}
+
+// Form card
+.form-card {
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(174, 179, 181, 0.12);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  max-width: 900px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.admission-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+// Form section
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-headline);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0;
+  padding-bottom: 0.5rem;
+
+  .material-symbols-outlined { font-size: 20px; }
+}
+
+// Grid layouts
+.form-grid {
+  display: grid;
+  gap: 1.25rem;
+
+  &--2 { grid-template-columns: 1fr 1fr; }
+  &--3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  @media (max-width: 640px) {
+    &--2, &--3 { grid-template-columns: 1fr; }
+  }
+}
+
+// Divider – "Don't use dividers" rule means we use spacing
+.form-divider {
+  border: none;
+  height: 1px;
+  background: rgba(174, 179, 181, 0.15);
+  margin: 2rem 0;
+}
+
+// Native select (glass-styled)
+.native-select-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-width: 100%;
+
+  &.error .native-select {
+    border-color: var(--error);
+    background: rgba(172, 52, 52, 0.04);
+  }
+}
+
+.native-select-label {
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.native-select {
+  width: 100%;
+  padding: 0.85rem 2.5rem 0.85rem 1.1rem;
+  background: var(--surface-container-highest);
+  border: 1px solid transparent;
+  border-radius: 1.5rem;
+  color: var(--on-surface);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+
+  // Custom arrow
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235a6062' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 16px;
+
+  &:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(0, 106, 106, 0.1);
+    background-color: var(--surface-container-lowest);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23006a6a' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  }
+
+  option {
+    background: var(--surface-container-lowest);
+    color: var(--on-surface);
+  }
+}
+
+.field-error {
+  font-size: 0.75rem;
+  color: var(--error);
+  font-family: var(--font-label);
+  animation: fade-in 0.2s ease;
+}
+
+// Server error
+.server-error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(172, 52, 52, 0.08);
+  border: 1px solid rgba(172, 52, 52, 0.2);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  color: var(--error);
+  font-size: 0.875rem;
+  margin-top: 1rem;
+
+  .material-symbols-outlined { font-size: 18px; }
+}
+
+// Actions
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(174, 179, 181, 0.15);
+  flex-wrap: wrap;
+
+  @media (max-width: 480px) {
+    flex-direction: column-reverse;
+    .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+  }
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dim));
+  color: var(--on-primary);
+  font-family: var(--font-headline);
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 106, 106, 0.25);
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+
+  &:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0, 106, 106, 0.35); }
+  &:active:not(:disabled) { transform: translateY(0); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .material-symbols-outlined { font-size: 20px; }
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-full);
+  background: var(--surface-container-high);
+  color: var(--on-surface-variant);
+  font-family: var(--font-headline);
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+
+  &:hover:not(:disabled) { background: var(--surface-container-highest); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.btn-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

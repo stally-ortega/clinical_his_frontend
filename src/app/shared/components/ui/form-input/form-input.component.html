@@ -1,0 +1,25 @@
+<div class="form-field" [ngClass]="{ 'form-field--error': isInvalidAndTouched }">
+  @if (label) {
+    <label class="form-label" [for]="controlName">{{ label }}</label>
+  }
+
+  <input
+    [id]="controlName"
+    [type]="type"
+    class="form-input"
+    [formControlName]="controlName"
+    [placeholder]="placeholder"
+    [attr.inputmode]="onlyNumbers ? 'numeric' : 'text'"
+    (keydown)="onKeydown($event)"
+    (paste)="onPaste($event)"
+  />
+
+  @if (isInvalidAndTouched) {
+    <span class="form-error">
+      @if (control?.hasError('required')) { Campo requerido }
+      @else if (control?.hasError('minlength')) { Mínimo de caracteres requerido }
+      @else if (control?.hasError('pattern')) { Solo se permiten números }
+      @else { Campo inválido }
+    </span>
+  }
+</div>

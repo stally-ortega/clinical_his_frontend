@@ -1,0 +1,14 @@
+<button
+  [type]="type"
+  class="btn"
+  [ngClass]="'btn--' + variant"
+  [disabled]="disabled || isLoading"
+  (click)="handleClick($event)"
+>
+  @if (isLoading) {
+    <app-spinner></app-spinner>
+    <span class="btn-text blurred">Cargando...</span>
+  } @else {
+    <span class="btn-text">{{ text }}</span>
+  }
+</button>

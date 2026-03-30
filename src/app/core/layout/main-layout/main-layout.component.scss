@@ -1,0 +1,121 @@
+// ─── Main Layout – CSS Grid Shell ─────────────────────────────────────────────
+//
+// Estructura visual:
+//   Col 1 (auto)   →  Sidebar (row 1 + row 2)   z-index: 50
+//   Col 2 (1fr)    →  Header  (row 1, col 1+2)  z-index: 40  ← full-width
+//                  →  Main    (row 2, col 2)
+//
+// El truco del "huevo vacío":
+//   - El header ocupa AMBAS columnas (full-width)
+//   - El sidebar, con z-index 50, se superpone visualmente al header en su columna
+//   - La esquina redondeada del sidebar "recorta" el fondo blanco del header
+//     en lugar del fondo de la página → efecto de integración visual perfecta
+//
+.layout-container {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+
+  // CSS custom property para el ancho del sidebar (usada en el header para padding-left)
+  --sidebar-width: 280px;
+
+  // Fondo con gradientes radiales para que el glassmorphism sea VISIBLE
+  background:
+    radial-gradient(ellipse 80% 60% at 100% -10%, rgba(135, 237, 237, 0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at -10% 110%, rgba(250, 232, 172, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 70% at 50% 50%, rgba(0, 106, 106, 0.04) 0%, transparent 70%),
+    linear-gradient(160deg, #eef7f7 0%, #f2f4f5 40%, #f8f9fa 100%);
+
+  // Cuando el sidebar está colapsado, reducimos el ancho de referencia para el header
+  &.sidebar-collapsed {
+    --sidebar-width: 76px;
+  }
+}
+
+// Overlay mobile
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(46, 51, 53, 0.30);
+  backdrop-filter: blur(2px);
+  z-index: 95;
+  animation: overlay-in 0.2s ease;
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+// ── Sidebar ──────────────────────────────────────────────────────────────────
+// Span desde la fila 1 (header) hasta la fila 2 (main) → full height
+// Z-index: 50 → SIT ON TOP of header → rounded corner cuts into header bg
+.layout-sidebar {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  z-index: 50;
+  position: relative;      // Para que z-index funcione en el grid
+  align-self: stretch;     // Ocupa toda la altura del grid
+}
+
+// ── Header – Full width ───────────────────────────────────────────────────────
+// grid-column: 1 / -1 = abarca AMBAS columnas (sidebar + content)
+// Pero como sidebar tiene z:50 > header z:40, el sidebar se superpone
+// y la esquina redondeada corta sobre el fondo blanco del header
+.layout-header {
+  grid-column: 1 / -1;  // Full width
+  grid-row: 1;
+  z-index: 40;
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
+.layout-main {
+  grid-column: 2;
+  grid-row: 2;
+  overflow-y: auto;
+  padding: 2rem 2.5rem;
+
+  &::-webkit-scrollbar { width: 5px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb {
+    background: var(--outline-variant);
+    border-radius: var(--radius-full);
+    &:hover { background: var(--outline); }
+  }
+}
+
+// ─── RESPONSIVE Mobile ────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .layout-container {
+    // En mobile el sidebar es position:fixed (fuera del flujo del grid)
+    // → la columna 'auto' colapsa a 0 → header y main ocupan full-width
+    grid-template-columns: 1fr;
+  }
+
+  .layout-sidebar {
+    // El posicionamiento fixed ya está en el SCSS del SidebarComponent (:host)
+    // Solo aseguramos que no participe en el flujo del grid
+    grid-column: unset;
+    grid-row: unset;
+  }
+
+  .layout-header {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .layout-main {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    padding: 1.25rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .layout-main {
+    padding: 1rem 0.75rem;
+  }
+}

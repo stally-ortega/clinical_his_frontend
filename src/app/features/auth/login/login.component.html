@@ -1,0 +1,65 @@
+<!-- Background: Light Ethereal con orbes suaves de primary-container -->
+<section class="login-wrapper">
+
+  <!-- Abstract depth orbs – blurred, low-opacity as per DESIGN.md -->
+  <div class="bg-orb bg-orb--1"></div>
+  <div class="bg-orb bg-orb--2"></div>
+
+  <!-- Card: White/60 glass, shadow ultra-ambient -->
+  <div class="login-card grain-overlay">
+
+    <!-- Header -->
+    <div class="login-header">
+      <div class="logo-icon">
+        <!-- Health cross icon matching sidebar stitch design -->
+        <div class="logo-bg">
+          <span class="material-symbols-outlined logo-symbol">health_and_safety</span>
+        </div>
+      </div>
+      <div>
+        <h1 class="login-title">Clinical HIS</h1>
+        <p class="login-subtitle">Medical Center · Portal de Acceso</p>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <app-form-input
+        controlName="documento"
+        label="Documento de identidad"
+        placeholder="Número de documento"
+        [onlyNumbers]="true"
+      ></app-form-input>
+
+      <div class="field-spacer"></div>
+
+      <app-form-input
+        controlName="clave"
+        label="Contraseña"
+        type="password"
+        placeholder="••••••••"
+      ></app-form-input>
+
+      @if (store.error()) {
+        <div class="server-error">
+          <span class="material-symbols-outlined">error</span>
+          {{ store.error() }}
+        </div>
+      }
+
+      <div class="submit-wrapper">
+        <app-button
+          type="submit"
+          text="Ingresar al Sistema"
+          [isLoading]="store.isLoading()"
+          [disabled]="form.invalid && form.touched"
+          variant="primary"
+        ></app-button>
+      </div>
+    </form>
+
+    <p class="login-footer">Clinical HIS &copy; {{ currentYear }} · Todos los derechos reservados</p>
+  </div>
+
+</section>

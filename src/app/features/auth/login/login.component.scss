@@ -1,0 +1,176 @@
+// Login Component – "The Clinical Ethereal" Light Mode
+// Tokens sourced from global styles.scss
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background);
+  position: relative;
+  overflow: hidden;
+  padding: 2rem;
+  font-family: var(--font-body);
+}
+
+// Soft depth orbs (primary-container hue, very low opacity)
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(100px);
+
+  &--1 {
+    width: 600px;
+    height: 600px;
+    background: rgba(135, 237, 237, 0.20); // primary-container at 20%
+    top: -15%;
+    right: -10%;
+  }
+  &--2 {
+    width: 400px;
+    height: 400px;
+    background: rgba(250, 232, 172, 0.15); // secondary-container at 15%
+    bottom: -10%;
+    left: 5%;
+  }
+}
+
+// Card – glass with ambient shadow
+.login-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.80);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.60);
+  border-radius: var(--radius-lg); // 2rem
+  padding: 2.5rem 2rem;
+  // Ambient shadow – "felt, not seen" (DESIGN.md spec)
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 106, 106, 0.04);
+  animation: card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+// Header
+.login-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  .logo-icon {
+    flex-shrink: 0;
+
+    .logo-bg {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dim));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 106, 106, 0.25);
+
+      .logo-symbol {
+        color: var(--on-primary);
+        font-size: 26px;
+        font-variation-settings: 'FILL' 1, 'wght' 600;
+      }
+    }
+  }
+}
+
+.login-title {
+  font-family: var(--font-headline);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #164e63; // cyan-900
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.login-subtitle {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0.2rem 0 0;
+}
+
+// Server error
+.server-error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(172, 52, 52, 0.08);
+  border: 1px solid rgba(172, 52, 52, 0.2);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--error);
+  margin-bottom: 1rem;
+  font-family: var(--font-body);
+  animation: fade-in 0.2s ease;
+
+  .material-symbols-outlined {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+}
+
+// Submit
+.submit-wrapper {
+  margin-top: 1.25rem;
+}
+
+// Footer
+.login-footer {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--outline-variant);
+  font-family: var(--font-label);
+  letter-spacing: 0.02em;
+}
+
+// Separador entre campos del formulario
+.field-spacer {
+  height: 0.75rem;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ─── RESPONSIVE ──────────────────────────────────────────────────────────────
+@media (max-width: 480px) {
+  .login-wrapper {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .login-card {
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    max-width: 100%;
+    width: 100%;
+    padding: 2rem 1.5rem 2.5rem;
+    min-height: 80vh;
+    animation: card-in-mobile 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes card-in-mobile {
+    from { transform: translateY(40px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+}
