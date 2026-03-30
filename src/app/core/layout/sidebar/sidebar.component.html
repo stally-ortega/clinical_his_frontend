@@ -19,7 +19,7 @@
 
   <!-- Navigation -->
   <nav class="sidebar-nav" [attr.aria-label]="'Navegación principal'">
-    @switch (authStore.usuario()?.role) {
+    @switch (authStore.usuario()?.rol) {
       @case ('ADMIN') {
         <!-- Group: Clínico -->
         <p class="nav-group-label">Clínico</p>

@@ -33,6 +33,10 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/clinical/kardex/kardex.routes').then(m => m.KARDEX_ROUTES)
       },
+      {
+        path: 'prescribir/:idPaciente',
+        loadChildren: () => import('./features/clinical/medicamentos_prescripcion/medicamentos_prescripcion.routes').then(m => m.ROUTES)
+      },
       // Futura expansión: evoluciones, notas, turnos, tareas
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]

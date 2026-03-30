@@ -1,0 +1,64 @@
+<div class="page-header">
+  <div class="header-left">
+    <app-button icon="arrow_back" variant="outline" (onClick)="goBack()"></app-button>
+    <div>
+      <h2 class="page-title">Nueva Prescripción Médica</h2>
+      <p class="page-subtitle">Añadiendo tratamiento al Kardex del Paciente #{{ idPaciente }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="form-card glass-panel grain-overlay">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="admission-form">
+    
+    <section class="form-section">
+      <h3 class="section-title">
+        <span class="material-symbols-outlined">vaccines</span>
+        Detalles del Medicamento
+      </h3>
+      
+      <div class="form-grid form-grid--2">
+        <app-form-input controlName="medicamento" label="Nombre del Medicamento" placeholder="Ej. Paracetamol"></app-form-input>
+        <app-form-input controlName="dosis" label="Dosis (Cantidad)" type="number" placeholder="Ej. 500"></app-form-input>
+      </div>
+
+      <div class="form-grid form-grid--2">
+        <app-form-input controlName="medida_dosis" label="Unidad de Medida" placeholder="Ej. mg, ml, UI"></app-form-input>
+        <app-form-input controlName="id_via_aplicacion" label="Vía de Aplicación" type="select" [options]="viasOptions()" placeholder="Seleccione vía..."></app-form-input>
+      </div>
+    </section>
+
+    <hr class="form-divider">
+
+    <section class="form-section">
+      <h3 class="section-title">
+        <span class="material-symbols-outlined">schedule</span>
+        Posología y Frecuencia
+      </h3>
+      
+      <div class="form-grid form-grid--2">
+        <app-form-input controlName="frecuencia_horas" label="Frecuencia (Cada cuántas horas)" type="number" placeholder="Ej. 8"></app-form-input>
+        <app-form-input controlName="fecha_hora_inicio" label="Fecha y Hora de Inicio" type="datetime-local"></app-form-input>
+      </div>
+      
+      <div class="form-grid form-grid--1">
+        <app-form-input controlName="duracion_dias" label="Duración del tratamiento (Días)" type="number" placeholder="Ej. 5"></app-form-input>
+      </div>
+    </section>
+
+    <!-- Error container -->
+    @if (store.error()) {
+      <div class="server-error" role="alert">
+        <span class="material-symbols-outlined">error</span>
+        {{ store.error() }}
+      </div>
+    }
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <app-button text="Cancelar" variant="outline" (onClick)="goBack()" [disabled]="store.isLoading()"></app-button>
+      <app-button text="Recetar" icon="prescriptions" type="submit" variant="primary" [isLoading]="store.isLoading()" [disabled]="form.invalid || store.isLoading()"></app-button>
+    </div>
+
+  </form>
+</div>

@@ -56,7 +56,12 @@
           variant="primary"
           [routerLink]="['/app/kardex', paciente.id]">
         </app-button>
-        <app-button text="Notas" icon="description" variant="outline"></app-button>
+        <app-button
+          text="Recetar"
+          icon="vaccines"
+          variant="outline"
+          [routerLink]="['/app/prescribir', paciente.id]">
+        </app-button>
         <!-- Ver Historia Clínica – usa app-button con routerLink -->
         <app-button
           text="Ver Historia"
