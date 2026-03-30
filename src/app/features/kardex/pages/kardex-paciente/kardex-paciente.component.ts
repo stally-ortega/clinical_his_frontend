@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -20,6 +20,17 @@ export class KardexPacienteComponent implements OnInit {
 
   // State
   pacienteId = signal<number | null>(null);
+  isOffline = signal<boolean>(!navigator.onLine);
+
+  @HostListener('window:offline')
+  setOffline() {
+    this.isOffline.set(true);
+  }
+
+  @HostListener('window:online')
+  setOnline() {
+    this.isOffline.set(false);
+  }
 
   ngOnInit(): void {
     const idParam = Number(this.route.snapshot.paramMap.get('id'));

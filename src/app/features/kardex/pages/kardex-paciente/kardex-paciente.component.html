@@ -11,6 +11,16 @@
   </div>
 </div>
 
+<!-- Offline Indicator -->
+@if (isOffline()) {
+  <div class="offline-banner">
+    <span class="material-symbols-outlined">wifi_off</span>
+    <div>
+      <strong>Estás trabajando sin conexión.</strong> Las dosis aplicadas se guardarán localmente y se sincronizarán al recuperar la red.
+    </div>
+  </div>
+}
+
 <!-- Loading & Error -->
 @if (store.isLoading() && store.prescripciones().length === 0) {
   <div class="loading-state">
