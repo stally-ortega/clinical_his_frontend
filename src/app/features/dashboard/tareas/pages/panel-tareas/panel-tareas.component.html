@@ -1,0 +1,86 @@
+<div class="page-header">
+  <div>
+    <h2 class="page-title">Dashboard de Tareas Clínicas</h2>
+    <p class="page-subtitle">Visualizador Kanban e Intervenciones Pendientes</p>
+  </div>
+</div>
+
+<div class="dashboard-grid">
+  <!-- Nueva Tarea (Left / Top) -->
+  <aside class="create-task glass-panel grain-overlay">
+    <h3 class="section-title">
+      <span class="material-symbols-outlined">add_task</span>
+      Asignar Tarea
+    </h3>
+    
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="task-form">
+      <app-form-input controlName="id_paciente" label="ID Paciente" type="number" placeholder="Ej. 1"></app-form-input>
+      <app-form-input controlName="fecha_hora_programada" label="Programada Para" type="datetime-local"></app-form-input>
+      
+      <div class="textarea-group" [class.error]="form.get('descripcion')?.invalid && form.get('descripcion')?.touched">
+        <label class="native-textarea-label">Descripción</label>
+        <textarea formControlName="descripcion" class="native-textarea" placeholder="Ej. Administrar dosis 500mg" rows="4"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <app-button text="Asignar Tarea" type="submit" variant="primary" [isLoading]="store.isLoading()" [disabled]="form.invalid || store.isLoading()"></app-button>
+      </div>
+    </form>
+    
+    @if (store.error()) {
+      <div class="server-error" role="alert">
+        <span class="material-symbols-outlined">error</span>
+        {{ store.error() }}
+      </div>
+    }
+  </aside>
+
+  <!-- Lista de Pendientes (Right / Bottom) -->
+  <main class="tasks-board">
+    @if (store.isLoading()) {
+      <div class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Sincronizando tareas...</p>
+      </div>
+    }
+
+    <div class="tasks-grid">
+      @for (tarea of store.tareas(); track tarea.id) {
+        <article class="task-card glass-panel grain-overlay" [class.completed]="tarea.estado === 'COMPLETADO'">
+          <header class="task-header">
+            <span class="task-status" [class.pending]="tarea.estado === 'PENDIENTE'">
+              {{ tarea.estado }}
+            </span>
+            <div class="task-meta">
+              <span class="material-symbols-outlined">event</span>
+              {{ tarea.fecha_hora_programada | date:'short' }}
+            </div>
+          </header>
+          
+          <div class="task-body">
+            <h4 class="task-desc">{{ tarea.descripcion }}</h4>
+            <p class="task-patient">Paciente #{{ tarea.id_paciente }}</p>
+            <p class="task-assignee">Asignado a: {{ tarea.id_usuario_asignado ? 'Usuario #' + tarea.id_usuario_asignado : 'Pool General' }}</p>
+          </div>
+
+          @if (tarea.estado === 'PENDIENTE') {
+            <div class="task-footer">
+              <div class="completion-input">
+                <input type="text" placeholder="Observaciones de cierre..." class="obs-input" (input)="setObservacion(tarea.id, $event)">
+              </div>
+              <app-button text="Completar" icon="check_circle" variant="outline" (onClick)="onCompletar(tarea.id)"></app-button>
+            </div>
+          }
+        </article>
+      } @empty {
+        @if (!store.isLoading()) {
+          <div class="empty-state">
+            <span class="material-symbols-outlined empty-icon">assignment_turned_in</span>
+            <h3>No hay tareas pendientes</h3>
+            <p>El pool de tareas está vacío para este turno.</p>
+          </div>
+        }
+      }
+    </div>
+  </main>
+</div>

@@ -13,10 +13,10 @@ export const routes: Routes = [
       import('./core/layout/main-layout/main-layout.component').then((m) => m.MainLayoutComponent),
     canActivate: [authGuard],
     children: [
+      { path: 'dashboard', redirectTo: 'dashboard/tareas', pathMatch: 'full' },
       {
-        path: 'dashboard',
-        loadComponent: () =>
-          import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+        path: 'dashboard/tareas',
+        loadChildren: () => import('./features/dashboard/tareas/tareas.routes').then(m => m.ROUTES)
       },
       {
         path: 'pacientes',
