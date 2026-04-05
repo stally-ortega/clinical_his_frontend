@@ -1,0 +1,52 @@
+<div class="page-header">
+  <div>
+    <h2 class="page-title">Panel de Control</h2>
+    <p class="page-subtitle">Vista general del estado clínico y operativo del hospital</p>
+  </div>
+  <div class="header-badge">
+    <span class="material-symbols-outlined">monitoring</span>
+    Tiempo real
+  </div>
+</div>
+
+<div class="metrics-grid">
+  @for (metrica of metricas; track metrica.titulo) {
+    <div class="metric-card glass-panel grain-overlay" [ngClass]="metrica.colorClass">
+      <div class="card-icon-wrapper">
+        <span class="material-symbols-outlined card-icon">{{ metrica.icon }}</span>
+      </div>
+      <div class="card-body">
+        <p class="card-label">{{ metrica.titulo }}</p>
+        <span class="card-value">{{ metrica.valor }}</span>
+        <p class="card-sub">{{ metrica.subtitulo }}</p>
+      </div>
+      <div class="card-glow"></div>
+    </div>
+  }
+</div>
+
+<!-- Sección de acciones rápidas -->
+<div class="quick-actions-section">
+  <h3 class="section-title">
+    <span class="material-symbols-outlined">bolt</span>
+    Acciones Rápidas
+  </h3>
+  <div class="quick-actions-grid">
+    <a routerLink="/app/pacientes" class="quick-action glass-panel">
+      <span class="material-symbols-outlined">person_add</span>
+      <span>Admitir Paciente</span>
+    </a>
+    <a routerLink="/app/dashboard/tareas" class="quick-action glass-panel">
+      <span class="material-symbols-outlined">assignment_add</span>
+      <span>Ver Tareas</span>
+    </a>
+    <a routerLink="/app/turnos/logueo" class="quick-action glass-panel">
+      <span class="material-symbols-outlined">login</span>
+      <span>Registrar Turno</span>
+    </a>
+    <a routerLink="/app/admin/auditoria" class="quick-action glass-panel">
+      <span class="material-symbols-outlined">history</span>
+      <span>Ver Auditoría</span>
+    </a>
+  </div>
+</div>

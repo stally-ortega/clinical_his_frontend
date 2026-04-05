@@ -9,6 +9,8 @@ export interface Usuario {
   nombres: string;
   apellidos: string;
   rol: string;
+  /** Array de códigos de permiso dinámicos del backend V3 */
+  permisos: string[];
 }
 
 /** Estructura completa de la respuesta del endpoint POST /auth/login */

@@ -1,4 +1,4 @@
-<!-- Sidebar – Clinical Ethereal, collapsible -->
+<!-- Sidebar – Clinical Ethereal V3 | RBAC Dinámico por Permisos -->
 <aside class="sidebar grain-overlay">
 
   <!-- Brand + Toggle -->
@@ -17,92 +17,77 @@
     </button>
   </div>
 
-  <!-- Navigation -->
+  <!-- Navigation – Dinámica por Permisos (RBAC V3) -->
   <nav class="sidebar-nav" [attr.aria-label]="'Navegación principal'">
-    @switch (authStore.usuario()?.rol) {
-      @case ('ADMIN') {
-        <!-- Group: Clínico -->
-        <p class="nav-group-label">Clínico</p>
-        <a routerLink="/app/dashboard/tareas" routerLinkActive="active" class="nav-item" title="Dashboard Kanban">
-          <span class="material-symbols-outlined">dashboard</span>
-          <span class="nav-label">Dashboard</span>
-        </a>
-        <a routerLink="/app/pacientes" routerLinkActive="active" class="nav-item" title="Pacientes">
-          <span class="material-symbols-outlined">group</span>
-          <span class="nav-label">Pacientes</span>
-        </a>
-        <a routerLink="/app/kardex" routerLinkActive="active" class="nav-item" title="Kardex">
-          <span class="material-symbols-outlined">assignment</span>
-          <span class="nav-label">Kardex</span>
-        </a>
-        <a routerLink="/app/evoluciones" routerLinkActive="active" class="nav-item" title="Evoluciones">
-          <span class="material-symbols-outlined">timeline</span>
-          <span class="nav-label">Evoluciones</span>
-        </a>
-        <a routerLink="/app/notas" routerLinkActive="active" class="nav-item" title="Notas de Enfermería">
-          <span class="material-symbols-outlined">description</span>
-          <span class="nav-label">Notas Enf.</span>
-        </a>
 
-        <!-- Group: Operación -->
-        <p class="nav-group-label">Operación</p>
-        <a routerLink="/app/turnos/logueo" routerLinkActive="active" class="nav-item" title="Turnos">
-          <span class="material-symbols-outlined">calendar_view_week</span>
-          <span class="nav-label">Turnos</span>
-        </a>
-        <a routerLink="/app/tareas" routerLinkActive="active" class="nav-item" title="Tareas">
-          <span class="material-symbols-outlined">pending_actions</span>
-          <span class="nav-label">Tareas</span>
-        </a>
-
-        <!-- Group: Infraestructura y Seguridad -->
-        <p class="nav-group-label">Infraestructura y Seguridad</p>
-        <a routerLink="/app/admin/ubicaciones" routerLinkActive="active" class="nav-item" title="Constructor EAV">
-          <span class="material-symbols-outlined">account_tree</span>
-          <span class="nav-label">Constructor EAV</span>
-        </a>
-        <a routerLink="/app/admin/auditoria" routerLinkActive="active" class="nav-item" title="Auditoría">
-          <span class="material-symbols-outlined">history</span>
-          <span class="nav-label">Auditoría Global</span>
-        </a>
-      }
-      @case ('MEDICO') {
-        <p class="nav-group-label">Módulo Médico</p>
-        <a routerLink="/app/pacientes" routerLinkActive="active" class="nav-item" title="Pacientes">
-          <span class="material-symbols-outlined">group</span>
-          <span class="nav-label">Pacientes</span>
-        </a>
-        <a routerLink="/app/evoluciones" routerLinkActive="active" class="nav-item" title="Historia Clínica">
-          <span class="material-symbols-outlined">timeline</span>
-          <span class="nav-label">Historia Clínica</span>
-        </a>
-      }
-      @case ('ENFERMERA') {
-        <p class="nav-group-label">Módulo Enfermería</p>
-        <a routerLink="/app/pacientes" routerLinkActive="active" class="nav-item" title="Pacientes">
-          <span class="material-symbols-outlined">group</span>
-          <span class="nav-label">Pacientes</span>
-        </a>
-        <a routerLink="/app/kardex" routerLinkActive="active" class="nav-item" title="Kardex de Medicamentos">
-          <span class="material-symbols-outlined">assignment</span>
-          <span class="nav-label">Kardex de Medicamentos</span>
-        </a>
-        <a routerLink="/app/notas" routerLinkActive="active" class="nav-item" title="Notas de Enfermería">
-          <span class="material-symbols-outlined">description</span>
-          <span class="nav-label">Notas de Enfermería</span>
-        </a>
-
-        <!-- Group: Operación -->
-        <p class="nav-group-label">Operación</p>
-        <a routerLink="/app/turnos/logueo" routerLinkActive="active" class="nav-item" title="Logueo de Turnos">
-          <span class="material-symbols-outlined">login</span>
-          <span class="nav-label">Turno Activo</span>
-        </a>
-      }
+    <!-- Clínico -->
+    @if (authStore.permisos().includes('VER_DASHBOARD') || authStore.permisos().length === 0) {
+      <p class="nav-group-label">Clínico</p>
     }
+    @if (authStore.permisos().includes('VER_DASHBOARD') || authStore.permisos().length === 0) {
+      <a routerLink="/app/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="nav-item" title="Dashboard">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span class="nav-label">Dashboard</span>
+      </a>
+    }
+    @if (authStore.permisos().includes('VER_PACIENTES')) {
+      <a routerLink="/app/pacientes" routerLinkActive="active" class="nav-item" title="Pacientes">
+        <span class="material-symbols-outlined">group</span>
+        <span class="nav-label">Pacientes</span>
+      </a>
+    }
+    @if (authStore.permisos().includes('VER_KARDEX')) {
+      <a routerLink="/app/kardex" routerLinkActive="active" class="nav-item" title="Kardex">
+        <span class="material-symbols-outlined">assignment</span>
+        <span class="nav-label">Kardex</span>
+      </a>
+    }
+    @if (authStore.permisos().includes('VER_EVOLUCIONES')) {
+      <a routerLink="/app/evoluciones" routerLinkActive="active" class="nav-item" title="Evoluciones">
+        <span class="material-symbols-outlined">timeline</span>
+        <span class="nav-label">Evoluciones</span>
+      </a>
+    }
+    @if (authStore.permisos().includes('VER_NOTAS_ENFERMERIA')) {
+      <a routerLink="/app/notas" routerLinkActive="active" class="nav-item" title="Notas de Enfermería">
+        <span class="material-symbols-outlined">description</span>
+        <span class="nav-label">Notas Enf.</span>
+      </a>
+    }
+
+    <!-- Operación -->
+    @if (authStore.permisos().includes('VER_DASHBOARD_TAREAS') || authStore.permisos().includes('LOGUEAR_TURNO')) {
+      <p class="nav-group-label">Operación</p>
+    }
+    @if (authStore.permisos().includes('VER_DASHBOARD_TAREAS')) {
+      <a routerLink="/app/dashboard/tareas" routerLinkActive="active" class="nav-item" title="Tareas del turno">
+        <span class="material-symbols-outlined">pending_actions</span>
+        <span class="nav-label">Tareas</span>
+      </a>
+    }
+    @if (authStore.permisos().includes('LOGUEAR_TURNO')) {
+      <a routerLink="/app/turnos/logueo" routerLinkActive="active" class="nav-item" title="Logueo de Turno">
+        <span class="material-symbols-outlined">login</span>
+        <span class="nav-label">Turno Activo</span>
+      </a>
+    }
+
+    <!-- Administración -->
+    @if (authStore.permisos().includes('CONFIGURAR_SISTEMA')) {
+      <p class="nav-group-label">Infraestructura y Seguridad</p>
+      <a routerLink="/app/admin/ubicaciones" routerLinkActive="active" class="nav-item" title="Constructor EAV">
+        <span class="material-symbols-outlined">account_tree</span>
+        <span class="nav-label">Constructor EAV</span>
+      </a>
+      <a routerLink="/app/admin/auditoria" routerLinkActive="active" class="nav-item" title="Auditoría Global">
+        <span class="material-symbols-outlined">history</span>
+        <span class="nav-label">Auditoría Global</span>
+      </a>
+    }
+
   </nav>
 
-  <!-- Footer: solo botón de admitir -->
+  <!-- Footer: botón de admitir paciente -->
   <div class="sidebar-footer">
     <button class="btn-admit" (click)="onAdmitPatient()" title="Admitir paciente">
       <span class="material-symbols-outlined">add</span>
