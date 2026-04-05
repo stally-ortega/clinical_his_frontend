@@ -56,8 +56,14 @@
     }
 
     <!-- Operación -->
-    @if (authStore.permisos().includes('VER_DASHBOARD_TAREAS') || authStore.permisos().includes('LOGUEAR_TURNO')) {
+    @if (authStore.permisos().includes('VER_DASHBOARD_TAREAS') || authStore.permisos().includes('LOGUEAR_TURNO') || authStore.permisos().includes('PROGRAMAR_TURNOS')) {
       <p class="nav-group-label">Operación</p>
+    }
+    @if (authStore.permisos().includes('PROGRAMAR_TURNOS')) {
+      <a routerLink="/app/turnos/malla" routerLinkActive="active" class="nav-item" title="Malla de Turnos">
+        <span class="material-symbols-outlined">calendar_month</span>
+        <span class="nav-label">Malla de Turnos</span>
+      </a>
     }
     @if (authStore.permisos().includes('VER_DASHBOARD_TAREAS')) {
       <a routerLink="/app/dashboard/tareas" routerLinkActive="active" class="nav-item" title="Tareas del turno">

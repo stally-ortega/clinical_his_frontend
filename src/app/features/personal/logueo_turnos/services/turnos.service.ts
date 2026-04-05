@@ -17,4 +17,12 @@ export class TurnosService {
   finalizarTurno(): Observable<any> {
     return this.http.post(`${this.apiUrl}/turnos/finalizar`, {});
   }
+
+  getMallaMensual(mes: number, anio: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/turnos/malla?mes=${mes}&anio=${anio}`);
+  }
+
+  programarTurno(payload: { id_usuario: number, fecha_inicio: string, fecha_fin: string, tipo_turno: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/turnos/programar`, payload);
+  }
 }

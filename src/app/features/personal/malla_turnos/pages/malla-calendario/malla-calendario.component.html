@@ -1,0 +1,94 @@
+<div class="calendar-layout">
+  <section class="calendar-main glass-panel grain-overlay">
+    
+    <!-- Header Calendario -->
+    <header class="calendar-header">
+      <div class="month-navigator">
+        <app-button variant="outline" icon="chevron_left" (click)="navegarMes(-1)"></app-button>
+        <h2>{{ mesesNombre[store.mesActual() - 1] }} <span>{{ store.anioActual() }}</span></h2>
+        <app-button variant="outline" icon="chevron_right" (click)="navegarMes(1)"></app-button>
+      </div>
+
+      <div class="header-actions">
+        <app-button variant="primary" text="Programar Turno" icon="event_available" (click)="abrirProgramacion()"></app-button>
+      </div>
+    </header>
+
+    @if (store.error()) {
+      <div class="alert alert-error">
+        {{ store.error() }}
+      </div>
+    }
+
+    <!-- Grid de Días de la Semana -->
+    <div class="weekdays-grid">
+      @for (d of diasSemana; track d) {
+        <div class="weekday">{{ d }}</div>
+      }
+    </div>
+
+    <!-- Grid del Mes -->
+    <div class="month-grid" [class.loading]="store.isLoading()">
+      @for (dia of diasDelMes(); track $index) {
+        <div 
+          class="day-cell" 
+          [class.not-current]="!dia.inCurrentMonth" 
+          (click)="dia.inCurrentMonth ? abrirProgramacion(dia) : null">
+          
+          <span class="day-number">{{ dia.diaDelMes }}</span>
+
+          <div class="shifts-container">
+            @for (turno of getTurnosPorDia(dia.fecha); track turno.id) {
+              <div class="shift-chip" [ngClass]="turno.tipo_turno.toLowerCase() || 'default'">
+                <span class="shift-name">{{ getNombreUsuario(turno.id_usuario) }}</span>
+                <span class="shift-type">{{ turno.tipo_turno.charAt(0) }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Panel Lateral (Formulario) -->
+  @if (showForm()) {
+    <aside class="side-panel glass-panel">
+      <div class="panel-header">
+        <h3>Programar Turno</h3>
+        <button class="close-btn" (click)="cerrarProgramacion()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <form [formGroup]="formTurno" (ngSubmit)="onSubmit()" class="shift-form">
+        <div class="form-group row-group">
+          <label class="native-label">Usuario / Personal</label>
+          <select formControlName="id_usuario" class="native-select">
+            <option value="">Seleccione personal...</option>
+            @for (u of usuarios(); track u.id) {
+              <option [value]="u.id">{{ u.nombres }} {{ u.apellidos }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group row-group">
+          <label class="native-label">Tipo de Turno</label>
+          <select formControlName="tipo_turno" class="native-select">
+            <option value="MANANA">MAÑANA (06:00 - 14:00)</option>
+            <option value="TARDE">TARDE (14:00 - 22:00)</option>
+            <option value="NOCHE">NOCHE (22:00 - 06:00)</option>
+            <option value="LIBRE">LIBRE / DESCANSO</option>
+          </select>
+        </div>
+
+        <app-form-input controlName="fecha_inicio" type="date" label="Fecha Inicio"></app-form-input>
+        <app-form-input controlName="fecha_fin" type="date" label="Fecha Fin"></app-form-input>
+
+        <div class="form-actions">
+          <app-button text="Cancelar" variant="outline" (click)="cerrarProgramacion()" type="button"></app-button>
+          <app-button text="Asignar Turno" variant="primary" type="submit" [isLoading]="store.isSaving()"></app-button>
+        </div>
+      </form>
+    </aside>
+  }
+</div>

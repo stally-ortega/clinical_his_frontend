@@ -55,6 +55,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/personal/logueo_turnos/logueo_turnos.routes').then(m => m.ROUTES)
       },
+      {
+        path: 'turnos/malla',
+        loadChildren: () =>
+          import('./features/personal/malla_turnos/malla_turnos.routes').then(m => m.ROUTES)
+      },
       // ── Admin ──────────────────────────────────────────────────────
       {
         path: 'admin/usuarios',

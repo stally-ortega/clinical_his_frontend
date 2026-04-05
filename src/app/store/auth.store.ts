@@ -1,4 +1,4 @@
-import { inject } from '@angular/core';
+import { inject, Injector } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
 import { signalStore, withState, withMethods, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
@@ -36,11 +36,12 @@ export const AuthStore = signalStore(
   withState(initialState),
   withMethods((store) => {
     const authService = inject(AuthService);
+    const injector = inject(Injector);
     // Inyección diferida para evitar dependencia circular en bootstrap
     let sessionTimeout: SessionTimeoutService | null = null;
     const getTimeoutService = () => {
-      if (!sessionTimeout) {
-        sessionTimeout = inject(SessionTimeoutService);
+      if (!sessionTimeout && injector) {
+        sessionTimeout = injector.get(SessionTimeoutService);
       }
       return sessionTimeout;
     };
@@ -71,7 +72,7 @@ export const AuthStore = signalStore(
                     error: null,
                   });
                   // Iniciar monitoreo de inactividad tras login
-                  getTimeoutService().iniciarMonitoreo();
+                  getTimeoutService()?.iniciarMonitoreo();
                 },
                 error: (err: { error?: { message?: string }; message?: string }) => {
                   const message =
@@ -90,7 +91,7 @@ export const AuthStore = signalStore(
 
       /** Limpia el estado, detiene el timeout y elimina la sesión del navegador */
       logout(): void {
-        getTimeoutService().detenerMonitoreo();
+        getTimeoutService()?.detenerMonitoreo();
         authService.clearSession();
         patchState(store, initialState);
       },
@@ -112,7 +113,7 @@ export const AuthStore = signalStore(
             isAuthenticated: true,
           });
           // Reactivar monitoreo de inactividad en refresh de página
-          getTimeoutService().iniciarMonitoreo();
+          getTimeoutService()?.iniciarMonitoreo();
         }
       },
     };
