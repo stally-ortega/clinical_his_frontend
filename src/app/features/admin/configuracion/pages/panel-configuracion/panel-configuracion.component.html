@@ -1,0 +1,55 @@
+<div class="page-header">
+  <h2 class="page-title">Configuración Global</h2>
+  <p class="page-subtitle">Parámetros operativos centralizados del sistema</p>
+</div>
+
+<div class="config-container glass-panel grain-overlay">
+  @if (isLoading) {
+    <div class="loading-state">Cargando configuración...</div>
+  } @else {
+    <div class="panel-header">
+      <span class="material-symbols-outlined header-icon">settings_applications</span>
+      <div>
+        <h3>Seguridad de la Sesión</h3>
+        <p>Ajusta el tiempo límite antes de forzar el desconecte de usuarios inactivos.</p>
+      </div>
+    </div>
+    
+    @if (successMessage) {
+      <div class="alert alert-success">
+        <span class="material-symbols-outlined">check_circle</span>
+        {{ successMessage }}
+      </div>
+    }
+    
+    @if (error) {
+      <div class="alert alert-error">
+        <span class="material-symbols-outlined">error</span>
+        {{ error }}
+      </div>
+    }
+
+    <form [formGroup]="formConfig" (ngSubmit)="onGuardar()" class="config-form">
+      <div class="form-row">
+        <div class="input-container">
+          <app-form-input 
+            controlName="timeout_inactividad_minutos" 
+            type="number"
+            label="Tiempo de inactividad permitido (Minutos)">
+          </app-form-input>
+          <small class="helper-text">Valor recomendado: Entre 10 y 30 minutos por normativas HIPAA.</small>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-button 
+          type="submit" 
+          text="Guardar Cambios" 
+          variant="primary" 
+          icon="save"
+          [isLoading]="isSaving">
+        </app-button>
+      </div>
+    </form>
+  }
+</div>

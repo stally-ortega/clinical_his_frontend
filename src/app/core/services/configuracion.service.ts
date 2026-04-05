@@ -20,4 +20,8 @@ export class ConfiguracionService {
       `${this.apiUrl}/configuracion`
     );
   }
+
+  actualizarConfiguracion(timeout_inactividad_minutos: number): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/configuracion`, { timeout_inactividad_minutos });
+  }
 }

@@ -22,4 +22,12 @@ export class CatalogosService {
     return this.http.get<ApiResponse<Catalogo[]>>(`${this.apiUrl}/catalogos/${tipo}`)
       .pipe(map(response => response.data));
   }
+
+  crearCatalogo(payload: { tipo: string; nombre: string; descripcion?: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/catalogos`, payload);
+  }
+
+  toggleEstado(id: number, activo: boolean, tipo?: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/catalogos/${id}/estado`, { activo, tipo });
+  }
 }

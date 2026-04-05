@@ -1,0 +1,130 @@
+<div class="page-header">
+  <h2 class="page-title">Catálogos Maestros</h2>
+  <p class="page-subtitle">Administración de diccionarios y listas de selección global</p>
+</div>
+
+<div class="catalog-filters glass-panel">
+  <div class="selector-group">
+    <label for="diccionarioSelect">Diccionario Activo:</label>
+    <select id="diccionarioSelect" class="form-select" [value]="store.tipoActivo()" (change)="onSelectDiccionario($event)">
+      @for (dic of diccionarios; track dic.key) {
+        <option [value]="dic.key">{{ dic.label }}</option>
+      }
+    </select>
+  </div>
+  
+  <app-button 
+    text="Nuevo Registro" 
+    icon="add_circle" 
+    variant="primary" 
+    (click)="toggleAddForm()">
+  </app-button>
+</div>
+
+@if (store.successMessage()) {
+  <div class="alert alert-success">
+    <span class="material-symbols-outlined">check_circle</span>
+    {{ store.successMessage() }}
+  </div>
+}
+
+@if (store.error()) {
+  <div class="alert alert-error">
+    <span class="material-symbols-outlined">error</span>
+    {{ store.error() }}
+  </div>
+}
+
+<div class="split-view" [class.form-open]="showForm()">
+  <!-- Columna Principal: Tabla -->
+  <section class="main-col glass-panel grain-overlay">
+    <div class="table-header">
+      <h3>Registros: {{ getDiccionarioNombre(store.tipoActivo()) }}</h3>
+    </div>
+
+    @if (store.isLoading()) {
+      <div class="loading-state">
+        <span class="material-symbols-outlined spin">autorenew</span>
+        <p>Cargando datos...</p>
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="clinical-table">
+          <thead>
+            <tr>
+              <th width="80">ID</th>
+              <th>Nombre / Valor</th>
+              <th>Descripción</th>
+              <th width="120">Estado</th>
+              <th width="120" class="text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of store.items(); track item.id) {
+              <tr [class.inactive]="item.activo === false">
+                <td class="col-id">#{{ item.id }}</td>
+                <td class="col-name"><strong>{{ item.nombre }}</strong></td>
+                <td class="col-desc">{{ item.descripcion || '—' }}</td>
+                <td>
+                  @if (item.activo !== false) {
+                    <span class="badge badge-success">Activo</span>
+                  } @else {
+                    <span class="badge badge-error">Inactivo</span>
+                  }
+                </td>
+                <td class="text-right">
+                  <app-button 
+                    [text]="item.activo !== false ? 'Desactivar' : 'Activar'" 
+                    [variant]="item.activo !== false ? 'outline' : 'primary'"
+                    size="small"
+                    (click)="onToggleEstado(item.id, item.activo !== false)">
+                  </app-button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="empty-state">
+                  No hay registros creados en este diccionario.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+
+  <!-- Panel Lateral: Formulario -->
+  @if (showForm()) {
+    <aside class="side-form-col glass-panel">
+      <div class="form-header">
+        <h4>Agregar a <span>{{ getDiccionarioNombre(store.tipoActivo()) }}</span></h4>
+        <button class="close-btn" (click)="toggleAddForm()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <form [formGroup]="addForm" (ngSubmit)="onSubmitAdd()" class="form-body">
+        <app-form-input 
+          controlName="nombre" 
+          label="Nombre o Valor" 
+          placeholder="Ej. Paracetamol">
+        </app-form-input>
+        
+        <div style="margin-top: 1rem"></div>
+
+        <app-form-input 
+          controlName="descripcion" 
+          type="text"
+          label="Descripción (opcional)" 
+          placeholder="Más detalles...">
+        </app-form-input>
+
+        <div class="form-actions">
+          <app-button type="button" text="Cancelar" variant="outline" (click)="toggleAddForm()"></app-button>
+          <app-button type="submit" text="Guardar Registro" variant="primary" [isLoading]="store.isSaving()"></app-button>
+        </div>
+      </form>
+    </aside>
+  }
+</div>
