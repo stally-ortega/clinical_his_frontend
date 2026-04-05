@@ -73,16 +73,30 @@
     }
 
     <!-- Administración -->
-    @if (authStore.permisos().includes('CONFIGURAR_SISTEMA')) {
+    @if (authStore.permisos().includes('CONFIGURAR_SISTEMA') || authStore.permisos().includes('GESTIONAR_USUARIOS')) {
       <p class="nav-group-label">Infraestructura y Seguridad</p>
-      <a routerLink="/app/admin/ubicaciones" routerLinkActive="active" class="nav-item" title="Constructor EAV">
-        <span class="material-symbols-outlined">account_tree</span>
-        <span class="nav-label">Constructor EAV</span>
-      </a>
-      <a routerLink="/app/admin/auditoria" routerLinkActive="active" class="nav-item" title="Auditoría Global">
-        <span class="material-symbols-outlined">history</span>
-        <span class="nav-label">Auditoría Global</span>
-      </a>
+      
+      @if (authStore.permisos().includes('GESTIONAR_USUARIOS') || authStore.permisos().includes('CONFIGURAR_SISTEMA')) {
+        <a routerLink="/app/admin/usuarios" routerLinkActive="active" class="nav-item" title="Gestión de Usuarios">
+          <span class="material-symbols-outlined">group_add</span>
+          <span class="nav-label">Gestión de Usuarios</span>
+        </a>
+      }
+      
+      @if (authStore.permisos().includes('CONFIGURAR_SISTEMA')) {
+        <a routerLink="/app/admin/roles" routerLinkActive="active" class="nav-item" title="Roles y Permisos">
+          <span class="material-symbols-outlined">policy</span>
+          <span class="nav-label">Roles y Permisos</span>
+        </a>
+        <a routerLink="/app/admin/ubicaciones" routerLinkActive="active" class="nav-item" title="Constructor EAV">
+          <span class="material-symbols-outlined">account_tree</span>
+          <span class="nav-label">Constructor EAV</span>
+        </a>
+        <a routerLink="/app/admin/auditoria" routerLinkActive="active" class="nav-item" title="Auditoría Global">
+          <span class="material-symbols-outlined">history</span>
+          <span class="nav-label">Auditoría Global</span>
+        </a>
+      }
     }
 
   </nav>

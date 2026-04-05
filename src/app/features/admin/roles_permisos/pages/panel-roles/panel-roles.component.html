@@ -1,0 +1,126 @@
+<div class="page-header">
+  <h2 class="page-title">Roles y Permisos</h2>
+  <p class="page-subtitle">Constructor dinámico de control de acceso funcional (RBAC V3)</p>
+</div>
+
+<div class="split-view">
+  
+  <!-- Columna Izquierda: Entidad Rol -->
+  <section class="roles-col glass-panel grain-overlay">
+    <div class="col-header">
+      <h3>Directorios de Roles</h3>
+      <app-button 
+        text="Nuevo" 
+        icon="add" 
+        variant="primary" 
+        size="small"
+        (click)="toggleNuevoRol()">
+      </app-button>
+    </div>
+
+    @if (showNuevoRol()) {
+      <div class="nuevo-rol-box">
+        <h4>Crear Rol</h4>
+        <form [formGroup]="formNuevoRol" (ngSubmit)="onCrearRol()">
+          <app-form-input controlName="nombre" label="Nombre" placeholder="Ej: AUDITOR"></app-form-input>
+          <div style="margin-top: 0.5rem"></div>
+          <app-form-input controlName="descripcion" label="Descripción"></app-form-input>
+          
+          <div class="nuevo-rol-actions">
+            <app-button type="button" text="Cancelar" variant="outline" size="small" (click)="toggleNuevoRol()"></app-button>
+            <app-button type="submit" text="Guardar" variant="primary" size="small"></app-button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <div class="roles-list">
+      @if (store.isLoading() && !store.roles().length) {
+        <p class="neutral-text">Cargando...</p>
+      }
+      @for (rol of store.roles(); track rol.id) {
+        <div 
+          class="rol-item" 
+          [class.active]="store.selectedRolId() === rol.id"
+          (click)="onSeleccionarRol(rol)">
+          <div class="rol-icon"><span class="material-symbols-outlined">manage_accounts</span></div>
+          <div class="rol-info">
+            <strong>{{ rol.nombre }}</strong>
+            <span>{{ rol.descripcion }}</span>
+          </div>
+          <div class="rol-badge-count">{{ rol.permisos?.length || 0 }} permisos</div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Columna Derecha: Asignación de Permisos -->
+  <section class="permisos-col glass-panel grain-overlay">
+    @if (rolActivo()) {
+      <div class="col-header permisos-header">
+        <div>
+          <h3>Permisos de: <span class="text-primary">{{ rolActivo()?.nombre }}</span></h3>
+          <p class="subtitle">Seleccione los accesos permitidos para este rol</p>
+        </div>
+        <app-button 
+          text="Guardar Permisos" 
+          icon="save" 
+          variant="primary" 
+          [isLoading]="store.isSaving()"
+          (click)="onGuardarPermisos()">
+        </app-button>
+      </div>
+
+      @if (store.successMessage()) {
+        <div class="alert-success">
+          <span class="material-symbols-outlined">check_circle</span>
+          {{ store.successMessage() }}
+        </div>
+      }
+      @if (store.error()) {
+        <div class="alert-error">
+          <span class="material-symbols-outlined">error</span>
+          {{ store.error() }}
+        </div>
+      }
+
+      <div class="permisos-container">
+        @for (grupo of permisosAgrupados; track grupo.modulo) {
+          <div class="permisos-group">
+            <h4 class="group-title">{{ grupo.modulo }}</h4>
+            <div class="permisos-grid">
+              @for (permiso of grupo.permisos; track permiso.id) {
+                <label class="permiso-checkbox">
+                  <input 
+                    type="checkbox" 
+                    class="native-check"
+                    [checked]="hasPermiso(permiso.id)"
+                    (change)="onTogglePermiso(permiso.id, $event)"
+                  >
+                  <div class="check-content">
+                    <span class="check-box"></span>
+                    <div class="check-info">
+                      <strong>{{ permiso.codigo }}</strong>
+                      <span>{{ permiso.descripcion }}</span>
+                    </div>
+                  </div>
+                </label>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+    } @else {
+      <!-- Empty state -->
+      <div class="empty-state">
+        <div class="empty-icon-box">
+          <span class="material-symbols-outlined">rule</span>
+        </div>
+        <h3>Selecciona un Rol</h3>
+        <p>Elige un rol del panel izquierdo o crea uno nuevo para configurar sus permisos dinámicos.</p>
+      </div>
+    }
+  </section>
+
+</div>

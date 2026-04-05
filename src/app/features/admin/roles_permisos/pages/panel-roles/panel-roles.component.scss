@@ -1,0 +1,163 @@
+.page-header { margin-bottom: 2rem; }
+.page-title { font-family: var(--font-headline); font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 800; color: #164e63; margin: 0; }
+.page-subtitle { color: var(--on-surface-variant); font-size: 0.9rem; margin: 0.25rem 0 0; }
+
+.split-view {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(174, 179, 181, 0.15);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(174, 179, 181, 0.15);
+
+  h3 { font-family: var(--font-headline); font-size: 1.1rem; color: #164e63; margin: 0; }
+}
+
+// -- Columna Roles --
+.nuevo-rol-box {
+  background: rgba(0, 106, 106, 0.04);
+  border: 1px solid rgba(0, 106, 106, 0.1);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  animation: slide-down 0.2s ease;
+
+  h4 { margin: 0 0 0.75rem; font-size: 0.85rem; color: var(--primary); text-transform: uppercase; }
+}
+.nuevo-rol-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; }
+
+.roles-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.rol-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+
+  &:hover { background: rgba(255, 255, 255, 0.5); border-color: rgba(174, 179, 181, 0.2); }
+  
+  &.active {
+    background: rgba(0, 106, 106, 0.06);
+    border-color: rgba(0, 106, 106, 0.2);
+    box-shadow: inset 3px 0 0 var(--primary);
+    .rol-icon { color: var(--primary); background: rgba(255, 255, 255, 0.8); }
+  }
+}
+
+.rol-icon {
+  width: 36px; height: 36px; border-radius: var(--radius-sm);
+  background: rgba(174, 179, 181, 0.15); color: var(--on-surface-variant);
+  display: flex; align-items: center; justify-content: center;
+  .material-symbols-outlined { font-size: 20px; }
+}
+
+.rol-info {
+  flex-grow: 1; display: flex; flex-direction: column;
+  strong { font-size: 0.85rem; font-weight: 700; color: var(--on-surface); }
+  span { font-size: 0.75rem; color: var(--on-surface-variant); }
+}
+
+.rol-badge-count {
+  font-size: 0.65rem; font-weight: 700; background: rgba(174, 179, 181, 0.2);
+  padding: 0.2rem 0.5rem; border-radius: var(--radius-full);
+}
+
+// -- Columna Permisos --
+.permisos-header {
+  .text-primary { color: var(--primary); }
+  .subtitle { font-size: 0.8rem; color: var(--on-surface-variant); margin: 0.2rem 0 0; }
+}
+
+.permisos-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.permisos-group {
+  .group-title {
+    font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase;
+    letter-spacing: 0.05em; margin: 0 0 0.75rem; padding-bottom: 0.25rem;
+    border-bottom: 1px dashed rgba(174, 179, 181, 0.3);
+  }
+}
+
+.permisos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+
+.permiso-checkbox {
+  cursor: pointer;
+  position: relative;
+  
+  .native-check { position: absolute; opacity: 0; width: 0; height: 0; }
+  
+  .check-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(174, 179, 181, 0.2);
+    border-radius: var(--radius-md);
+    transition: all 0.2s;
+  }
+
+  .check-box {
+    width: 20px; height: 20px; border-radius: 4px;
+    border: 2px solid rgba(174, 179, 181, 0.4);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; flex-shrink: 0; background: white;
+  }
+
+  .check-info {
+    display: flex; flex-direction: column;
+    strong { font-size: 0.8rem; font-family: monospace; color: var(--on-surface); }
+    span { font-size: 0.75rem; color: var(--on-surface-variant); line-height: 1.2; margin-top: 0.15rem; }
+  }
+
+  &:hover .check-content { border-color: var(--primary); background: rgba(0, 106, 106, 0.02); }
+
+  .native-check:checked ~ .check-content {
+    background: rgba(0, 106, 106, 0.05); border-color: rgba(0, 106, 106, 0.3);
+    .check-box {
+      background: var(--primary); border-color: var(--primary);
+      &::after { content: ''; width: 5px; height: 9px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-bottom: 2px; }
+    }
+  }
+}
+
+// Estados y Alertas
+.empty-state { text-align: center; padding: 4rem 2rem; color: var(--on-surface-variant); .empty-icon-box { font-size: 48px; opacity: 0.5; margin-bottom: 1rem; span { font-size: inherit; } } h3 { color: #164e63; margin-bottom: 0.5rem; } }
+.alert-success { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #065f46; padding: 0.75rem 1rem; border-radius: var(--radius-md); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.85rem; }
+.alert-error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #991b1b; padding: 0.75rem 1rem; border-radius: var(--radius-md); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.85rem; }
+
+@keyframes slide-down { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 992px) { .split-view { grid-template-columns: 1fr; } .roles-col { max-height: 400px; overflow-y: auto; } }

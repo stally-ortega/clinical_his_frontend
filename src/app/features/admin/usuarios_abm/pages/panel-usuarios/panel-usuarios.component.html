@@ -1,0 +1,74 @@
+<div class="page-header">
+  <h2 class="page-title">Gestión de Usuarios</h2>
+  <p class="page-subtitle">Administración de accesos y seguridad del personal</p>
+</div>
+
+<div class="panel-container glass-panel grain-overlay">
+  @if (store.isLoading()) {
+    <p class="loading-state">Cargando usuarios...</p>
+  } @else if (store.error()) {
+    <p class="error-state">{{ store.error() }}</p>
+  } @else {
+    <div class="table-responsive">
+      <table class="clinical-table">
+        <thead>
+          <tr>
+            <th>Documento</th>
+            <th>Nombres y Apellidos</th>
+            <th>Rol / Perfil</th>
+            <th>Estado</th>
+            <th class="actions-col">Acciones de Seguridad</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of store.usuarios(); track user.id) {
+            <tr [class.danger-row]="isBloqueado(user.bloqueado_hasta)">
+              <td class="col-doc">{{ user.documento || '—' }}</td>
+              <td class="col-name">{{ user.nombres }} {{ user.apellidos }}</td>
+              <td class="col-rol"><span class="badge badge-primary">{{ getRolNombre(user.rol) }}</span></td>
+              <td class="col-status">
+                @if (isBloqueado(user.bloqueado_hasta)) {
+                  <span class="badge badge-danger">Bloqueado</span>
+                } @else {
+                  <span class="badge badge-success">Activo</span>
+                }
+              </td>
+              <td class="actions-col">
+                <div class="action-buttons">
+                  <app-button
+                    variant="outline"
+                    icon="key"
+                    text="Forzar Reset"
+                    (click)="onForzarReset(user.id)"
+                  ></app-button>
+                  
+                  @if (isBloqueado(user.bloqueado_hasta)) {
+                    <app-button
+                      variant="outline"
+                      icon="lock_open"
+                      text="Desbloquear"
+                      (click)="onToggleBloqueo(user.id, true)"
+                      class="btn-unblock"
+                    ></app-button>
+                  } @else {
+                    <app-button
+                      variant="outline"
+                      icon="lock"
+                      text="Bloquear"
+                      (click)="onToggleBloqueo(user.id, false)"
+                      class="btn-block"
+                    ></app-button>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="empty-state">No se encontraron usuarios en el sistema.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -57,6 +57,16 @@ export const routes: Routes = [
       },
       // ── Admin ──────────────────────────────────────────────────────
       {
+        path: 'admin/usuarios',
+        loadChildren: () =>
+          import('./features/admin/usuarios_abm/usuarios_abm.routes').then(m => m.ROUTES)
+      },
+      {
+        path: 'admin/roles',
+        loadChildren: () =>
+          import('./features/admin/roles_permisos/roles_permisos.routes').then(m => m.ROUTES)
+      },
+      {
         path: 'admin/ubicaciones',
         loadChildren: () =>
           import('./features/admin/constructor_ubicaciones/constructor_ubicaciones.routes').then(m => m.ROUTES)

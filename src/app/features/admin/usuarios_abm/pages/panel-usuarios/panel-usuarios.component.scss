@@ -1,0 +1,118 @@
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-family: var(--font-headline);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-weight: 800;
+  color: #164e63;
+  margin: 0;
+}
+
+.page-subtitle {
+  color: var(--on-surface-variant);
+  font-size: 0.9rem;
+  margin: 0.25rem 0 0;
+}
+
+.panel-container {
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(174, 179, 181, 0.15);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.clinical-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 800px;
+
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(174, 179, 181, 0.2);
+    font-size: 0.875rem;
+  }
+
+  th {
+    font-family: var(--font-label);
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--on-surface-variant);
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+    background: rgba(0, 106, 106, 0.03);
+  }
+
+  tr {
+    transition: background 0.2s;
+    &:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+    
+    // Tinte rojizo sutil para filas bloqueadas
+    &.danger-row {
+      background: rgba(239, 68, 68, 0.05); // ef4444 al 5%
+      &:hover {
+        background: rgba(239, 68, 68, 0.08); // un poco más marcado en hover
+      }
+    }
+  }
+
+  .col-doc { font-family: monospace; color: var(--on-surface-variant); }
+  .col-name { font-weight: 600; color: var(--on-surface); }
+
+  .actions-col {
+    text-align: right;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+// Estilos de badges personalizados (aprovecho las variables CSS base)
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-full);
+}
+
+.badge-primary { background: rgba(0, 106, 106, 0.1); color: var(--primary); }
+.badge-success { background: rgba(16, 185, 129, 0.15); color: #065f46; border: 1px solid rgba(16, 185, 129, 0.3); }
+.badge-danger { background: rgba(239, 68, 68, 0.15); color: #991b1b; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+// Estilos específicos para los botones de la tabla, usando deep selector para forzar el color de app-button
+::ng-deep .btn-block button {
+  color: #dc2626 !important;
+  border-color: rgba(220, 38, 38, 0.3) !important;
+  background: rgba(220, 38, 38, 0.05) !important;
+  &:hover {
+    background: rgba(220, 38, 38, 0.1) !important;
+  }
+}
+
+::ng-deep .btn-unblock button {
+  color: #059669 !important;
+  border-color: rgba(5, 150, 105, 0.3) !important;
+  background: rgba(5, 150, 105, 0.05) !important;
+  &:hover {
+    background: rgba(5, 150, 105, 0.1) !important;
+  }
+}
