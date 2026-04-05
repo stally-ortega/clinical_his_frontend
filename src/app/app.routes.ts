@@ -8,6 +8,11 @@ export const routes: Routes = [
       import('./features/auth/login/login.component').then((m) => m.LoginComponent),
   },
   {
+    path: 'auth/recuperar-password',
+    loadChildren: () =>
+      import('./features/auth/password_recovery/password_recovery.routes').then(m => m.RECOVERY_ROUTES)
+  },
+  {
     path: 'app',
     loadComponent: () =>
       import('./core/layout/main-layout/main-layout.component').then((m) => m.MainLayoutComponent),

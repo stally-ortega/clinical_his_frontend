@@ -1,0 +1,121 @@
+<div class="page-header">
+  <h2 class="page-title">Mi Perfil</h2>
+  <p class="page-subtitle">Información de tu cuenta y configuración de seguridad</p>
+</div>
+
+@if (usuario()) {
+  <div class="perfil-grid">
+
+    <!-- Panel Izquierdo: Datos de la Cuenta -->
+    <section class="panel-datos glass-panel grain-overlay">
+      <div class="avatar-block">
+        <div class="avatar">{{ initials }}</div>
+        <div>
+          <h3 class="usuario-nombre">{{ usuario()!.nombres }} {{ usuario()!.apellidos }}</h3>
+          <span class="rol-badge">{{ usuario()!.rol }}</span>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="datos-list">
+        <div class="dato-item">
+          <span class="material-symbols-outlined dato-icon">badge</span>
+          <div>
+            <p class="dato-label">DNI / Documento</p>
+            <p class="dato-value">{{ usuario()!.documento || 'No especificado' }}</p>
+          </div>
+        </div>
+
+        <div class="dato-item">
+          <span class="material-symbols-outlined dato-icon">tag</span>
+          <div>
+            <p class="dato-label">ID Sistema</p>
+            <p class="dato-value">#{{ usuario()!.id }}</p>
+          </div>
+        </div>
+
+        <div class="dato-item">
+          <span class="material-symbols-outlined dato-icon">assignment_ind</span>
+          <div>
+            <p class="dato-label">Rol en el Sistema</p>
+            <p class="dato-value">{{ usuario()!.rol }}</p>
+          </div>
+        </div>
+
+        <div class="dato-item">
+          <span class="material-symbols-outlined dato-icon">security</span>
+          <div>
+            <p class="dato-label">Permisos Activos</p>
+            <p class="dato-value">{{ usuario()!.permisos.length || 0 }} permisos asignados</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel Derecho: Cambio de Contraseña -->
+    <section class="panel-seguridad glass-panel grain-overlay">
+      <h3 class="panel-title">
+        <span class="material-symbols-outlined">lock</span>
+        Cambiar Contraseña
+      </h3>
+
+      <!-- Success -->
+      @if (exito()) {
+        <div class="alert-success" role="status">
+          <span class="material-symbols-outlined">check_circle</span>
+          <span>¡Contraseña actualizada exitosamente!</span>
+        </div>
+      }
+
+      <!-- Error del servidor -->
+      @if (error()) {
+        <div class="alert-error" role="alert">
+          <span class="material-symbols-outlined">error</span>
+          {{ error() }}
+        </div>
+      }
+
+      <form [formGroup]="formClave" (ngSubmit)="onCambiarPassword()" novalidate class="clave-form">
+        <app-form-input
+          controlName="password_actual"
+          label="Contraseña Actual"
+          type="password"
+          placeholder="Tu contraseña vigente"
+        ></app-form-input>
+
+        <app-form-input
+          controlName="nueva_password"
+          label="Nueva Contraseña"
+          type="password"
+          placeholder="Mínimo 8 caracteres"
+        ></app-form-input>
+
+        <app-form-input
+          controlName="confirmar_password"
+          label="Confirmar Nueva Contraseña"
+          type="password"
+          placeholder="Repite la nueva contraseña"
+        ></app-form-input>
+
+        @if (passwordMismatch) {
+          <div class="alert-warning" role="alert">
+            <span class="material-symbols-outlined">warning</span>
+            Las contraseñas no coinciden.
+          </div>
+        }
+
+        <div class="form-actions">
+          <app-button
+            type="submit"
+            text="Actualizar Contraseña"
+            icon="lock_reset"
+            variant="primary"
+            [isLoading]="isLoading()"
+            [disabled]="formClave.invalid || isLoading()"
+          ></app-button>
+        </div>
+      </form>
+    </section>
+  </div>
+}

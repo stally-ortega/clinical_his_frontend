@@ -8,6 +8,7 @@ export interface Usuario {
   id: number;
   nombres: string;
   apellidos: string;
+  documento?: string;
   rol: string;
   /** Array de códigos de permiso dinámicos del backend V3 */
   permisos: string[];
@@ -26,4 +27,15 @@ export interface AuthResponse {
 export interface LoginPayload {
   documento: string;
   clave: string;
+}
+
+/** Payload para solicitar recuperación de contraseña por documento */
+export interface RecuperacionPayload {
+  documento: string;
+}
+
+/** Payload para cambiar contraseña autenticado */
+export interface CambioPasswordPayload {
+  password_actual: string;
+  nueva_password: string;
 }

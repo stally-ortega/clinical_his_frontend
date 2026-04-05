@@ -1,7 +1,8 @@
-import { Component, inject, effect } from '@angular/core';
+import { Component, inject, effect, computed, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthStore } from '../../../store/auth.store';
+import { CommonModule } from '@angular/common';
 import { FormInputComponent } from '../../../shared/components/ui/form-input/form-input.component';
 import { ButtonComponent } from '../../../shared/components/ui/button/button.component';
 
@@ -12,7 +13,7 @@ import { ButtonComponent } from '../../../shared/components/ui/button/button.com
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, FormInputComponent, ButtonComponent],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, FormInputComponent, ButtonComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -36,6 +37,14 @@ export class LoginComponent {
       }
     });
   }
+
+  /** Detecta si el error del backend indica cuenta bloqueada */
+  readonly cuentaBloqueada = computed(() => {
+    const err = this.store.error() ?? '';
+    return err.toLowerCase().includes('bloqueada') ||
+           err.toLowerCase().includes('bloqueado') ||
+           err.toLowerCase().includes('bloqueado_hasta');
+  });
 
   onSubmit(): void {
     if (this.form.valid) {

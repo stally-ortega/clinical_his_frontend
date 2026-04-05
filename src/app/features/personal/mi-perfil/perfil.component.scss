@@ -1,0 +1,196 @@
+.page-header {
+  margin-bottom: 2rem;
+}
+.page-title {
+  font-family: var(--font-headline);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-weight: 800;
+  color: #164e63;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+.page-subtitle {
+  color: var(--on-surface-variant);
+  font-size: 0.9rem;
+  margin: 0.25rem 0 0;
+}
+
+// Layout de cuadrícula a dos columnas
+.perfil-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+// Estilos comunes para los paneles (usando clases previas de glassmorphism)
+.glass-panel {
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(174, 179, 181, 0.15);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+// Panel Izquierdo: Datos
+.avatar-block {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+
+  .avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-full);
+    background: rgba(135, 237, 237, 0.35);
+    color: var(--primary);
+    font-family: var(--font-headline);
+    font-weight: 800;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid rgba(0, 106, 106, 0.15);
+  }
+
+  .usuario-nombre {
+    font-family: var(--font-headline);
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #164e63;
+    margin: 0;
+  }
+
+  .rol-badge {
+    display: inline-block;
+    margin-top: 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    font-family: var(--font-label);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--primary);
+    background: rgba(135, 237, 237, 0.25);
+    padding: 0.2rem 0.75rem;
+    border-radius: var(--radius-full);
+  }
+}
+
+.divider {
+  border: none;
+  height: 1px;
+  background: rgba(174, 179, 181, 0.15);
+  margin: 1.5rem 0;
+}
+
+.datos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.dato-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+
+  .dato-icon {
+    font-size: 22px;
+    color: var(--primary);
+    opacity: 0.7;
+    margin-top: 0.1rem;
+  }
+
+  .dato-label {
+    font-family: var(--font-label);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0;
+  }
+
+  .dato-value {
+    font-family: var(--font-body);
+    font-size: 0.925rem;
+    font-weight: 600;
+    color: var(--on-surface);
+    margin: 0.2rem 0 0;
+  }
+}
+
+// Panel Derecho: Seguridad
+.panel-seguridad {
+  .panel-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1.5rem 0;
+    font-family: var(--font-headline);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #164e63;
+    
+    .material-symbols-outlined { color: var(--primary); font-size: 24px; }
+  }
+}
+
+.clave-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Modificadores de Alertas */
+.alert-success, .alert-warning, .alert-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+  animation: fade-in 0.25s ease;
+
+  .material-symbols-outlined { font-size: 20px; flex-shrink: 0; }
+}
+
+.alert-success {
+  background: rgba(16, 185, 129, 0.10);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #065f46;
+  .material-symbols-outlined { color: #10b981; }
+}
+
+.alert-warning {
+  background: rgba(245, 158, 11, 0.10);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #b45309;
+  .material-symbols-outlined { color: #f59e0b; }
+}
+
+.alert-error {
+  background: rgba(239, 68, 68, 0.10);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #991b1b;
+  .material-symbols-outlined { color: #ef4444; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// Responsividad
+@media (max-width: 768px) {
+  .perfil-grid { grid-template-columns: 1fr; }
+}
