@@ -6,6 +6,7 @@ import { pipe, switchMap, tap } from 'rxjs';
 import { AuthService } from '../core/services/auth.service';
 import { AuthResponse, LoginPayload, Usuario } from '../core/models/auth.model';
 import { SessionTimeoutService } from '../core/services/session-timeout.service';
+import { WebSocketService } from '../core/services/websocket.service';
 
 /** Forma del estado global de autenticación */
 export type AuthState = {
@@ -46,6 +47,14 @@ export const AuthStore = signalStore(
       return sessionTimeout;
     };
 
+    let webSocket: WebSocketService | null = null;
+    const getWsService = () => {
+      if (!webSocket && injector) {
+        webSocket = injector.get(WebSocketService);
+      }
+      return webSocket;
+    };
+
     return {
       /**
        * Método reactivo que maneja el flujo completo de login:
@@ -71,8 +80,9 @@ export const AuthStore = signalStore(
                     isLoading: false,
                     error: null,
                   });
-                  // Iniciar monitoreo de inactividad tras login
+                  // Iniciar monitoreo de inactividad y tiempo real tras login
                   getTimeoutService()?.iniciarMonitoreo();
+                  getWsService()?.conectar();
                 },
                 error: (err: { error?: { message?: string }; message?: string }) => {
                   const message =
@@ -89,9 +99,10 @@ export const AuthStore = signalStore(
         ),
       ),
 
-      /** Limpia el estado, detiene el timeout y elimina la sesión del navegador */
+      /** Limpia el estado, detiene el timeout, cierra WS y elimina la sesión del navegador */
       logout(): void {
         getTimeoutService()?.detenerMonitoreo();
+        getWsService()?.desconectar();
         authService.clearSession();
         patchState(store, initialState);
       },
@@ -112,8 +123,9 @@ export const AuthStore = signalStore(
             permisos,
             isAuthenticated: true,
           });
-          // Reactivar monitoreo de inactividad en refresh de página
+          // Reactivar monitoreo e inactividad y WS en refresh de página
           getTimeoutService()?.iniciarMonitoreo();
+          getWsService()?.conectar();
         }
       },
     };
