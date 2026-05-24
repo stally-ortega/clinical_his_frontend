@@ -1,32 +1,41 @@
-import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { PacientesStore } from '../../store/pacientes.store';
 import { PacientesService } from '../../services/pacientes.service';
-import { CatalogosStore } from '../../../../admin/catalogos_maestros/store/catalogos.store';
 import { UbicacionesStore } from '../../../../admin/constructor_ubicaciones/store/ubicaciones.store';
 import { FormInputComponent } from '../../../../../shared/components/ui/form-input/form-input.component';
 import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
+import { SelectCatalogoComponent } from '../../../../../shared/components/ui/select-catalogo/select-catalogo.component';
+import { EavRendererComponent } from '../../../../../shared/components/ui/eav-renderer/eav-renderer.component';
+import { AtributoEAV } from '../../../../../core/models/eav.model';
+import { EavRendererService } from '../../../../../core/services/eav-renderer.service';
 
 @Component({
   selector: 'app-paciente-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormInputComponent, ButtonComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormInputComponent,
+    ButtonComponent,
+    SelectCatalogoComponent,
+    EavRendererComponent,
+  ],
   templateUrl: './paciente-create.component.html',
-  styleUrl: './paciente-create.component.scss'
+  styleUrl: './paciente-create.component.scss',
 })
 export class PacienteCreateComponent implements OnInit {
-  public store = inject(PacientesStore);
-  public catalogosStore = inject(CatalogosStore);
-  public ubicacionesStore = inject(UbicacionesStore);
-  private fb = inject(FormBuilder);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private destroyRef = inject(DestroyRef);
-  private pacientesSvc = inject(PacientesService);
+  readonly store = inject(PacientesStore);
+  readonly ubicacionesStore = inject(UbicacionesStore);
+  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly pacientesSvc = inject(PacientesService);
+  private readonly eavService = inject(EavRendererService);
 
   modoEdicion = false;
   documentoPaciente = '';
@@ -34,12 +43,16 @@ export class PacienteCreateComponent implements OnInit {
   sexoOptions = [
     { value: 'M', label: 'Masculino' },
     { value: 'F', label: 'Femenino' },
-    { value: 'O', label: 'Otro' }
+    { value: 'O', label: 'Otro' },
   ];
 
-  /** Señal que almacena los campos dinámicos EAV según la nomenclatura seleccionada */
-  camposUbicacion = signal<string[]>([]);
+  /** Atributos EAV derivados de la nomenclatura seleccionada */
+  atributosEav = signal<AtributoEAV[]>([]);
 
+  /** Valores iniciales para rehidratación EAV en modo edición */
+  valoresEavIniciales = signal<Record<string, string> | undefined>(undefined);
+
+  /** FormGroup estático para datos demográficos */
   form: FormGroup = this.fb.group({
     documento: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
     nombres: ['', Validators.required],
@@ -47,12 +60,23 @@ export class PacienteCreateComponent implements OnInit {
     edad: ['', [Validators.required, Validators.min(0)]],
     sexo: ['', Validators.required],
     id_nomenclatura: [null, Validators.required],
-    valores_ubicacion: this.fb.group({}),
-    id_tipo_dieta: [null, Validators.required]
+    id_tipo_dieta: [null, Validators.required],
   });
 
+  /** FormGroup dinámico generado por el motor EAV */
+  eavForm: FormGroup = new FormGroup({});
+
+  constructor() {
+    // ── Mutación dinámica del formulario EAV al cambiar nomenclatura ──
+    this.form.get('id_nomenclatura')?.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((valorSeleccionado: unknown) => {
+        const idSeleccionado = typeof valorSeleccionado === 'string' ? parseInt(valorSeleccionado, 10) : valorSeleccionado;
+        this.reconstruirEav(idSeleccionado as number | null);
+      });
+  }
+
   ngOnInit(): void {
-    this.catalogosStore.loadCatalogos({ tipo: 'dietas', reset: true });
     this.ubicacionesStore.cargarNomenclaturas();
 
     const docParam = this.route.snapshot.paramMap.get('documento');
@@ -61,14 +85,10 @@ export class PacienteCreateComponent implements OnInit {
       this.documentoPaciente = docParam;
       this.cargarPaciente(docParam);
     }
+  }
 
-    // ── Mutación dinámica del formulario EAV ────────────────────────────────
-    this.form.get('id_nomenclatura')!.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((valorSeleccionado: unknown) => {
-        const idSeleccionado = parseInt(valorSeleccionado as string, 10);
-        this.reconstruirCamposUbicacion(idSeleccionado);
-      });
+  onEavFormReady(form: FormGroup): void {
+    this.eavForm = form;
   }
 
   private cargarPaciente(documento: string): void {
@@ -87,68 +107,63 @@ export class PacienteCreateComponent implements OnInit {
           this.form.patchValue({
             id_nomenclatura: paciente.ubicacion_fisica.id_nomenclatura,
           });
-
-          this.reconstruirCamposUbicacion(
+          this.reconstruirEav(
             paciente.ubicacion_fisica.id_nomenclatura,
             paciente.ubicacion_fisica.valores
           );
-
-          this.form.patchValue({
-            valores_ubicacion: paciente.ubicacion_fisica.valores,
-          });
         }
       },
       error: (err) => {
         console.error('Error cargando paciente:', err);
-      }
+      },
     });
   }
 
-  private reconstruirCamposUbicacion(idNomenclatura: number, valoresIniciales?: Record<string, string>): void {
-    const nuevoGrupo = this.fb.group({});
-
-    if (!isNaN(idNomenclatura)) {
-      const nomenclatura = this.ubicacionesStore.nomenclaturas().find(
-        (n) => n.id === idNomenclatura
-      );
-
-      if (nomenclatura?.estructura) {
-        const nuevosCampos = nomenclatura.estructura
-          .slice()
-          .sort((a, b) => a.orden - b.orden)
-          .map((e) => e.tipoUbicacion?.nombre || `nivel_${e.orden}`)
-          .filter((nombre): nombre is string => Boolean(nombre));
-
-        nuevosCampos.forEach((campo) => {
-          const valorInicial = valoresIniciales?.[campo] ?? '';
-          nuevoGrupo.addControl(campo, new FormControl(valorInicial, Validators.required));
-        });
-
-        this.form.setControl('valores_ubicacion', nuevoGrupo);
-        this.form.updateValueAndValidity();
-
-        this.camposUbicacion.set(nuevosCampos);
-        return;
-      }
-    }
-
-    this.form.setControl('valores_ubicacion', nuevoGrupo);
-    this.camposUbicacion.set([]);
-  }
-
-  onSubmit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+  private reconstruirEav(idNomenclatura: number | null, valoresIniciales?: Record<string, string>): void {
+    if (!idNomenclatura || isNaN(idNomenclatura)) {
+      this.atributosEav.set([]);
+      this.valoresEavIniciales.set(undefined);
       return;
     }
 
-    const rawVal = this.form.value;
+    const nomenclatura = this.ubicacionesStore.nomenclaturas().find((n) => n.id === idNomenclatura);
+    if (!nomenclatura?.estructura) {
+      this.atributosEav.set([]);
+      this.valoresEavIniciales.set(undefined);
+      return;
+    }
+
+    // Convertir la estructura de nomenclatura a AtributoEAV
+    const atributos: AtributoEAV[] = nomenclatura.estructura
+      .slice()
+      .sort((a, b) => a.orden - b.orden)
+      .map((nivel, idx) => ({
+        id: idx,
+        id_entidad: idNomenclatura,
+        nombre: nivel.tipoUbicacion?.nombre || `nivel_${nivel.orden}`,
+        tipo_dato: 'texto' as const,
+        orden: nivel.orden,
+        obligatorio: true,
+      }));
+
+    this.atributosEav.set(atributos);
+    this.valoresEavIniciales.set(valoresIniciales);
+  }
+
+  onSubmit(): void {
+    if (this.form.invalid || this.eavForm.invalid) {
+      this.form.markAllAsTouched();
+      this.eavForm.markAllAsTouched();
+      return;
+    }
+
+    const raw = this.form.value;
     const payload = {
-      ...rawVal,
-      edad: parseInt(rawVal.edad, 10),
-      id_nomenclatura: parseInt(rawVal.id_nomenclatura, 10),
-      id_tipo_dieta: parseInt(rawVal.id_tipo_dieta, 10),
-      valores_ubicacion: rawVal.valores_ubicacion as Record<string, string>
+      ...raw,
+      edad: parseInt(raw.edad, 10),
+      id_nomenclatura: parseInt(raw.id_nomenclatura, 10),
+      id_tipo_dieta: parseInt(raw.id_tipo_dieta, 10),
+      valores_ubicacion: this.eavService.extractPayload(this.eavForm),
     };
 
     if (this.modoEdicion) {
@@ -161,5 +176,4 @@ export class PacienteCreateComponent implements OnInit {
   goBack(): void {
     this.router.navigate(['/app/pacientes']);
   }
-
 }

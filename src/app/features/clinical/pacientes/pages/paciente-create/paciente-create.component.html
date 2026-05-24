@@ -1,4 +1,4 @@
-<!-- Paciente Create – Clinical Ethereal Form -->
+<!-- Paciente Create – Formulario de Admisión con Motor EAV -->
 <div class="page-header">
   <div class="title-with-back">
     <app-button icon="arrow_back" variant="outline" (onClick)="goBack()"></app-button>
@@ -26,7 +26,6 @@
         <app-form-input controlName="nombres" label="Nombres" placeholder="Nombres completos"></app-form-input>
         <app-form-input controlName="apellidos" label="Apellidos" placeholder="Apellidos completos"></app-form-input>
       </div>
-      <!-- Sexo biológico -->
       <div class="form-grid form-grid--1">
         <div class="native-select-group"
           [class.error]="form.get('sexo')?.invalid && form.get('sexo')?.touched">
@@ -44,7 +43,6 @@
       </div>
     </section>
 
-    <!-- Divisor -->
     <hr class="form-divider">
 
     <!-- Sección 2: Asignación Clínica -->
@@ -69,47 +67,27 @@
           }
         </div>
 
-        <!-- Tipo de Dieta -->
-        <div class="native-select-group"
-          [class.error]="form.get('id_tipo_dieta')?.invalid && form.get('id_tipo_dieta')?.touched">
-          <label class="native-select-label">Tipo de Dieta Inicial</label>
-          <select formControlName="id_tipo_dieta" class="native-select">
-            <option [ngValue]="null">Seleccione una dieta...</option>
-            @for (dieta of catalogosStore.items(); track dieta.id) {
-              <option [value]="dieta.id">{{ dieta.nombre }}</option>
-            }
-          </select>
-          @if (form.get('id_tipo_dieta')?.invalid && form.get('id_tipo_dieta')?.touched) {
-            <span class="field-error">La dieta es requerida.</span>
-          }
-        </div>
+        <!-- Tipo de Dieta (genérico via CVA) -->
+        <app-select-catalogo
+          catalogo="dietas"
+          label="Tipo de Dieta Inicial"
+          placeholder="Seleccione una dieta..."
+          formControlName="id_tipo_dieta">
+        </app-select-catalogo>
       </div>
 
-      <!-- Valores de Ubicación (dinámico) -->
+      <!-- Valores de Ubicación (dinámico vía motor EAV) -->
       <div class="form-grid form-grid--1">
-        @if (camposUbicacion().length > 0) {
-          <div formGroupName="valores_ubicacion" class="dynamic-eav-grid">
-            @for (campo of camposUbicacion(); track campo) {
-              <div class="native-select-group"
-                [class.error]="form.get(['valores_ubicacion', campo])?.invalid && form.get(['valores_ubicacion', campo])?.touched">
-                <label class="native-select-label">{{ campo }}</label>
-                <input
-                  type="text"
-                  [formControlName]="campo"
-                  class="native-select"
-                  [placeholder]="'Ingrese ' + campo"
-                />
-                @if (form.get(['valores_ubicacion', campo])?.invalid && (form.get(['valores_ubicacion', campo])?.dirty || form.get(['valores_ubicacion', campo])?.touched)) {
-                  <span class="field-error">{{ campo }} es requerido.</span>
-                }
-              </div>
-            }
-          </div>
+        @if (atributosEav().length > 0) {
+          <app-eav-renderer
+            [atributos]="atributosEav()"
+            [valoresIniciales]="valoresEavIniciales()"
+            (formReady)="onEavFormReady($event)">
+          </app-eav-renderer>
         } @else {
           <p class="eav-placeholder">Seleccione una nomenclatura para generar los campos de ubicación.</p>
         }
       </div>
-
     </section>
 
     <!-- Server error -->
@@ -125,7 +103,7 @@
       <app-button
         text="Cancelar"
         variant="outline"
-        [disabled]="store.isLoading()"
+        [disabled]="store.isSaving()"
         (onClick)="goBack()">
       </app-button>
 
@@ -134,10 +112,9 @@
         icon="check_circle"
         type="submit"
         variant="primary"
-        [isLoading]="store.isLoading()"
-        [disabled]="store.isLoading()">
+        [isLoading]="store.isSaving()"
+        [disabled]="store.isSaving()">
       </app-button>
     </div>
-
   </form>
 </div>

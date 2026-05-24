@@ -37,6 +37,7 @@ __screenshots__/
 .settings/
 *.sublime-workspace
 .history/
+*.txt
 
 # ── Visual Studio Code ────────────────────────────────────────────────────────
 .vscode/*
