@@ -33,6 +33,17 @@ export interface NomenclaturaPayload {
   estructura: { id_tipo_ubicacion: number; orden: number }[];
 }
 
+export interface ValorUbicacion {
+  id: number;
+  id_nomenclatura: number;
+  id_tipo_ubicacion: number;
+  valor: string;
+  etiqueta?: string;
+  id_valor_padre?: number | null;
+  orden: number;
+  estado: boolean;
+}
+
 export interface ApiResponse<T> {
   exito: boolean;
   data: T;
@@ -105,6 +116,28 @@ export class UbicacionesService {
 
   toggleEstadoNomenclatura(id: number): Observable<Nomenclatura> {
     return this.http.patch<ApiResponse<Nomenclatura>>(`${this.apiUrl}/ubicaciones/nomenclaturas/${id}/estado`, {})
+      .pipe(map(res => res.data));
+  }
+
+  // ── Valores de Ubicación (nodos concretos de la jerarquía EAV) ──
+
+  getValoresNomenclatura(idNomenclatura: number): Observable<ValorUbicacion[]> {
+    return this.http.get<ApiResponse<ValorUbicacion[]>>(`${this.apiUrl}/ubicaciones/nomenclaturas/${idNomenclatura}/valores`)
+      .pipe(map(res => Array.isArray(res.data) ? res.data : []));
+  }
+
+  crearValorUbicacion(payload: Omit<ValorUbicacion, 'id' | 'estado'>): Observable<ValorUbicacion> {
+    return this.http.post<ApiResponse<ValorUbicacion>>(`${this.apiUrl}/ubicaciones/valores`, payload)
+      .pipe(map(res => res.data));
+  }
+
+  actualizarValorUbicacion(id: number, payload: Partial<ValorUbicacion>): Observable<ValorUbicacion> {
+    return this.http.put<ApiResponse<ValorUbicacion>>(`${this.apiUrl}/ubicaciones/valores/${id}`, payload)
+      .pipe(map(res => res.data));
+  }
+
+  toggleEstadoValor(id: number): Observable<ValorUbicacion> {
+    return this.http.patch<ApiResponse<ValorUbicacion>>(`${this.apiUrl}/ubicaciones/valores/${id}/estado`, {})
       .pipe(map(res => res.data));
   }
 }

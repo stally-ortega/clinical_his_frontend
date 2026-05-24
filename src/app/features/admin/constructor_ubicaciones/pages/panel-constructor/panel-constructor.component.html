@@ -127,6 +127,9 @@
                 <span class="card-badge">{{ item.estructura.length }} niveles</span>
               </div>
               <div class="card-actions">
+                <button type="button" class="btn-icon" (click)="abrirModalValores(item)" title="Gestionar Valores">
+                  <span class="material-symbols-outlined">account_tree</span>
+                </button>
                 <button type="button" class="btn-icon btn-edit" (click)="editarNomenclatura(item)" title="Editar">
                   <span class="material-symbols-outlined">edit</span>
                 </button>
@@ -154,3 +157,10 @@
     }
   </section>
 </div>
+
+@if (nomenclaturaModalAbierta()) {
+  <app-valor-nodo-form
+    [nomenclatura]="nomenclaturaModalAbierta()!"
+    (cerrar)="cerrarModalValores()">
+  </app-valor-nodo-form>
+}

@@ -6,11 +6,12 @@ import { UbicacionesStore } from '../../store/ubicaciones.store';
 import { Nomenclatura, TipoUbicacion } from '../../services/ubicaciones.service';
 import { FormInputComponent } from '../../../../../shared/components/ui/form-input/form-input.component';
 import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
+import { ValorNodoFormComponent } from '../../components/valor-nodo-form/valor-nodo-form.component';
 
 @Component({
   selector: 'app-panel-constructor',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormInputComponent, ButtonComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormInputComponent, ButtonComponent, ValorNodoFormComponent],
   templateUrl: './panel-constructor.component.html',
   styleUrl: './panel-constructor.component.scss'
 })
@@ -34,6 +35,7 @@ export class PanelConstructorComponent implements OnInit {
   tipoEditandoId = signal<number | null>(null);
   modoEdicion = signal<boolean>(false);
   nomenclaturaEditandoId = signal<number | null>(null);
+  nomenclaturaModalAbierta = signal<Nomenclatura | null>(null);
 
   ngOnInit(): void {
     this.store.cargarTipos();
@@ -152,5 +154,13 @@ export class PanelConstructorComponent implements OnInit {
 
   toggleEstado(item: Nomenclatura): void {
     this.store.toggleEstado(item.id);
+  }
+
+  abrirModalValores(item: Nomenclatura): void {
+    this.nomenclaturaModalAbierta.set(item);
+  }
+
+  cerrarModalValores(): void {
+    this.nomenclaturaModalAbierta.set(null);
   }
 }

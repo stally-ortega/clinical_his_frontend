@@ -22,6 +22,10 @@ export interface AtributoEAV {
   orden: number;
   obligatorio: boolean;
   id_catalogo?: number; // Solo si tipo_dato === 'catalogo'
+  /** Nombre del atributo padre en la jerarquía para filtros en cascada */
+  dependencia?: string;
+  /** Valores posibles para renderizar como select (usado en ubicaciones jerárquicas) */
+  valores?: ValorEAV[];
 }
 
 /** Representa un Valor posible para un Atributo (ej. Torre A, Piso 3, Cama 4) */
@@ -31,6 +35,8 @@ export interface ValorEAV {
   valor: string;
   etiqueta: string;
   orden?: number;
+  /** Si este valor depende de un valor padre (cascada), referencia al ID del valor padre */
+  id_valor_padre?: number | null;
 }
 
 /** Payload que envía el frontend al guardar un registro EAV */
