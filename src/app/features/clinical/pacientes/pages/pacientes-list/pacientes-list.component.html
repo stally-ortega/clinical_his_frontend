@@ -34,17 +34,21 @@
 
       <!-- Vitals grid -->
       <div class="vitals-grid">
-        <div class="vital">
-          <p class="vital-label">Edad</p>
-          <p class="vital-value">{{ paciente.edad }}a</p>
+        <div class="vital-row vital-row--2">
+          <div class="vital">
+            <p class="vital-label">Edad</p>
+            <p class="vital-value">{{ paciente.edad }}</p>
+          </div>
+          <div class="vital vital--border">
+            <p class="vital-label">Sexo</p>
+            <p class="vital-value">{{ paciente.sexo }}</p>
+          </div>
         </div>
-        <div class="vital vital--border">
-          <p class="vital-label">Sexo</p>
-          <p class="vital-value">{{ paciente.sexo }}</p>
-        </div>
-        <div class="vital">
-          <p class="vital-label">Ingreso</p>
-          <p class="vital-value">{{ paciente.fecha_ingreso | date:'dd/MM' }}</p>
+        <div class="vital-row vital-row--full">
+          <div class="vital">
+            <p class="vital-label">Ingreso</p>
+            <p class="vital-value">{{ paciente.fecha_registro | date:'dd/MM/yyyy HH:mm' }}</p>
+          </div>
         </div>
       </div>
 
@@ -68,7 +72,11 @@
           variant="outline"
           [routerLink]="['/app/pacientes', paciente.id, 'historia']">
         </app-button>
-        <app-button icon="chevron_right" variant="primary"></app-button>
+        <app-button
+          icon="chevron_right"
+          variant="primary"
+          [routerLink]="['/app/pacientes/editar', paciente.documento]">
+        </app-button>
       </div>
     </article>
   } @empty {

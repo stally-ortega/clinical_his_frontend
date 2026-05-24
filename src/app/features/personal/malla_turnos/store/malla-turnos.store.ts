@@ -63,8 +63,8 @@ export const MallaTurnosStore = signalStore(
           switchMap(({ mes, anio }) =>
             turnosService.getMallaMensual(mes, anio).pipe(
               tapResponse({
-                next: (res: any) => {
-                  const data = res.data || res || [];
+                next: (res: TurnoProgramado[] | { data?: TurnoProgramado[] }) => {
+                  const data = (res as { data?: TurnoProgramado[] }).data || res || [];
                   patchState(store, { turnosProgramados: Array.isArray(data) ? data : [], isLoading: false });
                 },
                 error: (err) => patchState(store, { error: 'Error al cargar malla de turnos', isLoading: false }),
@@ -80,14 +80,14 @@ export const MallaTurnosStore = signalStore(
           switchMap((payload) =>
             turnosService.programarTurno(payload).pipe(
               tapResponse({
-                next: (res: any) => {
+                next: (res: unknown) => {
                   patchState(store, { isSaving: false, successMessage: 'Turno programado correctamente' });
                   // Recargamos el mes actual
                   const mes = store.mesActual();
                   const anio = store.anioActual();
                   // No podemos despachar recursivamente pero idealmente exponemos esto
                 },
-                error: (err: any) => patchState(store, { error: err.error?.message || 'Error al programar turno', isSaving: false }),
+                error: (err: { error?: { message?: string }; message?: string }) => patchState(store, { error: err.error?.message || 'Error al programar turno', isSaving: false }),
               })
             )
           )

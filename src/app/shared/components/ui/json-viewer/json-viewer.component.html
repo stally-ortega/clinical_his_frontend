@@ -1,0 +1,34 @@
+@if (isPrimitive(data())) {
+  <span class="json-primitive">{{ data() }}</span>
+}
+
+@if (isArray(data())) {
+  <div class="json-array">
+    @for (item of getAsArray(data()); track $index) {
+      <div class="array-item">
+        <app-json-viewer [data]="item"></app-json-viewer>
+      </div>
+    }
+  </div>
+}
+
+@if (isObject(data()) && !isArray(data())) {
+  @if (getObjectKeys(data()).length === 0) {
+    <span class="empty-object">{{ '{}' }}</span>
+  } @else {
+    <div class="json-object">
+      @for (item of getObjectKeys(data()); track item.key) {
+        <div class="json-property">
+          <span class="json-key" style="color: #2563eb; font-weight: 500;">"{{ item.key }}"</span>:
+          @if (isNullOrUndefined(item.value)) {
+            <span style="color: #9ca3af; font-style: italic;">null</span>
+          } @else if (isPrimitive(item.value)) {
+            <app-json-viewer [data]="item.value" style="display: inline; padding: 0; border: none; margin: 0;"></app-json-viewer>
+          } @else {
+            <app-json-viewer [data]="item.value"></app-json-viewer>
+          }
+        </div>
+      }
+    </div>
+  }
+}

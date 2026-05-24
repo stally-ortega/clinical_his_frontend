@@ -17,7 +17,10 @@
     <form [formGroup]="formTipo" (ngSubmit)="crearTipo()" class="creator-form" novalidate>
       <app-form-input controlName="nombre" label="Nuevo Tipo Físico" placeholder="Ej. Pabellón"></app-form-input>
       <div class="form-actions">
-        <app-button text="Registrar Tipo" icon="add_box" type="submit" variant="primary" [disabled]="formTipo.invalid || store.isLoading()"></app-button>
+        @if (modoEdicionTipo()) {
+          <app-button text="Cancelar" variant="outline" (click)="cancelarEdicionTipo()"></app-button>
+        }
+        <app-button [text]="modoEdicionTipo() ? 'Actualizar Tipo' : 'Registrar Tipo'" icon="add_box" type="submit" variant="primary" [disabled]="formTipo.invalid || store.isLoading()"></app-button>
       </div>
     </form>
 
@@ -28,7 +31,12 @@
       }
       <div class="chips-container">
         @for (tipo of store.tiposDisponibles(); track tipo.id) {
-          <span class="tipo-chip">{{ tipo.nombre }}</span>
+          <span class="tipo-chip" [class.inactive]="tipo.estado === false" (click)="editarTipo(tipo)" role="button" tabindex="0">
+            {{ tipo.nombre }}
+            <button type="button" class="chip-toggle" (click)="toggleEstadoTipo(tipo, $event)" title="Cambiar Estado">
+              <span class="material-symbols-outlined">{{ tipo.estado === false ? 'restore' : 'block' }}</span>
+            </button>
+          </span>
         } @empty {
           <span class="empty-chip">Aún no hay nomenclaturas registradas.</span>
         }
@@ -79,22 +87,70 @@
         </div>
       </div>
 
-      <!-- Error Global -->
-      @if (store.error()) {
-        <div class="server-error" role="alert">
-          <span class="material-symbols-outlined">error</span>
-          {{ store.error() }}
-        </div>
-      }
-
       <!-- Acciones de panel -->
       <div class="global-actions">
         <!-- Success State -->
         @if (store.nomenclaturaActiva()) {
           <span class="success-message">¡Estructura guardada exitosamente!</span>
         }
-        <app-button text="Guardar Estructura Global" icon="save" type="submit" variant="primary" [isLoading]="store.isLoading()" [disabled]="formNomenclatura.invalid || nivelesConstruccion().length === 0 || store.isLoading()"></app-button>
+        @if (modoEdicion()) {
+          <app-button text="Cancelar" variant="outline" (click)="cancelarEdicion()"></app-button>
+        }
+        <app-button [text]="modoEdicion() ? 'Actualizar Estructura' : 'Guardar Estructura'" icon="save" type="submit" variant="primary" [isLoading]="store.isLoading()" [disabled]="formNomenclatura.invalid || nivelesConstruccion().length === 0 || store.isLoading()"></app-button>
       </div>
     </form>
   </main>
+
+  <!-- Panel inferior: Estructuras Guardadas -->
+  <section class="panel-nomenclaturas glass-panel grain-overlay">
+    <h3 class="section-title">
+      <span class="material-symbols-outlined">table_chart</span>
+      Estructuras Topológicas Guardadas
+    </h3>
+    <p class="section-desc">Lista de nomenclaturas registradas en el sistema</p>
+
+    @if (store.isLoading() && store.nomenclaturas().length === 0) {
+      <div class="loading-state">
+        <span class="material-symbols-outlined spinning">progress_activity</span>
+        <p>Cargando estructuras...</p>
+      </div>
+    } @else {
+      <div class="nomenclaturas-grid">
+        @for (item of store.nomenclaturas(); track item.id) {
+          <div class="nomenclatura-card glass-card" [class.inactive]="item.estado === false">
+            <div class="card-header">
+              <div class="card-icon">
+                <span class="material-symbols-outlined">apartment</span>
+              </div>
+              <div class="card-title-group">
+                <h4 class="card-title">{{ item.nombre }}</h4>
+                <span class="card-badge">{{ item.estructura.length }} niveles</span>
+              </div>
+              <div class="card-actions">
+                <button type="button" class="btn-icon btn-edit" (click)="editarNomenclatura(item)" title="Editar">
+                  <span class="material-symbols-outlined">edit</span>
+                </button>
+                <button type="button" class="btn-icon btn-delete" (click)="toggleEstado(item)" title="Cambiar Estado">
+                  <span class="material-symbols-outlined">{{ item.estado === false ? 'restore' : 'block' }}</span>
+                </button>
+              </div>
+            </div>
+            <div class="card-levels">
+              @for (nivel of item.estructura; track $index) {
+                <span class="level-pill">
+                  <span class="level-order">{{ nivel.orden }}</span>
+                  <span class="level-name">{{ nivel.tipoUbicacion?.nombre || ('Nivel ' + nivel.orden) }}</span>
+                </span>
+              }
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-state">
+            <span class="material-symbols-outlined">inbox</span>
+            <p>No hay estructuras guardadas aún. Crea una usando el constructor de la derecha.</p>
+          </div>
+        }
+      </div>
+    }
+  </section>
 </div>

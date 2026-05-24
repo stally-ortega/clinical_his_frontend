@@ -5,6 +5,7 @@ import { PacienteCreateComponent } from './pages/paciente-create/paciente-create
 export const PACIENTES_ROUTES: Routes = [
   { path: '', component: PacientesListComponent },
   { path: 'nuevo', component: PacienteCreateComponent },
+  { path: 'editar/:documento', component: PacienteCreateComponent },
   {
     path: ':id/historia',
     loadComponent: () =>

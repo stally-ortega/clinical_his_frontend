@@ -17,7 +17,7 @@ export class PanelUsuariosComponent implements OnInit {
     this.store.loadUsuarios();
   }
 
-  getRolNombre(rol: any): string {
+  getRolNombre(rol: { id?: number; nombre?: string } | string): string {
     if (typeof rol === 'string') return rol;
     return rol?.nombre || 'N/A';
   }

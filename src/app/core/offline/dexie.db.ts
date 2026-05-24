@@ -3,7 +3,7 @@ import Dexie, { Table } from 'dexie';
 export interface SyncOperation {
   id?: number;
   tipo: 'DOSIS';
-  payload: any;
+  payload: unknown;
   fecha: number;
 }
 

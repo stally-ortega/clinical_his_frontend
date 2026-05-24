@@ -55,7 +55,7 @@ export class PanelTareasComponent implements OnInit {
     this.store.marcarCompletada({ id, observaciones: ob });
   }
 
-  setObservacion(id: number, event: any): void {
-    this.observacionesCierre[id] = event?.target?.value || '';
+  setObservacion(id: number, event: Event): void {
+    this.observacionesCierre[id] = (event.target as HTMLInputElement)?.value || '';
   }
 }

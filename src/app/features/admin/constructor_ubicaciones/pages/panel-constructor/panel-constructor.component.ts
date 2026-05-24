@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
 import { UbicacionesStore } from '../../store/ubicaciones.store';
+import { Nomenclatura, TipoUbicacion } from '../../services/ubicaciones.service';
 import { FormInputComponent } from '../../../../../shared/components/ui/form-input/form-input.component';
 import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
 
@@ -29,9 +30,14 @@ export class PanelConstructorComponent implements OnInit {
   });
 
   tipoSeleccionado = signal<string>('');
+  modoEdicionTipo = signal<boolean>(false);
+  tipoEditandoId = signal<number | null>(null);
+  modoEdicion = signal<boolean>(false);
+  nomenclaturaEditandoId = signal<number | null>(null);
 
   ngOnInit(): void {
     this.store.cargarTipos();
+    this.store.cargarNomenclaturas();
   }
 
   crearTipo(): void {
@@ -39,8 +45,27 @@ export class PanelConstructorComponent implements OnInit {
       this.formTipo.markAllAsTouched();
       return;
     }
-    this.store.registrarTipo(this.formTipo.value.nombre);
+    const payload = { id: this.modoEdicionTipo() ? this.tipoEditandoId() ?? undefined : undefined, nombre: this.formTipo.value.nombre };
+    this.store.registrarTipo(payload);
     this.formTipo.reset();
+    this.cancelarEdicionTipo();
+  }
+
+  editarTipo(tipo: TipoUbicacion): void {
+    this.modoEdicionTipo.set(true);
+    this.tipoEditandoId.set(tipo.id);
+    this.formTipo.patchValue({ nombre: tipo.nombre });
+  }
+
+  cancelarEdicionTipo(): void {
+    this.formTipo.reset();
+    this.modoEdicionTipo.set(false);
+    this.tipoEditandoId.set(null);
+  }
+
+  toggleEstadoTipo(tipo: TipoUbicacion, event: Event): void {
+    event.stopPropagation();
+    this.store.toggleEstadoTipo(tipo.id);
   }
 
   agregarNivel(): void {
@@ -75,9 +100,18 @@ export class PanelConstructorComponent implements OnInit {
     }
     const payload = {
       nombre: this.formNomenclatura.value.nombre_nomenclatura,
-      niveles: this.nivelesConstruccion().map(n => ({ id_tipo_ubicacion: n.id_tipo_ubicacion, orden: n.orden }))
+      estructura: this.nivelesConstruccion().map(n => ({ id_tipo_ubicacion: n.id_tipo_ubicacion, orden: n.orden }))
     };
-    this.store.configurarEstructura(payload);
+
+    if (this.modoEdicion()) {
+      const id = this.nomenclaturaEditandoId();
+      if (id !== null) {
+        this.store.actualizarEstructura({ id, payload });
+        this.cancelarEdicion();
+      }
+    } else {
+      this.store.configurarEstructura(payload);
+    }
   }
 
   getTiposOptions() {
@@ -86,5 +120,37 @@ export class PanelConstructorComponent implements OnInit {
   
   setTipoSeleccionado(val: string) {
     this.tipoSeleccionado.set(val);
+  }
+
+  editarNomenclatura(item: Nomenclatura): void {
+    this.modoEdicion.set(true);
+    this.nomenclaturaEditandoId.set(item.id);
+
+    this.formNomenclatura.patchValue({
+      nombre_nomenclatura: item.nombre
+    });
+
+    const niveles = item.estructura.map(n => ({
+      id_tipo_ubicacion: n.id_tipo_ubicacion,
+      orden: n.orden,
+      nombre: n.tipoUbicacion?.nombre || ('Nivel ' + n.orden)
+    }));
+    this.nivelesConstruccion.set(niveles);
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  cancelarEdicion(): void {
+    this.formNomenclatura.reset({
+      nombre_nomenclatura: 'Estructura Hospitalaria Base',
+      tipo_selector: ''
+    });
+    this.nivelesConstruccion.set([]);
+    this.modoEdicion.set(false);
+    this.nomenclaturaEditandoId.set(null);
+  }
+
+  toggleEstado(item: Nomenclatura): void {
+    this.store.toggleEstado(item.id);
   }
 }

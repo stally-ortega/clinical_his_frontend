@@ -6,12 +6,39 @@
 </div>
 
 <div class="audit-dashboard">
-  @if (store.error()) {
-    <div class="server-error" role="alert">
-      <span class="material-symbols-outlined">error</span>
-      {{ store.error() }}
+  <!-- Filtros superiores -->
+  <div class="audit-filters glass-panel">
+    <div class="filter-group">
+      <input
+        type="text"
+        class="filter-input"
+        placeholder="Buscar por acción, tabla, usuario, registro..."
+        [ngModel]="store.filtros().search"
+        (ngModelChange)="onSearchChange($event)"
+      />
+      <span class="material-symbols-outlined filter-icon">search</span>
     </div>
-  }
+
+    <div class="filter-group">
+      <label class="filter-label">Desde</label>
+      <input
+        type="date"
+        class="filter-input"
+        [ngModel]="store.filtros().startDate"
+        (ngModelChange)="onFechaChange('startDate', $event)"
+      />
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">Hasta</label>
+      <input
+        type="date"
+        class="filter-input"
+        [ngModel]="store.filtros().endDate"
+        (ngModelChange)="onFechaChange('endDate', $event)"
+      />
+    </div>
+  </div>
 
   @if (store.isLoading() && store.logs().length === 0) {
     <div class="loading-state">
@@ -20,35 +47,56 @@
     </div>
   }
 
-  <div class="table-container glass-panel grain-overlay">
+  <div class="table-container glass-panel grain-overlay" (scroll)="onTableScroll($event)">
     <table class="audit-table">
       <thead>
         <tr>
-          <th>Fecha / Hora</th>
-          <th>Usuario (ID)</th>
-          <th>Acción</th>
-          <th>Módulo / Endpoint</th>
+          <th (click)="onSort('fecha_cambio')" class="sortable">
+            <span class="header-content">
+              Fecha / Hora
+              <span class="material-symbols-outlined sort-icon">{{ sortIcon('fecha_cambio') }}</span>
+            </span>
+          </th>
+          <th>Usuario</th>
+          <th (click)="onSort('accion')" class="sortable">
+            <span class="header-content">
+              Acción
+              <span class="material-symbols-outlined sort-icon">{{ sortIcon('accion') }}</span>
+            </span>
+          </th>
+          <th (click)="onSort('tabla_afectada')" class="sortable">
+            <span class="header-content">
+              Módulo / Tabla
+              <span class="material-symbols-outlined sort-icon">{{ sortIcon('tabla_afectada') }}</span>
+            </span>
+          </th>
           <th>Detalles Recopilados</th>
-          <th>IP Origen</th>
+          <th>Registro Afectado</th>
         </tr>
       </thead>
       <tbody>
         @for (log of store.logs(); track log.id) {
-          <tr [class.danger-row]="log.accion === 'DELETE' || log.accion === 'ERROR'">
-            <td class="col-date">{{ log.fecha_hora | date:'short' }}</td>
+          <tr [class.danger-row]="log.accion === 'DELETE'" (click)="abrirModal(log)" class="clickable-row">
+            <td class="col-date">{{ log.fecha_cambio | date:'dd/MM/yyyy, h:mm a' }}</td>
             <td class="col-user">
-              <span class="user-badge" title="Identificador de BBDD">#{{ log.usuario_id }}</span>
+              @if (log.usuario) {
+                <span class="user-badge" title="{{ log.usuario.documento }}">
+                  {{ log.usuario.nombres }} {{ log.usuario.apellidos }}
+                </span>
+              } @else {
+                <span class="user-badge">#{{ log.id_usuario }}</span>
+              }
             </td>
             <td class="col-action">
-              <span class="action-badge" [ngClass]="log.accion | lowercase">{{ log.accion }}</span>
+              <span class="action-badge" [ngClass]="(log.accion | lowercase) ?? ''">{{ log.accion }}</span>
             </td>
-            <td class="col-module">{{ log.modulo_endpoint }}</td>
+            <td class="col-module">{{ log.tabla_afectada }}</td>
             <td class="col-details">
-              <div class="details-content" [title]="log.detalles | json">
-                {{ (log.detalles | json) || 'N/A' }}
+              <div class="details-content">
+                {{ (log.valores_nuevos | json)?.slice(0, 80) }}...
               </div>
             </td>
-            <td class="col-ip">{{ log.ip_address || 'Internal' }}</td>
+            <td class="col-record">#{{ log.id_registro_afectado }}</td>
           </tr>
         } @empty {
           @if (!store.isLoading()) {
@@ -62,5 +110,58 @@
         }
       </tbody>
     </table>
+
+    @if (store.isLoadingMore()) {
+      <div class="lazy-loading-indicator">
+        <span class="material-symbols-outlined spinning">progress_activity</span>
+        <span>Cargando más registros...</span>
+      </div>
+    }
+
+    @if (!store.hasMore() && store.logs().length > 0) {
+      <div class="lazy-loading-indicator no-more">
+        <span>No hay más registros</span>
+      </div>
+    }
   </div>
 </div>
+
+<!-- Modal JSON -->
+@if (modalAbierto() && logSeleccionado()) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-content glass-panel" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Detalle del Log #{{ logSeleccionado()?.id }}</h3>
+        <button type="button" class="btn-icon" (click)="cerrarModal()" title="Cerrar">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-meta">
+          <span><strong>Acción:</strong> {{ logSeleccionado()?.accion }}</span>
+          <span><strong>Tabla:</strong> {{ logSeleccionado()?.tabla_afectada }}</span>
+          <span><strong>Registro:</strong> #{{ logSeleccionado()?.id_registro_afectado }}</span>
+          <span><strong>Fecha:</strong> {{ logSeleccionado()?.fecha_cambio | date:'dd/MM/yyyy, h:mm a' }}</span>
+        </div>
+
+        <div class="json-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="margin: 0; text-transform: uppercase; font-size: 0.875rem; color: #6b7280; font-weight: 600;">Valores Nuevos</h3>
+            <button type="button" class="btn-outline" style="display: flex; gap: 0.25rem; align-items: center; padding: 0.25rem 0.5rem; font-size: 0.75rem;" (click)="copiarAlPortapapeles(logSeleccionado()?.valores_nuevos)">
+              <span class="material-symbols-outlined" style="font-size: 1rem;">content_copy</span> Copiar JSON
+            </button>
+          </div>
+          <app-json-viewer [data]="logSeleccionado()?.valores_nuevos"></app-json-viewer>
+        </div>
+
+        @if (logSeleccionado()?.valores_anteriores) {
+          <div class="json-section">
+            <h4>Valores Anteriores</h4>
+            <app-json-viewer [data]="logSeleccionado()?.valores_anteriores"></app-json-viewer>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

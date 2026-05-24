@@ -37,7 +37,7 @@ export const TareasStore = signalStore(
             return tareasService.getTareasPendientes(userId).pipe(
               tapResponse({
                 next: (tareas) => patchState(store, { tareas, isLoading: false }),
-                error: (err: any) => {
+                error: (err: { error?: { message?: string }; message?: string }) => {
                   console.error('Error cargando tareas:', err);
                   patchState(store, { error: 'No se pudieron cargar las tareas pendientes', isLoading: false });
                 },
@@ -63,7 +63,7 @@ export const TareasStore = signalStore(
                      next: (t) => patchState(store, { tareas: t })
                   });
                 },
-                error: (err: any) => {
+                error: (err: { error?: { message?: string }; message?: string }) => {
                   console.error('Error creando tarea:', err);
                   patchState(store, { error: 'No se pudo crear la tarea', isLoading: false });
                 },
@@ -87,7 +87,7 @@ export const TareasStore = signalStore(
                      next: (t) => patchState(store, { tareas: t })
                   });
                 },
-                error: (err: any) => {
+                error: (err: { error?: { message?: string }; message?: string }) => {
                   console.error('Error completando tarea:', err);
                   patchState(store, { error: 'No se pudo completar la tarea', isLoading: false });
                 },

@@ -85,9 +85,9 @@ export const KardexStore = signalStore(
                 // Background success - UI is already updated, we just stop loading state
                 patchState(store, { isLoading: false });
               },
-              error: (err: any) => {
+              error: (err: { status?: number; error?: { status?: number; message?: string }; message?: string }) => {
                 patchState(store, { isLoading: false });
-                
+
                 const status = err?.status || err?.error?.status;
                 // Si es un status 0 (offline), 504 o la red está caida nativamente
                 if (!navigator.onLine || status === 0 || status === 504 || status === 503) {

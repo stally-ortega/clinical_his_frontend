@@ -14,10 +14,28 @@ export interface Paciente {
   estado: string;
   id_ubicacion_fisica: number;
   id_tipo_dieta: number;
-  fecha_ingreso: Date;
+  fecha_registro: Date;
+  ubicacion_fisica?: {
+    id: number;
+    id_nomenclatura: number;
+    valores: Record<string, string>;
+  };
+  tipo_dieta?: {
+    id: number;
+    nombre: string;
+  };
 }
 
-export type PacientePayload = Omit<Paciente, 'id' | 'estado' | 'fecha_ingreso'>;
+export interface PacientePayload {
+  documento: string;
+  nombres: string;
+  apellidos: string;
+  edad: number;
+  sexo: string;
+  id_nomenclatura: number;
+  valores_ubicacion: Record<string, string>;
+  id_tipo_dieta: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class PacientesService {
@@ -29,8 +47,18 @@ export class PacientesService {
       .pipe(map(res => res.data));
   }
 
+  getPacienteByDocumento(documento: string): Observable<Paciente> {
+    return this.http.get<ApiResponse<Paciente>>(`${this.apiUrl}/pacientes/${documento}`)
+      .pipe(map(res => res.data));
+  }
+
   registrarPaciente(payload: PacientePayload): Observable<Paciente> {
     return this.http.post<ApiResponse<Paciente>>(`${this.apiUrl}/pacientes`, payload)
+      .pipe(map(res => res.data));
+  }
+
+  actualizarPaciente(documento: string, payload: PacientePayload): Observable<Paciente> {
+    return this.http.patch<ApiResponse<Paciente>>(`${this.apiUrl}/pacientes/${documento}`, payload)
       .pipe(map(res => res.data));
   }
 }

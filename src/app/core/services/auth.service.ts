@@ -27,8 +27,8 @@ export class AuthService {
    * Solicita instrucciones de recuperación de contraseña por documento.
    * El backend siempre responde con éxito (Silent Success pattern).
    */
-  solicitarRecuperacion(payload: RecuperacionPayload): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/forgot-password`, payload);
+  solicitarRecuperacion(payload: RecuperacionPayload): Observable<null> {
+    return this.http.post<null>(`${this.apiUrl}/auth/forgot-password`, payload);
   }
 
   /**
@@ -36,8 +36,8 @@ export class AuthService {
    * Cambia la contraseña de un usuario autenticado.
    * Requiere token JWT válido en el header (añadido por el interceptor HTTP).
    */
-  cambiarPasswordInterno(payload: CambioPasswordPayload): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/auth/cambiar-password`, payload);
+  cambiarPasswordInterno(payload: CambioPasswordPayload): Observable<null> {
+    return this.http.patch<null>(`${this.apiUrl}/auth/cambiar-password`, payload);
   }
 
   /** Persiste el token y los datos del usuario en localStorage */

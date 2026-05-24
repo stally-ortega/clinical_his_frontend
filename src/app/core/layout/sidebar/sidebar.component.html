@@ -1,4 +1,4 @@
-<!-- Sidebar – Clinical Ethereal V3 | RBAC Dinámico por Permisos -->
+<!-- Sidebar – Clinical Ethereal V3 | RBAC Dinámico + Bypass Super Admin -->
 <aside class="sidebar grain-overlay">
 
   <!-- Brand + Toggle -->
@@ -8,7 +8,7 @@
     </div>
     <div class="brand-text">
       <h1 class="brand-title">Clinical HIS</h1>
-      <p class="brand-sub">Medical Center</p>
+      <p class="brand-sub">{{ nombreHospital() }}</p>
     </div>
     <button class="collapse-btn" (click)="toggleCollapse()" [title]="isCollapsed() ? 'Expandir menú' : 'Contraer menú'">
       <span class="material-symbols-outlined">
@@ -17,38 +17,38 @@
     </button>
   </div>
 
-  <!-- Navigation – Dinámica por Permisos (RBAC V3) -->
+  <!-- Navigation – Dinámica por Permisos (RBAC V3) con bypass ADMIN -->
   <nav class="sidebar-nav" [attr.aria-label]="'Navegación principal'">
 
     <!-- Clínico -->
-    @if (authStore.permisos().includes('VER_DASHBOARD') || authStore.permisos().length === 0) {
+    @if (authStore.isAdmin() || authStore.permisos().includes('VER_DASHBOARD') || authStore.permisos().length === 0) {
       <p class="nav-group-label">Clínico</p>
     }
-    @if (authStore.permisos().includes('VER_DASHBOARD') || authStore.permisos().length === 0) {
+    @if (authStore.isAdmin() || authStore.permisos().includes('VER_DASHBOARD') || authStore.permisos().length === 0) {
       <a routerLink="/app/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="nav-item" title="Dashboard">
         <span class="material-symbols-outlined">dashboard</span>
         <span class="nav-label">Dashboard</span>
       </a>
     }
-    @if (authStore.permisos().includes('VER_PACIENTES')) {
+    @if (authStore.isAdmin() || authStore.permisos().includes('VER_PACIENTES')) {
       <a routerLink="/app/pacientes" routerLinkActive="active" class="nav-item" title="Pacientes">
         <span class="material-symbols-outlined">group</span>
         <span class="nav-label">Pacientes</span>
       </a>
     }
-    @if (authStore.permisos().includes('VER_KARDEX')) {
+    @if (authStore.isAdmin() || authStore.permisos().includes('VER_KARDEX')) {
       <a routerLink="/app/kardex" routerLinkActive="active" class="nav-item" title="Kardex">
         <span class="material-symbols-outlined">assignment</span>
         <span class="nav-label">Kardex</span>
       </a>
     }
-    @if (authStore.permisos().includes('VER_EVOLUCIONES')) {
+    @if (authStore.isAdmin() || authStore.permisos().includes('VER_EVOLUCIONES')) {
       <a routerLink="/app/evoluciones" routerLinkActive="active" class="nav-item" title="Evoluciones">
         <span class="material-symbols-outlined">timeline</span>
         <span class="nav-label">Evoluciones</span>
       </a>
     }
-    @if (authStore.permisos().includes('VER_NOTAS_ENFERMERIA')) {
+    @if (authStore.isAdmin() || authStore.permisos().includes('VER_NOTAS_ENFERMERIA')) {
       <a routerLink="/app/notas" routerLinkActive="active" class="nav-item" title="Notas de Enfermería">
         <span class="material-symbols-outlined">description</span>
         <span class="nav-label">Notas Enf.</span>
@@ -56,22 +56,22 @@
     }
 
     <!-- Operación -->
-    @if (authStore.permisos().includes('VER_DASHBOARD_TAREAS') || authStore.permisos().includes('LOGUEAR_TURNO') || authStore.permisos().includes('PROGRAMAR_TURNOS')) {
+    @if (authStore.isAdmin() || authStore.permisos().includes('VER_DASHBOARD_TAREAS') || authStore.permisos().includes('LOGUEAR_TURNO') || authStore.permisos().includes('PROGRAMAR_TURNOS')) {
       <p class="nav-group-label">Operación</p>
     }
-    @if (authStore.permisos().includes('PROGRAMAR_TURNOS')) {
+    @if (authStore.isAdmin() || authStore.permisos().includes('PROGRAMAR_TURNOS')) {
       <a routerLink="/app/turnos/malla" routerLinkActive="active" class="nav-item" title="Malla de Turnos">
         <span class="material-symbols-outlined">calendar_month</span>
         <span class="nav-label">Malla de Turnos</span>
       </a>
     }
-    @if (authStore.permisos().includes('VER_DASHBOARD_TAREAS')) {
+    @if (authStore.isAdmin() || authStore.permisos().includes('VER_DASHBOARD_TAREAS')) {
       <a routerLink="/app/dashboard/tareas" routerLinkActive="active" class="nav-item" title="Tareas del turno">
         <span class="material-symbols-outlined">pending_actions</span>
         <span class="nav-label">Tareas</span>
       </a>
     }
-    @if (authStore.permisos().includes('LOGUEAR_TURNO')) {
+    @if (authStore.isAdmin() || authStore.permisos().includes('LOGUEAR_TURNO')) {
       <a routerLink="/app/turnos/logueo" routerLinkActive="active" class="nav-item" title="Logueo de Turno">
         <span class="material-symbols-outlined">login</span>
         <span class="nav-label">Turno Activo</span>
@@ -79,17 +79,17 @@
     }
 
     <!-- Administración -->
-    @if (authStore.permisos().includes('CONFIGURAR_SISTEMA') || authStore.permisos().includes('GESTIONAR_USUARIOS')) {
+    @if (authStore.isAdmin() || authStore.permisos().includes('CONFIGURAR_SISTEMA') || authStore.permisos().includes('GESTIONAR_USUARIOS')) {
       <p class="nav-group-label">Infraestructura y Seguridad</p>
-      
-      @if (authStore.permisos().includes('GESTIONAR_USUARIOS') || authStore.permisos().includes('CONFIGURAR_SISTEMA')) {
+
+      @if (authStore.isAdmin() || authStore.permisos().includes('GESTIONAR_USUARIOS') || authStore.permisos().includes('CONFIGURAR_SISTEMA')) {
         <a routerLink="/app/admin/usuarios" routerLinkActive="active" class="nav-item" title="Gestión de Usuarios">
           <span class="material-symbols-outlined">group_add</span>
           <span class="nav-label">Gestión de Usuarios</span>
         </a>
       }
-      
-      @if (authStore.permisos().includes('CONFIGURAR_SISTEMA')) {
+
+      @if (authStore.isAdmin() || authStore.permisos().includes('CONFIGURAR_SISTEMA')) {
         <a routerLink="/app/admin/roles" routerLinkActive="active" class="nav-item" title="Roles y Permisos">
           <span class="material-symbols-outlined">policy</span>
           <span class="nav-label">Roles y Permisos</span>

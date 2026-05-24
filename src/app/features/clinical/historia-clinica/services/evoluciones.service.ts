@@ -15,7 +15,9 @@ export interface Evolucion {
   created_at?: string;
 }
 
-export type EvolucionPayload = Omit<Evolucion, 'id' | 'created_at'>;
+export type EvolucionPayload = Omit<Evolucion, 'id' | 'created_at'> & {
+  estado_paciente: 'ESTABLE' | 'REGULAR' | 'GRAVE' | 'CRITICO' | 'OBSERVACION' | 'PRONOSTICO_RESERVADO';
+};
 
 @Injectable({ providedIn: 'root' })
 export class EvolucionesService {

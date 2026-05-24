@@ -3,8 +3,8 @@
   <div class="title-with-back">
     <app-button icon="arrow_back" variant="outline" (onClick)="goBack()"></app-button>
     <div>
-      <h2 class="page-title">Registrar Ingreso</h2>
-      <p class="page-subtitle">Apertura de historia clínica y asignación de habitación</p>
+      <h2 class="page-title">{{ modoEdicion ? 'Editar Paciente' : 'Registrar Ingreso' }}</h2>
+      <p class="page-subtitle">{{ modoEdicion ? 'Modificación de datos del paciente' : 'Apertura de historia clínica y asignación de habitación' }}</p>
     </div>
   </div>
 </div>
@@ -28,12 +28,19 @@
       </div>
       <!-- Sexo biológico -->
       <div class="form-grid form-grid--1">
-        <app-form-input 
-          controlName="sexo" 
-          label="Sexo biológico" 
-          type="select" 
-          [options]="sexoOptions">
-        </app-form-input>
+        <div class="native-select-group"
+          [class.error]="form.get('sexo')?.invalid && form.get('sexo')?.touched">
+          <label class="native-select-label">Sexo biológico</label>
+          <select formControlName="sexo" class="native-select">
+            <option [ngValue]="null">Seleccione sexo...</option>
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
+            <option value="O">Otro</option>
+          </select>
+          @if (form.get('sexo')?.invalid && form.get('sexo')?.touched) {
+            <span class="field-error">El sexo es requerido.</span>
+          }
+        </div>
       </div>
     </section>
 
@@ -47,23 +54,62 @@
         Asignación Clínica
       </h3>
       <div class="form-grid form-grid--2">
-        <!-- Ubicación -->
-        <app-form-input 
-          controlName="id_ubicacion_fisica" 
-          label="Unidad / Cama" 
-          type="select" 
-          placeholder="Asignar ubicación..."
-          [options]="ubicacionesOptions()">
-        </app-form-input>
-        <!-- Dieta -->
-        <app-form-input 
-          controlName="id_tipo_dieta" 
-          label="Tipo de Dieta Inicial" 
-          type="select" 
-          placeholder="Asignar dieta..."
-          [options]="dietasOptions()">
-        </app-form-input>
+        <!-- Nomenclatura EAV -->
+        <div class="native-select-group"
+          [class.error]="form.get('id_nomenclatura')?.invalid && form.get('id_nomenclatura')?.touched">
+          <label class="native-select-label">Nomenclatura</label>
+          <select formControlName="id_nomenclatura" class="native-select">
+            <option [ngValue]="null">Seleccione una nomenclatura...</option>
+            @for (nomen of ubicacionesStore.nomenclaturas(); track nomen.id) {
+              <option [value]="nomen.id">{{ nomen.nombre }}</option>
+            }
+          </select>
+          @if (form.get('id_nomenclatura')?.invalid && form.get('id_nomenclatura')?.touched) {
+            <span class="field-error">La nomenclatura es requerida.</span>
+          }
+        </div>
+
+        <!-- Tipo de Dieta -->
+        <div class="native-select-group"
+          [class.error]="form.get('id_tipo_dieta')?.invalid && form.get('id_tipo_dieta')?.touched">
+          <label class="native-select-label">Tipo de Dieta Inicial</label>
+          <select formControlName="id_tipo_dieta" class="native-select">
+            <option [ngValue]="null">Seleccione una dieta...</option>
+            @for (dieta of catalogosStore.items(); track dieta.id) {
+              <option [value]="dieta.id">{{ dieta.nombre }}</option>
+            }
+          </select>
+          @if (form.get('id_tipo_dieta')?.invalid && form.get('id_tipo_dieta')?.touched) {
+            <span class="field-error">La dieta es requerida.</span>
+          }
+        </div>
       </div>
+
+      <!-- Valores de Ubicación (dinámico) -->
+      <div class="form-grid form-grid--1">
+        @if (camposUbicacion().length > 0) {
+          <div formGroupName="valores_ubicacion" class="dynamic-eav-grid">
+            @for (campo of camposUbicacion(); track campo) {
+              <div class="native-select-group"
+                [class.error]="form.get(['valores_ubicacion', campo])?.invalid && form.get(['valores_ubicacion', campo])?.touched">
+                <label class="native-select-label">{{ campo }}</label>
+                <input
+                  type="text"
+                  [formControlName]="campo"
+                  class="native-select"
+                  [placeholder]="'Ingrese ' + campo"
+                />
+                @if (form.get(['valores_ubicacion', campo])?.invalid && (form.get(['valores_ubicacion', campo])?.dirty || form.get(['valores_ubicacion', campo])?.touched)) {
+                  <span class="field-error">{{ campo }} es requerido.</span>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="eav-placeholder">Seleccione una nomenclatura para generar los campos de ubicación.</p>
+        }
+      </div>
+
     </section>
 
     <!-- Server error -->
@@ -76,19 +122,19 @@
 
     <!-- Actions -->
     <div class="form-actions">
-      <app-button 
-        text="Cancelar" 
-        variant="outline" 
-        [disabled]="store.isLoading()" 
+      <app-button
+        text="Cancelar"
+        variant="outline"
+        [disabled]="store.isLoading()"
         (onClick)="goBack()">
       </app-button>
-      
-      <app-button 
-        text="Guardar Admisión" 
-        icon="check_circle" 
-        type="submit" 
-        variant="primary" 
-        [isLoading]="store.isLoading()" 
+
+      <app-button
+        [text]="modoEdicion ? 'Guardar Cambios' : 'Guardar Admisión'"
+        icon="check_circle"
+        type="submit"
+        variant="primary"
+        [isLoading]="store.isLoading()"
         [disabled]="store.isLoading()">
       </app-button>
     </div>

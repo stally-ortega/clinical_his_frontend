@@ -30,7 +30,7 @@ export const UsuariosStore = signalStore(
           switchMap(() =>
             usuariosService.getUsuarios().pipe(
               tapResponse({
-                next: (res: any) => {
+                next: (res: UsuarioAdmin[] | { data?: UsuarioAdmin[] }) => {
                   const usuarios = Array.isArray(res) ? res : (res.data || []);
                   patchState(store, { usuarios, isLoading: false });
                 },

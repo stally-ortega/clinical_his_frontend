@@ -15,6 +15,7 @@ dist/
 tmp/
 out-tsc/
 bazel-out/
+*.log
 
 # ── Testing & Coverage ────────────────────────────────────────────────────────
 coverage/
@@ -55,3 +56,6 @@ Thumbs.db
 /libpeerconnection.log
 testem.log
 /typings
+idea.md
+frontend_way.md
+FRONTEND_ARCHITECTURE.md

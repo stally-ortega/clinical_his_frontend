@@ -54,11 +54,12 @@ export class SyncService {
         if (item.id) {
           await db.syncQueue.delete(item.id);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         // En caso de 400 o 409, asumimos que la idempotency_key previno la duplicación
         // o que hubo un error lógico de negocio irreparable. Para no bloquear la cola,
         // lo eliminamos. Si es error de red (0, 503, 504), simplemente se mantiene en cola.
-        const status = err?.status || err?.error?.status;
+        const e = err as { status?: number; error?: { status?: number } };
+        const status = e.status || e.error?.status;
         if (status === 400 || status === 409 || status === 422) {
           if (item.id) {
             await db.syncQueue.delete(item.id);

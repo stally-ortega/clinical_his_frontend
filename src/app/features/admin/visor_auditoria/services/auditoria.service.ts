@@ -5,12 +5,29 @@ import { environment } from '../../../../../environments/environment';
 
 export interface AuditoriaLog {
   id: number;
-  usuario_id: number;
+  id_usuario: number;
+  tabla_afectada: string;
+  id_registro_afectado: number;
   accion: string;
-  modulo_endpoint: string;
-  detalles: any;
-  fecha_hora: string;
-  ip_address?: string;
+  valores_anteriores: unknown;
+  valores_nuevos: unknown;
+  fecha_cambio: string;
+  usuario?: {
+    nombres: string;
+    apellidos: string;
+    documento: string;
+    rol?: { nombre: string };
+  };
+}
+
+export interface AuditoriaFiltros {
+  search?: string;
+  startDate?: string;
+  endDate?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  offset?: number;
+  limit?: number;
 }
 
 export interface ApiResponse<T> {
@@ -27,11 +44,27 @@ export class AuditoriaService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
 
-  getLogs(limite: number = 100, offset: number = 0): Observable<AuditoriaLog[]> {
+  getLogs(filtros: AuditoriaFiltros = {}, limit: number = 50, offset: number = 0): Observable<AuditoriaLog[]> {
     let params = new HttpParams()
-      .set('limit', limite.toString())
+      .set('limit', limit.toString())
       .set('offset', offset.toString());
-      
+
+    if (filtros.search) {
+      params = params.set('search', filtros.search);
+    }
+    if (filtros.startDate) {
+      params = params.set('fecha_inicio', filtros.startDate);
+    }
+    if (filtros.endDate) {
+      params = params.set('fecha_fin', filtros.endDate);
+    }
+    if (filtros.sortBy) {
+      params = params.set('sortBy', filtros.sortBy);
+    }
+    if (filtros.sortOrder) {
+      params = params.set('sortOrder', filtros.sortOrder);
+    }
+
     return this.http.get<ApiResponse<AuditoriaLog[]>>(`${this.apiUrl}/auditoria`, { params })
       .pipe(map(res => res.data || []));
   }

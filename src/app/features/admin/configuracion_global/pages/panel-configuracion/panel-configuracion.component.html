@@ -1,0 +1,87 @@
+<div class="configuracion-container">
+  <div class="header-section">
+    <h2>Configuración Global</h2>
+    <p>Parámetros operativos centralizados del sistema</p>
+  </div>
+
+  @if (store.isLoading()) {
+    <div class="loading-state">
+      Cargando configuración...
+    </div>
+  } @else if (store.error()) {
+    <div class="error-state">
+      Error al cargar: {{ store.error() }}
+    </div>
+  } @else {
+    <div class="grid-container">
+      @for (grupo of store.configuracionesPorGrupo() | keyvalue; track grupo.key) {
+        <div class="card">
+          <h3 class="card-title">{{ grupo.key }}</h3>
+
+          @for (item of grupo.value; track item.clave) {
+            <div class="form-group">
+              <label class="form-label">{{ item.clave.replace('_', ' ') }}</label>
+
+              @switch (item.clave) {
+                @case ('EGRESO_AUTOMATICO_ACTIVO') {
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      [checked]="esBooleanoActivo(item.clave, item.valor)"
+                      (change)="actualizarBooleano(item.clave, $any($event).target.checked)"
+                    />
+                    <span class="switch-slider"></span>
+                  </label>
+                  <span class="switch-label">
+                    {{ esBooleanoActivo(item.clave, item.valor) ? 'Activo' : 'Inactivo' }}
+                  </span>
+                }
+                @case ('EGRESO_AUTOMATICO_HORA') {
+                  <input
+                    type="time"
+                    class="form-control"
+                    [value]="valoresEditados[item.clave] || item.valor"
+                    (input)="actualizarValor(item.clave, $any($event).target.value)"
+                  />
+                }
+                @case ('DIAS_INACTIVIDAD_EGRESO') {
+                  <input
+                    type="number"
+                    class="form-control"
+                    min="1"
+                    [value]="valoresEditados[item.clave] || item.valor"
+                    (input)="actualizarValor(item.clave, $any($event).target.value)"
+                  />
+                }
+                @default {
+                  <input
+                    type="text"
+                    class="form-control"
+                    [value]="valoresEditados[item.clave] || item.valor"
+                    (input)="actualizarValor(item.clave, $any($event).target.value)"
+                  />
+                }
+              }
+
+              @if (item.descripcion) {
+                <small class="form-help">{{ item.descripcion }}</small>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="actions-section">
+      <button class="btn-primary"
+              [disabled]="!hayCambios() || store.isSaving()"
+              (click)="onSubmit()">
+        @if (store.isSaving()) {
+          Guardando...
+        } @else {
+          Guardar Cambios
+        }
+      </button>
+    </div>
+  }
+</div>

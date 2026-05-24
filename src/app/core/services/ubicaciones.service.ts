@@ -10,18 +10,22 @@ export class UbicacionesService {
   private readonly apiUrl = environment.apiUrl;
 
   getTiposUbicacion(): Observable<Catalogo[]> {
-    const fallbackData = [
+    const fallbackData: Catalogo[] = [
       {id: 1, nombre: 'Urgencias (Box 1)'},
       {id: 2, nombre: 'UCI (Cama 4)'},
       {id: 3, nombre: 'Hospitalización Norte (Hab. 201)'}
     ];
 
-    return this.http.get<ApiResponse<Catalogo[]>>(`${this.apiUrl}/ubicaciones/nomenclaturas/1`)
+    interface NomenclaturaResponse {
+      estructura?: Array<{ id_tipo_ubicacion: number }>;
+    }
+
+    return this.http.get<ApiResponse<NomenclaturaResponse>>(`${this.apiUrl}/ubicaciones/nomenclaturas/1`)
       .pipe(
         map(response => {
-          const data: any = response.data;
-          if(data && data.estructura) {
-             return data.estructura.map((e: any) => ({id: e.id_tipo_ubicacion, nombre: `Ubicación Tipo ${e.id_tipo_ubicacion}`}));
+          const data = response.data;
+          if(data && Array.isArray(data.estructura)) {
+             return data.estructura.map((e) => ({id: e.id_tipo_ubicacion, nombre: `Ubicación Tipo ${e.id_tipo_ubicacion}`}));
           }
           return fallbackData;
         }),

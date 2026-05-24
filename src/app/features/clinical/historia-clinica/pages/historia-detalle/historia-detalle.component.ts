@@ -5,6 +5,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 
 import { HistoriaStore } from '../../store/historia.store';
 import { AuthStore } from '../../../../../store/auth.store';
+import { CatalogosStore } from '../../../../admin/catalogos_maestros/store/catalogos.store';
 import { TimelineComponent, TimelineEvento } from '../../../../../shared/components/organisms/timeline/timeline.component';
 import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
 import { FormInputComponent } from '../../../../../shared/components/ui/form-input/form-input.component';
@@ -25,6 +26,7 @@ import { FormInputComponent } from '../../../../../shared/components/ui/form-inp
 export class HistoriaDetalleComponent implements OnInit {
   // ── Services & stores ────────────────────────────────────────────────────
   readonly store = inject(HistoriaStore);
+  readonly catalogosStore = inject(CatalogosStore);
   private readonly authStore = inject(AuthStore);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -46,6 +48,7 @@ export class HistoriaDetalleComponent implements OnInit {
   readonly evolucionForm: FormGroup = this.fb.group({
     titulo: ['', [Validators.required, Validators.minLength(3)]],
     descripcion: ['', [Validators.required, Validators.minLength(5)]],
+    estado_paciente: ['ESTABLE', Validators.required],
   });
 
   // ── Computed: timeline unificado ─────────────────────────────────────────
@@ -79,6 +82,7 @@ export class HistoriaDetalleComponent implements OnInit {
 
   // ── Lifecycle ────────────────────────────────────────────────────────────
   ngOnInit(): void {
+    this.catalogosStore.loadEstadosPaciente();
     const idParam = Number(this.route.snapshot.paramMap.get('id'));
     if (!isNaN(idParam) && idParam > 0) {
       this.pacienteId.set(idParam);
@@ -129,6 +133,7 @@ export class HistoriaDetalleComponent implements OnInit {
       id_paciente: id,
       titulo: this.evolucionForm.value.titulo,
       descripcion: this.evolucionForm.value.descripcion,
+      estado_paciente: this.evolucionForm.value.estado_paciente,
       autor: this.autorActual,
       fecha: new Date().toISOString(),
     });

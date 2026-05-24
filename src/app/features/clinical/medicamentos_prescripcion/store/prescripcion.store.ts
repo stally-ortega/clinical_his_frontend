@@ -35,8 +35,8 @@ export const PrescripcionStore = signalStore(
           switchMap(() =>
             catalogosService.getCatalogos('vias').pipe(
               tapResponse({
-                next: (vias) => patchState(store, { viasAplicacion: vias, isLoading: false }),
-                error: (err: any) => {
+                next: (res) => patchState(store, { viasAplicacion: res.data, isLoading: false }),
+                error: (err: { error?: { message?: string }; message?: string }) => {
                   console.error('Error cargando vías:', err);
                   patchState(store, { error: 'Error al cargar las vías de aplicación', isLoading: false });
                 },
@@ -56,7 +56,7 @@ export const PrescripcionStore = signalStore(
                   patchState(store, { isLoading: false });
                   router.navigate(['/app/kardex', idPaciente]);
                 },
-                error: (err: any) => {
+                error: (err: { error?: { message?: string }; message?: string }) => {
                   console.error('Error prescribiendo medicamento:', err);
                   patchState(store, { error: 'No se pudo generar la prescripción médica', isLoading: false });
                 },

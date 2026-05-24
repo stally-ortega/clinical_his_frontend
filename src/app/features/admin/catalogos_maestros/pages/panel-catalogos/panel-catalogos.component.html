@@ -12,11 +12,11 @@
       }
     </select>
   </div>
-  
-  <app-button 
-    text="Nuevo Registro" 
-    icon="add_circle" 
-    variant="primary" 
+
+  <app-button
+    text="Nuevo Registro"
+    icon="add_circle"
+    variant="primary"
     (click)="toggleAddForm()">
   </app-button>
 </div>
@@ -40,45 +40,98 @@
   <section class="main-col glass-panel grain-overlay">
     <div class="table-header">
       <h3>Registros: {{ getDiccionarioNombre(store.tipoActivo()) }}</h3>
+      <span class="record-count">{{ store.items().length }} de {{ store.total() }}</span>
     </div>
 
-    @if (store.isLoading()) {
+    <!-- Buscador con diseño Glassmorphism -->
+    <div class="search-container glass-input">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Buscar..."
+        [value]="searchTerm()"
+        (input)="onSearchInput($event)"
+        (keyup.enter)="onSearchSubmit()">
+      @if (searchTerm()) {
+        <button class="clear-btn" (click)="clearSearch()" title="Limpiar búsqueda">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      }
+    </div>
+
+    @if (store.isLoading() && store.items().length === 0) {
       <div class="loading-state">
         <span class="material-symbols-outlined spin">autorenew</span>
         <p>Cargando datos...</p>
       </div>
     } @else {
-      <div class="table-responsive">
+      <div class="table-container" (scroll)="onTableScroll($event)">
         <table class="clinical-table">
           <thead>
             <tr>
-              <th width="80">ID</th>
-              <th>Nombre / Valor</th>
+              <th
+                width="80"
+                class="sortable-header"
+                [class.active-sort]="store.sortBy() === 'id'"
+                [class.asc]="store.sortBy() === 'id' && store.sortOrder() === 'asc'"
+                [class.desc]="store.sortBy() === 'id' && store.sortOrder() === 'desc'"
+                (click)="onSort('id')">
+                <div class="th-content">
+                  ID
+                  <span class="sort-icon material-symbols-outlined">
+                    {{ store.sortBy() === 'id' ? (store.sortOrder() === 'asc' ? 'arrow_upward' : 'arrow_downward') : 'unfold_more' }}
+                  </span>
+                </div>
+              </th>
+              <th
+                class="sortable-header"
+                [class.active-sort]="store.sortBy() === 'nombre'"
+                [class.asc]="store.sortBy() === 'nombre' && store.sortOrder() === 'asc'"
+                [class.desc]="store.sortBy() === 'nombre' && store.sortOrder() === 'desc'"
+                (click)="onSort('nombre')">
+                <div class="th-content">
+                  Nombre / Valor
+                  <span class="sort-icon material-symbols-outlined">
+                    {{ store.sortBy() === 'nombre' ? (store.sortOrder() === 'asc' ? 'arrow_upward' : 'arrow_downward') : 'unfold_more' }}
+                  </span>
+                </div>
+              </th>
               <th>Descripción</th>
-              <th width="120">Estado</th>
+              <th width="100">Estado</th>
               <th width="120" class="text-right">Acciones</th>
             </tr>
           </thead>
           <tbody>
             @for (item of store.items(); track item.id) {
-              <tr [class.inactive]="item.activo === false">
+              <tr [class.inactive]="item.estado === false">
                 <td class="col-id">#{{ item.id }}</td>
                 <td class="col-name"><strong>{{ item.nombre }}</strong></td>
                 <td class="col-desc">{{ item.descripcion || '—' }}</td>
                 <td>
-                  @if (item.activo !== false) {
+                  @if (item.estado !== false) {
                     <span class="badge badge-success">Activo</span>
                   } @else {
                     <span class="badge badge-error">Inactivo</span>
                   }
                 </td>
-                <td class="text-right">
-                  <app-button 
-                    [text]="item.activo !== false ? 'Desactivar' : 'Activar'" 
-                    [variant]="item.activo !== false ? 'outline' : 'primary'"
-                    size="small"
-                    (click)="onToggleEstado(item.id, item.activo !== false)">
-                  </app-button>
+                <td class="text-right actions-cell">
+                  <div class="action-buttons">
+                    <app-button
+                      icon="edit"
+                      variant="outline"
+                      size="small"
+                      title="Editar"
+                      (click)="editarRegistro(item)">
+                    </app-button>
+                    <app-button
+                      [icon]="item.estado !== false ? 'block' : 'restore'"
+                      [variant]="item.estado !== false ? 'outline' : 'primary'"
+                      size="small"
+                      [title]="item.estado !== false ? 'Deshabilitar' : 'Habilitar'"
+                      (click)="onToggleEstado(item.id, item.estado !== false)">
+                    </app-button>
+                  </div>
                 </td>
               </tr>
             } @empty {
@@ -90,6 +143,21 @@
             }
           </tbody>
         </table>
+
+        <!-- Indicador de carga para scroll infinito -->
+        @if (store.isLoading() && store.items().length > 0) {
+          <div class="loading-more">
+            <span class="material-symbols-outlined spin">autorenew</span>
+            <span>Cargando más...</span>
+          </div>
+        }
+
+        <!-- Indicador de fin de lista -->
+        @if (!store.hasMoreItems() && store.items().length > 0 && !store.isLoading()) {
+          <div class="end-of-list">
+            <span>No hay más registros</span>
+          </div>
+        }
       </div>
     }
   </section>
@@ -98,31 +166,56 @@
   @if (showForm()) {
     <aside class="side-form-col glass-panel">
       <div class="form-header">
-        <h4>Agregar a <span>{{ getDiccionarioNombre(store.tipoActivo()) }}</span></h4>
+        <h4>
+          @if (isEditing()) {
+            Editar {{ getDiccionarioNombre(store.tipoActivo()) }}
+          } @else {
+            Agregar a <span>{{ getDiccionarioNombre(store.tipoActivo()) }}</span>
+          }
+        </h4>
         <button class="close-btn" (click)="toggleAddForm()">
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
 
       <form [formGroup]="addForm" (ngSubmit)="onSubmitAdd()" class="form-body">
-        <app-form-input 
-          controlName="nombre" 
-          label="Nombre o Valor" 
+        <!-- Campo Código (solo para TIPOS_DIAGNOSTICO) -->
+        @if (store.tipoActivo() === 'TIPOS_DIAGNOSTICO') {
+          <app-form-input
+            controlName="codigo"
+            label="Código"
+            placeholder="Ej. CD10">
+          </app-form-input>
+
+          <div style="margin-top: 1rem"></div>
+        }
+
+        <app-form-input
+          controlName="nombre"
+          label="Nombre o Valor"
           placeholder="Ej. Paracetamol">
         </app-form-input>
-        
+
         <div style="margin-top: 1rem"></div>
 
-        <app-form-input 
-          controlName="descripcion" 
-          type="text"
-          label="Descripción (opcional)" 
-          placeholder="Más detalles...">
-        </app-form-input>
+        <div class="form-field">
+          <label class="form-label" for="descripcion">Descripción (opcional)</label>
+          <textarea
+            id="descripcion"
+            formControlName="descripcion"
+            class="form-textarea"
+            rows="3"
+            placeholder="Más detalles..."></textarea>
+        </div>
 
         <div class="form-actions">
           <app-button type="button" text="Cancelar" variant="outline" (click)="toggleAddForm()"></app-button>
-          <app-button type="submit" text="Guardar Registro" variant="primary" [isLoading]="store.isSaving()"></app-button>
+          <app-button
+            type="submit"
+            [text]="isEditing() ? 'Actualizar Registro' : 'Guardar Registro'"
+            variant="primary"
+            [isLoading]="store.isSaving()">
+          </app-button>
         </div>
       </form>
     </aside>

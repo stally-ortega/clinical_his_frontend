@@ -49,44 +49,29 @@ export class WebSocketService implements OnDestroy {
     });
 
     // ── Eventos clínicos ─────────────────────────────────────────────
-    this.socket.on('notificacion_personal', (data: any) => {
-      this.notifStore.agregarAlerta({
-        mensaje: data.mensaje ?? 'Nueva notificación personal',
-        tipo: data.tipo ?? 'info',
-        origen: 'Personal',
-      });
+    this.socket.on('notificacion_personal', (data: unknown) => {
+      const payload = this._parseAlerta(data);
+      this.notifStore.agregarAlerta(payload);
     });
 
-    this.socket.on('emergencia_rol', (data: any) => {
-      this.notifStore.agregarAlerta({
-        mensaje: data.mensaje ?? '⚠️ Emergencia de rol activa',
-        tipo: 'error',
-        origen: 'Emergencia',
-      });
+    this.socket.on('emergencia_rol', (data: unknown) => {
+      const payload = this._parseAlerta(data, '⚠️ Emergencia de rol activa', 'error', 'Emergencia');
+      this.notifStore.agregarAlerta(payload);
     });
 
-    this.socket.on('alerta_clinica', (data: any) => {
-      this.notifStore.agregarAlerta({
-        mensaje: data.mensaje ?? 'Alerta clínica recibida',
-        tipo: 'warning',
-        origen: data.origen ?? 'Clínica',
-      });
+    this.socket.on('alerta_clinica', (data: unknown) => {
+      const payload = this._parseAlerta(data, 'Alerta clínica recibida', 'warning', 'Clínica');
+      this.notifStore.agregarAlerta(payload);
     });
 
-    this.socket.on('tarea_asignada', (data: any) => {
-      this.notifStore.agregarAlerta({
-        mensaje: data.mensaje ?? 'Se te ha asignado una nueva tarea',
-        tipo: 'info',
-        origen: 'Tareas',
-      });
+    this.socket.on('tarea_asignada', (data: unknown) => {
+      const payload = this._parseAlerta(data, 'Se te ha asignado una nueva tarea', 'info', 'Tareas');
+      this.notifStore.agregarAlerta(payload);
     });
 
-    this.socket.on('turno_programado', (data: any) => {
-      this.notifStore.agregarAlerta({
-        mensaje: data.mensaje ?? 'Tu turno ha sido actualizado',
-        tipo: 'success',
-        origen: 'Turnos',
-      });
+    this.socket.on('turno_programado', (data: unknown) => {
+      const payload = this._parseAlerta(data, 'Tu turno ha sido actualizado', 'success', 'Turnos');
+      this.notifStore.agregarAlerta(payload);
     });
   }
 
@@ -102,6 +87,24 @@ export class WebSocketService implements OnDestroy {
   /** Estado de la conexión */
   get isConnected(): boolean {
     return this.socket?.connected ?? false;
+  }
+
+  private _parseAlerta(
+    data: unknown,
+    fallbackMensaje = 'Nueva notificación',
+    fallbackTipo: 'info' | 'success' | 'warning' | 'error' = 'info',
+    fallbackOrigen = 'Sistema',
+  ): { mensaje: string; tipo: 'info' | 'success' | 'warning' | 'error'; origen: string } {
+    if (data && typeof data === 'object') {
+      const d = data as Record<string, unknown>;
+      const tipo = (d['tipo'] as 'info' | 'success' | 'warning' | 'error') || fallbackTipo;
+      return {
+        mensaje: (d['mensaje'] as string) || fallbackMensaje,
+        tipo,
+        origen: (d['origen'] as string) || fallbackOrigen,
+      };
+    }
+    return { mensaje: fallbackMensaje, tipo: fallbackTipo, origen: fallbackOrigen };
   }
 
   ngOnDestroy(): void {

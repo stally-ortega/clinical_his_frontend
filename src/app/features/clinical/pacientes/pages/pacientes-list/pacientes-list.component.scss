@@ -162,46 +162,65 @@
 
 // Vitals grid (nurse dashboard "vitals" pattern)
 .vitals-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: column;
   background: var(--surface-container-low);
   border-radius: var(--radius-md);
   padding: 0.75rem 1rem;
+  gap: 0.5rem;
+}
+
+.vital-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 0;
 
-  .vital {
-    text-align: center;
+  &--full {
+    grid-template-columns: 1fr;
+    border-top: 1px solid rgba(174, 179, 181, 0.20);
+    padding-top: 0.5rem;
+    margin-top: 0.25rem;
+  }
+}
 
-    &--border {
-      border-inline: 1px solid rgba(174, 179, 181, 0.20);
-    }
+.vital {
+  text-align: center;
 
-    .vital-label {
-      font-family: var(--font-label);
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: var(--outline);
-      text-transform: uppercase;
-      margin: 0;
-    }
+  &--border {
+    border-inline: 1px solid rgba(174, 179, 181, 0.20);
+  }
 
-    .vital-value {
-      font-family: var(--font-headline);
-      font-size: 0.875rem;
-      font-weight: 700;
-      color: var(--on-surface);
-      margin: 0.15rem 0 0;
-    }
+  .vital-label {
+    font-family: var(--font-label);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--outline);
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .vital-value {
+    font-family: var(--font-headline);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--on-surface);
+    margin: 0.15rem 0 0;
   }
 }
 
 // Card actions
 .card-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
   padding-top: 0.75rem;
   border-top: 1px solid rgba(174, 179, 181, 0.12);
+
+  app-button {
+    flex: 1 1 auto;
+    white-space: nowrap;
+  }
 }
 
 .card-action-btn {

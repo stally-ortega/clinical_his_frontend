@@ -27,7 +27,8 @@
   border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
   box-shadow: 20px 0 60px rgba(0, 139, 139, 0.07);
   padding: 1.5rem 0;
-  overflow: hidden;
+  overflow: hidden;          // el .sidebar-nav tiene su propio scroll
+  min-height: 0;             // ← permite que los hijos flex shrinkeen correctamente
 }
 
 // ─── Brand ────────────────────────────────────────────────────────────────────
@@ -36,7 +37,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0 1rem 1.5rem;
-  flex-shrink: 0;
+  flex-shrink: 0;               // ← CSS Defensivo: evita aplastamiento del header
   position: relative;
 
   .brand-icon {
@@ -119,8 +120,10 @@
 
 // ─── Nav ──────────────────────────────────────────────────────────────────────
 .sidebar-nav {
-  flex: 1;
-  overflow-y: auto;
+  flex: 1;                    // ← ocupa todo el espacio disponible entre brand y footer
+  min-height: 0;              // ← crítico: permite overflow-y dentro de un flex container
+  overflow-y: auto;           // ← scroll interno independiente de la página
+  overflow-x: hidden;         // ← evita scroll horizontal en mobile
   padding: 0 0.75rem;
   display: flex;
   flex-direction: column;
@@ -129,18 +132,26 @@
   &::-webkit-scrollbar { display: none; }
 }
 
+// ─── Etiquetas de sección (CSS Defensivo) ────────────────────────────────────
 .nav-group-label {
   font-family: var(--font-label);
-  font-size: 0.6rem;
+  font-size: 0.75rem;           // tipografía pequeña pero legible
   font-weight: 700;
   color: var(--on-surface-variant);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 1.1rem 0.75rem 0.4rem;
-  opacity: 0.5;
+  text-transform: uppercase;    // ← estilo de etiqueta de sección
+  letter-spacing: 0.05em;       // ← respiración entre caracteres
+  line-height: normal;          // ← evita recorte de texto (ascendentes/descendentes)
+  flex-shrink: 0 !important;    // ← CSS Defensivo: prohíbe aplastamiento en flex
+  margin-top: 1.5rem;           // ← respira del bloque anterior
+  margin-bottom: 0.5rem;        // ← respira de sus propios enlaces
+  padding: 0 0.75rem;           // alineado con .nav-item
+  opacity: 0.7;                 // ← sutil, pero visible
   white-space: nowrap;
   overflow: hidden;
   transition: opacity 0.2s;
+
+  // Primera etiqueta sin margen superior exagerado
+  &:first-child { margin-top: 0.25rem; }
 }
 
 .nav-item {
@@ -266,7 +277,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    height: 100vh;
+    height: 100dvh;           // ← dvh en mobile para no recortar por la barra del navegador
     width: 280px !important;  // siempre ancho completo en mobile
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -306,7 +317,7 @@
 
     .nav-item {
       justify-content: flex-start;
-      padding: 0.7rem 0.85rem;
+      padding: 1rem 0.85rem;    // ← padding generoso para tap target táctil (≥ 44px)
       gap: 0.9rem;
     }
 
@@ -314,5 +325,19 @@
       gap: 0.5rem;
       padding: 0.85rem;
     }
+  }
+
+  // Tap targets generosos en mobile (Apple HIG / Material Design ≥ 44px)
+  .nav-item {
+    padding-block: 1rem;        // ← 16px arriba y abajo en todos los nav-items mobile
+    min-height: 44px;           // ← mínimo recomendado por Apple HIG
+  }
+
+  .nav-group-label {
+    margin-top: 1.5rem !important;  // ← CSS Defensivo: espacio consistente, sin superposición
+    margin-bottom: 0.75rem;         // ← más espacio antes de los enlaces en táctil
+    font-size: 0.7rem;               // ← mínimo legible en pantallas pequeñas
+    line-height: normal;            // ← asegura que no se recorte el texto
+    flex-shrink: 0 !important;      // ← previene aplastamiento en vista móvil
   }
 }

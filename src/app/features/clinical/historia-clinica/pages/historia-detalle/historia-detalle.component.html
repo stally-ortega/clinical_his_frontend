@@ -1,4 +1,4 @@
-<!-- Historia Clínica – Detalle del Paciente -->
+﻿<!-- Historia Clínica – Detalle del Paciente -->
 
 <!-- Page Header -->
 <div class="page-header">
@@ -110,11 +110,28 @@
           placeholder="Ej. Evaluación médica matutina">
         </app-form-input>
 
-        <app-form-input
-          controlName="descripcion"
-          label="Descripción clínica"
-          placeholder="Describe la evolución del cuadro clínico...">
-        </app-form-input>
+        <div class="native-select-group">
+          <label class="native-select-label">Descripción Clínica</label>
+          <textarea
+            formControlName="descripcion"
+            class="native-select"
+            rows="5"
+            placeholder="Redacte la evolución clínica detallada..."></textarea>
+        </div>
+
+        <div class="native-select-group"
+          [class.error]="evolucionForm.get('estado_paciente')?.invalid && evolucionForm.get('estado_paciente')?.touched">
+          <label class="native-select-label">Estado Clínico</label>
+          <select formControlName="estado_paciente" class="native-select">
+            <option [ngValue]="null">Seleccione un estado...</option>
+            @for (estado of catalogosStore.estadosPaciente(); track estado) {
+              <option [value]="estado">{{ estado | titlecase }}</option>
+            }
+          </select>
+          @if (evolucionForm.get('estado_paciente')?.invalid && evolucionForm.get('estado_paciente')?.touched) {
+            <span class="field-error">El estado clínico es requerido.</span>
+          }
+        </div>
 
         <div class="form-submit">
           <app-button

@@ -44,7 +44,7 @@ export const PacientesStore = signalStore(
             pacientesSvc.getPacientesActivos().pipe(
               tapResponse({
                 next: (pacientes) => patchState(store, { pacientes, isLoading: false }),
-                error: (err: any) => patchState(store, { error: err.message, isLoading: false })
+                error: (err: { error?: { message?: string }; message?: string }) => patchState(store, { error: err.message, isLoading: false })
               })
             )
           )
@@ -57,8 +57,8 @@ export const PacientesStore = signalStore(
           switchMap(() =>
             catalogosSvc.getCatalogos('dietas').pipe(
               tapResponse({
-                next: (dietas) => patchState(store, { dietas, isLoading: false }),
-                error: (err: any) => patchState(store, { error: err.message, isLoading: false })
+                next: (res) => patchState(store, { dietas: res.data, isLoading: false }),
+                error: (err: { error?: { message?: string }; message?: string }) => patchState(store, { error: err.message, isLoading: false })
               })
             )
           )
@@ -72,13 +72,49 @@ export const PacientesStore = signalStore(
             pacientesSvc.registrarPaciente(payload).pipe(
               tapResponse({
                 next: (nuevoPaciente) => {
-                  patchState(store, { 
+                  patchState(store, {
                     pacientes: [...store.pacientes(), nuevoPaciente],
-                    isLoading: false 
+                    isLoading: false
                   });
                   router.navigate(['/app/pacientes']);
                 },
-                error: (err: any) => patchState(store, { error: err.error?.message || err.message, isLoading: false })
+                error: (err: { error?: { message?: string }; message?: string }) => patchState(store, { error: err.error?.message || err.message, isLoading: false })
+              })
+            )
+          )
+        )
+      ),
+
+      cargarPacientePorDocumento: rxMethod<string>(
+        pipe(
+          tap(() => patchState(store, { isLoading: true, error: null })),
+          switchMap((documento) =>
+            pacientesSvc.getPacienteByDocumento(documento).pipe(
+              tapResponse({
+                next: (paciente) => {
+                  patchState(store, { isLoading: false });
+                },
+                error: (err: { error?: { message?: string }; message?: string }) => patchState(store, { error: err.error?.message || err.message, isLoading: false })
+              })
+            )
+          )
+        )
+      ),
+
+      actualizar: rxMethod<{ documento: string; payload: PacientePayload }>(
+        pipe(
+          tap(() => patchState(store, { isLoading: true, error: null })),
+          switchMap(({ documento, payload }) =>
+            pacientesSvc.actualizarPaciente(documento, payload).pipe(
+              tapResponse({
+                next: (pacienteActualizado) => {
+                  patchState(store, {
+                    pacientes: store.pacientes().map(p => p.id === pacienteActualizado.id ? pacienteActualizado : p),
+                    isLoading: false
+                  });
+                  router.navigate(['/app/pacientes']);
+                },
+                error: (err: { error?: { message?: string }; message?: string }) => patchState(store, { error: err.error?.message || err.message, isLoading: false })
               })
             )
           )

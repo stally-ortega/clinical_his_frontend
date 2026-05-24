@@ -1,6 +1,7 @@
-import { inject, Injector } from '@angular/core';
+import { computed, inject, Injector } from '@angular/core';
+import { Router } from '@angular/router';
 import { tapResponse } from '@ngrx/operators';
-import { signalStore, withState, withMethods, patchState } from '@ngrx/signals';
+import { signalStore, withState, withMethods, withComputed, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
 import { AuthService } from '../core/services/auth.service';
@@ -35,24 +36,40 @@ const initialState: AuthState = {
 export const AuthStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
+
+  // ── Señales computadas ─────────────────────────────────────────────────────
+  withComputed((store) => ({
+    /** true si el usuario logueado tiene rol ADMIN – bypass total del RBAC de UI */
+    isAdmin: computed(() => store.usuario()?.rol === 'ADMIN'),
+
+    /** Verifica si el usuario posee un permiso específico */
+    hasPermission: computed(() => (codigo: string) => store.permisos().includes(codigo)),
+
+    /** Verifica si el usuario posee al menos uno de los permisos requeridos */
+    hasAnyPermission: computed(() => (codigos: string[]) => codigos.some((c) => store.permisos().includes(c))),
+  })),
+
   withMethods((store) => {
     const authService = inject(AuthService);
     const injector = inject(Injector);
-    // Inyección diferida para evitar dependencia circular en bootstrap
+
+    // ── Inyección diferida (evita dependencias circulares en bootstrap) ───────
     let sessionTimeout: SessionTimeoutService | null = null;
     const getTimeoutService = () => {
-      if (!sessionTimeout && injector) {
-        sessionTimeout = injector.get(SessionTimeoutService);
-      }
+      if (!sessionTimeout && injector) sessionTimeout = injector.get(SessionTimeoutService);
       return sessionTimeout;
     };
 
     let webSocket: WebSocketService | null = null;
     const getWsService = () => {
-      if (!webSocket && injector) {
-        webSocket = injector.get(WebSocketService);
-      }
+      if (!webSocket && injector) webSocket = injector.get(WebSocketService);
       return webSocket;
+    };
+
+    let router: Router | null = null;
+    const getRouter = () => {
+      if (!router && injector) router = injector.get(Router);
+      return router;
     };
 
     return {
@@ -69,7 +86,6 @@ export const AuthStore = signalStore(
               tapResponse({
                 next: (response: AuthResponse) => {
                   const { access_token, usuario } = response.data;
-                  // Permisos del backend V3 (con fallback a array vacío para retrocompatibilidad)
                   const permisos = usuario.permisos ?? [];
                   authService.saveSession(access_token, usuario);
                   patchState(store, {
@@ -80,18 +96,12 @@ export const AuthStore = signalStore(
                     isLoading: false,
                     error: null,
                   });
-                  // Iniciar monitoreo de inactividad y tiempo real tras login
                   getTimeoutService()?.iniciarMonitoreo();
                   getWsService()?.conectar();
                 },
                 error: (err: { error?: { message?: string }; message?: string }) => {
-                  const message =
-                    err?.error?.message ?? err?.message ?? 'Error al iniciar sesión.';
-                  patchState(store, {
-                    isLoading: false,
-                    error: message,
-                    isAuthenticated: false,
-                  });
+                  const message = err?.error?.message ?? err?.message ?? 'Error al iniciar sesión.';
+                  patchState(store, { isLoading: false, error: message, isAuthenticated: false });
                 },
               }),
             ),
@@ -99,31 +109,26 @@ export const AuthStore = signalStore(
         ),
       ),
 
-      /** Limpia el estado, detiene el timeout, cierra WS y elimina la sesión del navegador */
+      /** Limpia el estado, detiene el timeout, cierra WS y redirige al login */
       logout(): void {
         getTimeoutService()?.detenerMonitoreo();
         getWsService()?.desconectar();
         authService.clearSession();
         patchState(store, initialState);
+        // Redirección explícita al login tras limpiar el estado
+        getRouter()?.navigate(['/login']);
       },
 
       /**
        * Lee el localStorage al iniciar la app y restaura el estado
        * si existe una sesión previa válida.
-       * Reactiva el monitoreo de inactividad si la sesión era válida.
        */
       checkAuth(): void {
         const token = authService.getToken();
         const usuario = authService.getStoredUser();
         if (token && usuario) {
           const permisos = usuario.permisos ?? [];
-          patchState(store, {
-            token,
-            usuario,
-            permisos,
-            isAuthenticated: true,
-          });
-          // Reactivar monitoreo e inactividad y WS en refresh de página
+          patchState(store, { token, usuario, permisos, isAuthenticated: true });
           getTimeoutService()?.iniciarMonitoreo();
           getWsService()?.conectar();
         }

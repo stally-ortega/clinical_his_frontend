@@ -31,7 +31,7 @@ export const TurnosStore = signalStore(
             turnosService.iniciarTurno().pipe(
               tapResponse({
                 next: () => patchState(store, { estadoActual: 'EN_TURNO', isLoading: false }),
-                error: (err: any) => {
+                error: (err: { error?: { message?: string }; message?: string }) => {
                   console.error('Error iniciando turno:', err);
                   patchState(store, { error: 'No se pudo iniciar el turno', isLoading: false });
                 },
@@ -48,7 +48,7 @@ export const TurnosStore = signalStore(
             turnosService.finalizarTurno().pipe(
               tapResponse({
                 next: () => patchState(store, { estadoActual: 'FUERA_TURNO', isLoading: false }),
-                error: (err: any) => {
+                error: (err: { error?: { message?: string }; message?: string }) => {
                   console.error('Error finalizando turno:', err);
                   patchState(store, { error: 'No se pudo finalizar el turno', isLoading: false });
                 },

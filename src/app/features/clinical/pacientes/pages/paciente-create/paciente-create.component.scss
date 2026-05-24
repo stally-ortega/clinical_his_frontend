@@ -201,6 +201,20 @@
   }
 }
 
+// Dynamic EAV grid
+.dynamic-eav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.eav-placeholder {
+  color: var(--on-surface-variant);
+  font-size: 0.875rem;
+  margin: 0.5rem 0;
+  grid-column: 1 / -1;
+}
+
 .btn-primary {
   display: inline-flex;
   align-items: center;

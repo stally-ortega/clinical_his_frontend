@@ -23,15 +23,15 @@ export class UsuariosService {
     return this.http.get<{ data: UsuarioAdmin[] }>(`${this.apiUrl}/usuarios`);
   }
 
-  crearUsuario(payload: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/usuarios`, payload);
+  crearUsuario(payload: unknown): Observable<null> {
+    return this.http.post<null>(`${this.apiUrl}/usuarios`, payload);
   }
 
-  toggleBloqueo(id: number, accion: 'BLOQUEAR' | 'DESBLOQUEAR'): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/usuarios/${id}/bloqueo`, { accion });
+  toggleBloqueo(id: number, accion: 'BLOQUEAR' | 'DESBLOQUEAR'): Observable<null> {
+    return this.http.patch<null>(`${this.apiUrl}/usuarios/${id}/bloqueo`, { accion });
   }
 
-  forzarReset(id: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/usuarios/${id}/force-reset`, {});
+  forzarReset(id: number): Observable<null> {
+    return this.http.post<null>(`${this.apiUrl}/usuarios/${id}/force-reset`, {});
   }
 }
