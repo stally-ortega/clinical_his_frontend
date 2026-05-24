@@ -1,64 +1,65 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
-import { environment } from '../../../../../environments/environment';
-import { ApiResponse } from '../../../../core/services/catalogos.service';
-
-export interface Paciente {
-  id: number;
-  documento: string;
-  nombres: string;
-  apellidos: string;
-  edad: number;
-  sexo: string;
-  estado: string;
-  id_ubicacion_fisica: number;
-  id_tipo_dieta: number;
-  fecha_registro: Date;
-  ubicacion_fisica?: {
-    id: number;
-    id_nomenclatura: number;
-    valores: Record<string, string>;
-  };
-  tipo_dieta?: {
-    id: number;
-    nombre: string;
-  };
-}
-
-export interface PacientePayload {
-  documento: string;
-  nombres: string;
-  apellidos: string;
-  edad: number;
-  sexo: string;
-  id_nomenclatura: number;
-  valores_ubicacion: Record<string, string>;
-  id_tipo_dieta: number;
-}
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, map, distinctUntilChanged, shareReplay } from 'rxjs';
+import { environment } from '@env/environment';
+import { ApiResponse } from '@core/services/catalogos.service';
+import {
+  Paciente,
+  CrearPacienteDto,
+  ActualizarPacienteDto,
+  PacienteQueryParams,
+} from '@core/models/paciente.model';
 
 @Injectable({ providedIn: 'root' })
 export class PacientesService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
 
+  getPacientes(params?: PacienteQueryParams): Observable<Paciente[]> {
+    let httpParams = new HttpParams();
+    if (params) {
+      if (params.search) httpParams = httpParams.set('search', params.search);
+      if (params.estado) httpParams = httpParams.set('estado', params.estado);
+      if (params.activo !== undefined) httpParams = httpParams.set('activo', String(params.activo));
+      if (params.offset !== undefined) httpParams = httpParams.set('offset', String(params.offset));
+      if (params.limit !== undefined) httpParams = httpParams.set('limit', String(params.limit));
+      if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
+      if (params.sortOrder) httpParams = httpParams.set('sortOrder', params.sortOrder);
+    }
+    return this.http
+      .get<ApiResponse<Paciente[]>>(`${this.apiUrl}/pacientes`, { params: httpParams })
+      .pipe(
+        map((res) => res.data),
+        distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+        shareReplay(1)
+      );
+  }
+
   getPacientesActivos(): Observable<Paciente[]> {
-    return this.http.get<ApiResponse<Paciente[]>>(`${this.apiUrl}/pacientes`)
-      .pipe(map(res => res.data));
+    return this.getPacientes({ activo: true });
+  }
+
+  getPacienteById(id: number): Observable<Paciente> {
+    return this.http
+      .get<ApiResponse<Paciente>>(`${this.apiUrl}/pacientes/${id}`)
+      .pipe(map((res) => res.data), shareReplay(1));
   }
 
   getPacienteByDocumento(documento: string): Observable<Paciente> {
-    return this.http.get<ApiResponse<Paciente>>(`${this.apiUrl}/pacientes/${documento}`)
-      .pipe(map(res => res.data));
+    return this.http
+      .get<ApiResponse<Paciente>>(`${this.apiUrl}/pacientes/${documento}`)
+      .pipe(map((res) => res.data), shareReplay(1));
   }
 
-  registrarPaciente(payload: PacientePayload): Observable<Paciente> {
-    return this.http.post<ApiResponse<Paciente>>(`${this.apiUrl}/pacientes`, payload)
-      .pipe(map(res => res.data));
+  registrarPaciente(payload: CrearPacienteDto): Observable<Paciente> {
+    return this.http
+      .post<ApiResponse<Paciente>>(`${this.apiUrl}/pacientes`, payload)
+      .pipe(map((res) => res.data));
   }
 
-  actualizarPaciente(documento: string, payload: PacientePayload): Observable<Paciente> {
-    return this.http.patch<ApiResponse<Paciente>>(`${this.apiUrl}/pacientes/${documento}`, payload)
-      .pipe(map(res => res.data));
+  actualizarPaciente(documento: string, payload: ActualizarPacienteDto): Observable<Paciente> {
+    return this.http
+      .patch<ApiResponse<Paciente>>(`${this.apiUrl}/pacientes/${documento}`, payload)
+      .pipe(map((res) => res.data));
   }
 }

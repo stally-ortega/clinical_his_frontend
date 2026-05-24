@@ -1,11 +1,11 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UsuariosStore } from '../../store/usuarios.store';
-import { UsuarioFormComponent } from '../usuario-form/usuario-form.component';
-import { CrearUsuarioDto, ActualizarUsuarioDto, UsuarioAdmin } from '../../services/usuarios.service';
+import { UsuariosStore } from '@features/admin/usuarios_abm/store/usuarios.store';
+import { UsuarioFormComponent } from '@features/admin/usuarios_abm/pages/usuario-form/usuario-form.component';
+import { CrearUsuarioDto, ActualizarUsuarioDto, UsuarioAdmin } from '@features/admin/usuarios_abm/services/usuarios.service';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { UsuariosService } from '../../services/usuarios.service';
+import { UsuariosService } from '@features/admin/usuarios_abm/services/usuarios.service';
 
 /**
  * Wrapper page para editar un usuario existente.

@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SpinnerComponent } from '../spinner/spinner.component';
+import { SpinnerComponent } from '@shared/components/ui/spinner/spinner.component';
 
 @Component({
   selector: 'app-button',

@@ -4,8 +4,8 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UsuariosStore } from '../../store/usuarios.store';
-import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
+import { UsuariosStore } from '@features/admin/usuarios_abm/store/usuarios.store';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
 
 @Component({
   selector: 'app-panel-usuarios',

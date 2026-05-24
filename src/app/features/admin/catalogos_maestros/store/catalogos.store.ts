@@ -8,7 +8,7 @@ import {
   Catalogo,
   CatalogoQueryParams,
   CatalogoPaginatedResult,
-} from '../../../../core/services/catalogos.service';
+} from '@core/services/catalogos.service';
 
 export interface CatalogoItem extends Catalogo {
   estado?: boolean;

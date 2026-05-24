@@ -1,0 +1,115 @@
+<!-- Header / Banner -->
+<div class="page-header">
+  <div class="header-left">
+    <app-button icon="arrow_back" variant="outline" (onClick)="goBack()"></app-button>
+    @if (paciente(); as p) {
+      <div class="patient-info">
+        <h2 class="page-title">{{ p.apellidos }}, {{ p.nombres }}</h2>
+        <div class="patient-meta">
+          <span class="meta-item">CC {{ p.documento }}</span>
+          <span class="meta-separator">·</span>
+          <span class="meta-item">{{ p.edad }} años</span>
+          <span class="meta-separator">·</span>
+          <span class="meta-item">Sexo {{ p.sexo }}</span>
+          <span class="meta-separator">·</span>
+          <span class="status-chip" [class]="estadoClass(p.estado)">{{ p.estado }}</span>
+        </div>
+      </div>
+    } @else {
+      <h2 class="page-title">Cargando paciente...</h2>
+    }
+  </div>
+</div>
+
+<!-- Patient Banner -->
+@if (paciente(); as p) {
+  <div class="patient-banner glass-panel grain-overlay">
+    <div class="banner-grid">
+      <div class="banner-cell">
+        <p class="banner-label">Ubicación</p>
+        <p class="banner-value">{{ ubicacionTexto(p.ubicacion_fisica?.valores) }}</p>
+      </div>
+      <div class="banner-cell">
+        <p class="banner-label">Ingreso</p>
+        <p class="banner-value">{{ p.fecha_ingreso | date:'dd/MM/yyyy' }}</p>
+      </div>
+      <div class="banner-cell">
+        <p class="banner-label">Días Hospitalización</p>
+        <p class="banner-value">{{ diasHospitalizacion() }}</p>
+      </div>
+      <div class="banner-cell">
+        <p class="banner-label">Estado</p>
+        <p class="banner-value">{{ p.activo ? 'Activo' : 'Inactivo' }}</p>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Tabs -->
+<div class="tabs-bar">
+  <button
+    *appHasPermission="'VER_EVOLUCIONES'"
+    class="tab-btn"
+    [class.tab-btn--active]="activeTab() === 'evoluciones'"
+    (click)="setTab('evoluciones')">Evoluciones</button>
+  <button
+    class="tab-btn"
+    [class.tab-btn--active]="activeTab() === 'kardex'"
+    (click)="setTab('kardex')">Kardex</button>
+  <button
+    class="tab-btn"
+    [class.tab-btn--active]="activeTab() === 'notas'"
+    (click)="setTab('notas')">Notas</button>
+</div>
+
+<!-- Confirmation Modal -->
+@if (confirmacionAbierta()) {
+  <app-confirm-dialog
+    title="Confirmar Registro de Evolución"
+    message="Por razones de auditoría legal, este registro no podrá ser modificado ni borrado posteriormente. ¿Desea continuar?"
+    (confirm)="confirmarEvolucion()"
+    (cancel)="cancelarConfirmacion()"></app-confirm-dialog>
+}
+
+<!-- Tab Content -->
+@switch (activeTab()) {
+  @case ('evoluciones') {
+    <div class="tab-panel">
+      @if (puedeRegistrarEvolucion()) {
+        <div class="panel-section">
+          <app-evolucion-form
+            [isSaving]="evolucionesStore.isSaving()"
+            (submitEvolucion)="onSubmitEvolucion($event)"></app-evolucion-form>
+        </div>
+      } @else {
+        <div class="alert-banner" role="alert">
+          <span class="material-symbols-outlined">info</span>
+          <span>El paciente está inactivo. No se pueden registrar nuevas evoluciones.</span>
+        </div>
+      }
+
+      <div class="panel-section">
+        <h3 class="section-title">Historial de Evoluciones</h3>
+        <app-evoluciones-timeline [evoluciones]="evolucionesStore.evoluciones()"></app-evoluciones-timeline>
+      </div>
+    </div>
+  }
+  @case ('kardex') {
+    <div class="tab-panel tab-panel--center">
+      <p class="tab-placeholder">Vista de Kardex del paciente</p>
+      <app-button
+        text="Abrir Kardex Completo"
+        variant="primary"
+        [routerLink]="['/app/kardex', pacienteId()]"></app-button>
+    </div>
+  }
+  @case ('notas') {
+    <div class="tab-panel tab-panel--center">
+      <p class="tab-placeholder">Notas de Enfermería</p>
+      <app-button
+        text="Ver Historia Clínica"
+        variant="outline"
+        [routerLink]="['/app/pacientes', pacienteId(), 'historia']"></app-button>
+    </div>
+  }
+}

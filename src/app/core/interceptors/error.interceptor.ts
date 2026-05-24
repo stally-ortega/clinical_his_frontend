@@ -1,8 +1,8 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError } from 'rxjs/operators';
-import { ToastService } from '../services/toast.service';
-import { AuthStore } from '../../store/auth.store';
+import { ToastService } from '@core/services/toast.service';
+import { AuthStore } from '@store/auth.store';
 
 const ERROR_MESSAGES: Record<number, string> = {
   400: 'Solicitud incorrecta. Verifique los datos e intente nuevamente.',

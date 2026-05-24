@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { FormControl, Validators } from '@angular/forms';
 import { EavFormBuilderService } from './eav-form-builder.service';
-import { AtributoEAV } from '../models/eav.model';
+import { AtributoEAV } from '@core/models/eav.model';
 
 describe('EavFormBuilderService', () => {
   let service: EavFormBuilderService;

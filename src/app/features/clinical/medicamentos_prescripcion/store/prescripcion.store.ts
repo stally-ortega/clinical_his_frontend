@@ -3,8 +3,8 @@ import { signalStore, withState, withMethods, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, tap, switchMap, catchError, of } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
-import { CatalogosService, Catalogo } from '../../../../core/services/catalogos.service';
-import { PrescripcionService, PrescripcionPayload } from '../services/prescripcion.service';
+import { CatalogosService, Catalogo } from '@core/services/catalogos.service';
+import { PrescripcionService, PrescripcionPayload } from '@features/clinical/medicamentos_prescripcion/services/prescripcion.service';
 import { Router } from '@angular/router';
 
 export type PrescripcionState = {

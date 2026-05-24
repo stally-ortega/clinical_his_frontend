@@ -1,10 +1,10 @@
 import { Component, inject, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RolesStore } from '../../store/roles.store';
-import { Rol, Permiso } from '../../services/roles.service';
-import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
-import { FormInputComponent } from '../../../../../shared/components/ui/form-input/form-input.component';
+import { RolesStore } from '@features/admin/roles_permisos/store/roles.store';
+import { Rol, Permiso } from '@features/admin/roles_permisos/services/roles.service';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
+import { FormInputComponent } from '@shared/components/ui/form-input/form-input.component';
 
 @Component({
   selector: 'app-panel-roles',

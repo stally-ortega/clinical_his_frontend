@@ -3,9 +3,9 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { PrescripcionStore } from '../../store/prescripcion.store';
-import { FormInputComponent } from '../../../../../shared/components/ui/form-input/form-input.component';
-import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
+import { PrescripcionStore } from '@features/clinical/medicamentos_prescripcion/store/prescripcion.store';
+import { FormInputComponent } from '@shared/components/ui/form-input/form-input.component';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
 
 @Component({
   selector: 'app-crear-prescripcion',

@@ -1,0 +1,10 @@
+<div class="dialog-overlay" (click)="onCancel()">
+  <div class="dialog-card glass-panel grain-overlay" (click)="$event.stopPropagation()">
+    <h3 class="dialog-title">{{ title() }}</h3>
+    <p class="dialog-message">{{ message() }}</p>
+    <div class="dialog-actions">
+      <app-button text="Cancelar" variant="outline" (onClick)="onCancel()"></app-button>
+      <app-button text="Confirmar" variant="primary" (onClick)="onConfirm()"></app-button>
+    </div>
+  </div>
+</div>

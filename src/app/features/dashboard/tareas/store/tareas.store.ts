@@ -3,8 +3,8 @@ import { signalStore, withState, withMethods, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, tap, switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
-import { TareasService, Tarea, TareaPayload } from '../services/tareas.service';
-import { AuthStore } from '../../../../store/auth.store';
+import { TareasService, Tarea, TareaPayload } from '@features/dashboard/tareas/services/tareas.service';
+import { AuthStore } from '@store/auth.store';
 
 export type TareasState = {
   tareas: Tarea[];

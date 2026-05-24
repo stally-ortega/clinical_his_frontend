@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthStore } from '../../store/auth.store';
+import { AuthStore } from '@store/auth.store';
 
 /**
  * Guard funcional que evita que un usuario autenticado acceda

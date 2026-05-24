@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { AtributoEAV, EavTipoDato } from '../models/eav.model';
+import { AtributoEAV, EavTipoDato } from '@core/models/eav.model';
 
 /**
  * Servicio dedicado a construir FormGroups dinámicos a partir de metadata EAV.

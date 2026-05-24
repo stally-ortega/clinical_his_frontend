@@ -1,8 +1,8 @@
 import { Injectable, inject, OnDestroy } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
-import { environment } from '../../../environments/environment';
-import { NotificacionesStore } from '../store/notificaciones.store';
-import { AuthStore } from '../../store/auth.store';
+import { environment } from '@env/environment';
+import { NotificacionesStore } from '@core/store/notificaciones.store';
+import { AuthStore } from '@store/auth.store';
 
 /**
  * WebSocketService

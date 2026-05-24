@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AuditoriaStore } from '../../store/auditoria.store';
-import { AuditoriaLog } from '../../services/auditoria.service';
-import { JsonViewerComponent } from '../../../../../shared/components/ui/json-viewer/json-viewer.component';
-import { ToastService } from '../../../../../core/services/toast.service';
+import { AuditoriaStore } from '@features/admin/visor_auditoria/store/auditoria.store';
+import { AuditoriaLog } from '@features/admin/visor_auditoria/services/auditoria.service';
+import { JsonViewerComponent } from '@shared/components/ui/json-viewer/json-viewer.component';
+import { ToastService } from '@core/services/toast.service';
 
 @Component({
   selector: 'app-panel-auditoria',

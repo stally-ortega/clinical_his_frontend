@@ -2,10 +2,10 @@ import { Component, Input, Output, EventEmitter, inject, signal, computed } from
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UbicacionesStore } from '../../store/ubicaciones.store';
-import { Nomenclatura, ValorUbicacion } from '../../services/ubicaciones.service';
-import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
-import { FormInputComponent } from '../../../../../shared/components/ui/form-input/form-input.component';
+import { UbicacionesStore } from '@features/admin/constructor_ubicaciones/store/ubicaciones.store';
+import { Nomenclatura, ValorUbicacion } from '@features/admin/constructor_ubicaciones/services/ubicaciones.service';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
+import { FormInputComponent } from '@shared/components/ui/form-input/form-input.component';
 
 /**
  * Modal/panel lateral para gestionar valores concretos de una nomenclatura EAV.

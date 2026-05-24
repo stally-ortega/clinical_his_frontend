@@ -1,10 +1,10 @@
 import { Component, inject, effect, computed, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthStore } from '../../../store/auth.store';
+import { AuthStore } from '@store/auth.store';
 import { CommonModule } from '@angular/common';
-import { FormInputComponent } from '../../../shared/components/ui/form-input/form-input.component';
-import { ButtonComponent } from '../../../shared/components/ui/button/button.component';
+import { FormInputComponent } from '@shared/components/ui/form-input/form-input.component';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
 
 /**
  * Componente standalone del formulario de Login.

@@ -1,8 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HeaderComponent } from '../header/header.component';
-import { SidebarComponent } from '../sidebar/sidebar.component';
-import { ToastComponent } from '../../components/toast/toast.component';
+import { HeaderComponent } from '@core/layout/header/header.component';
+import { SidebarComponent } from '@core/layout/sidebar/sidebar.component';
+import { ToastComponent } from '@core/components/toast/toast.component';
 
 @Component({
   selector: 'app-main-layout',

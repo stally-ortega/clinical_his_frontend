@@ -2,10 +2,10 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-import { TareasStore } from '../../store/tareas.store';
-import { AuthStore } from '../../../../../store/auth.store';
-import { FormInputComponent } from '../../../../../shared/components/ui/form-input/form-input.component';
-import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
+import { TareasStore } from '@features/dashboard/tareas/store/tareas.store';
+import { AuthStore } from '@store/auth.store';
+import { FormInputComponent } from '@shared/components/ui/form-input/form-input.component';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
 
 @Component({
   selector: 'app-panel-tareas',

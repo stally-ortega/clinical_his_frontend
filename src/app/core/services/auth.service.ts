@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { AuthResponse, LoginPayload, Usuario, RecuperacionPayload, CambioPasswordPayload } from '../models/auth.model';
-import { secureSet, secureGet, secureRemove } from '../utils/storage.util';
+import { environment } from '@env/environment';
+import { AuthResponse, LoginPayload, Usuario, RecuperacionPayload, CambioPasswordPayload } from '@core/models/auth.model';
+import { secureSet, secureGet, secureRemove } from '@core/utils/storage.util';
 
 const TOKEN_KEY = 'clinical_his_token';
 const USER_KEY = 'clinical_his_user';

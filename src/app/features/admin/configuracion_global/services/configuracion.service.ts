@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { environment } from '../../../../../environments/environment';
-import { ConfiguracionGlobal, ActualizarConfiguracionDto } from '../models/configuracion.interface';
+import { environment } from '@env/environment';
+import { ConfiguracionGlobal, ActualizarConfiguracionDto } from '@features/admin/configuracion_global/models/configuracion.interface';
 
 interface ApiResponse<T> {
   exito: boolean;

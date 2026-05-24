@@ -6,6 +6,38 @@
   <app-button text="Nuevo Paciente" icon="add" variant="primary" (onClick)="goToCrear()"></app-button>
 </div>
 
+<!-- Toolbar: Search + Filters -->
+<div class="filters-toolbar">
+  <div class="search-box">
+    <span class="material-symbols-outlined search-icon">search</span>
+    <input
+      type="text"
+      placeholder="Buscar por nombre o documento..."
+      [value]="store.search()"
+      (input)="onSearch($event)"
+      class="search-input"
+    />
+  </div>
+
+  <div class="toggle-group">
+    <button
+      class="toggle-btn"
+      [class.toggle-btn--active]="store.activo() === true"
+      (click)="onToggleActivo(true)"
+    >Activos</button>
+    <button
+      class="toggle-btn"
+      [class.toggle-btn--active]="store.activo() === false"
+      (click)="onToggleActivo(false)"
+    >Inactivos</button>
+    <button
+      class="toggle-btn"
+      [class.toggle-btn--active]="store.activo() === null"
+      (click)="onToggleActivo(null)"
+    >Todos</button>
+  </div>
+</div>
+
 <!-- Loading State -->
 @if (store.isLoading()) {
   <div class="loading-state">
@@ -23,7 +55,7 @@
         <div class="patient-avatar">
           {{ paciente.nombres.charAt(0) }}{{ paciente.apellidos.charAt(0) }}
         </div>
-        <span class="status-chip status-chip--active">{{ paciente.estado }}</span>
+        <span class="status-chip" [class]="estadoClass(paciente.estado)">{{ paciente.estado }}</span>
       </div>
 
       <!-- Patient name & info -->
@@ -47,14 +79,19 @@
         <div class="vital-row vital-row--full">
           <div class="vital">
             <p class="vital-label">Ingreso</p>
-            <p class="vital-value">{{ paciente.fecha_registro | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p class="vital-value">{{ paciente.fecha_ingreso | date:'dd/MM/yyyy' }}</p>
+          </div>
+        </div>
+        <div class="vital-row vital-row--full">
+          <div class="vital">
+            <p class="vital-label">Días Hosp.</p>
+            <p class="vital-value">{{ diasHospitalizacion(paciente.fecha_ingreso) }}</p>
           </div>
         </div>
       </div>
 
       <!-- Actions -->
       <div class="card-actions">
-        <!-- Kardex - app-button con RouteLink -->
         <app-button
           text="Kardex"
           variant="primary"
@@ -66,7 +103,6 @@
           variant="outline"
           [routerLink]="['/app/prescribir', paciente.id]">
         </app-button>
-        <!-- Ver Historia Clínica – usa app-button con routerLink -->
         <app-button
           text="Ver Historia"
           variant="outline"
@@ -90,3 +126,10 @@
     }
   }
 </div>
+
+<!-- Pagination -->
+@if (store.hasMore() && !store.isLoading()) {
+  <div class="load-more">
+    <app-button text="Cargar más" variant="outline" (onClick)="loadNextPage()"></app-button>
+  </div>
+}

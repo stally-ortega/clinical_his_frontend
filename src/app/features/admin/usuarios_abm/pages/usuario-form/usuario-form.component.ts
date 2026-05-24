@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UsuarioAdmin, CrearUsuarioDto, ActualizarUsuarioDto } from '../../services/usuarios.service';
-import { RolesService, Rol } from '../../../roles_permisos/services/roles.service';
-import { FormInputComponent } from '../../../../../shared/components/ui/form-input/form-input.component';
-import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
+import { UsuarioAdmin, CrearUsuarioDto, ActualizarUsuarioDto } from '@features/admin/usuarios_abm/services/usuarios.service';
+import { RolesService, Rol } from '@features/admin/roles_permisos/services/roles.service';
+import { FormInputComponent } from '@shared/components/ui/form-input/form-input.component';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
 
 @Component({
   selector: 'app-usuario-form',

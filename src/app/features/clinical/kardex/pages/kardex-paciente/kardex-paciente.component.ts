@@ -2,8 +2,8 @@ import { Component, OnInit, inject, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { KardexStore } from '../../store/kardex.store';
-import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
+import { KardexStore } from '@features/clinical/kardex/store/kardex.store';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
 
 @Component({
   selector: 'app-kardex-paciente',

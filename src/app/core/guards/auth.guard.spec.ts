@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router, UrlTree, provideRouter, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { vi } from 'vitest';
 import { authGuard } from './auth.guard';
-import { AuthStore } from '../../store/auth.store';
+import { AuthStore } from '@store/auth.store';
 
 describe('authGuard', () => {
   const runGuard = () => {

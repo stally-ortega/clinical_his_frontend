@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { UsuariosStore } from '../../store/usuarios.store';
-import { UsuarioFormComponent } from '../usuario-form/usuario-form.component';
-import { CrearUsuarioDto, ActualizarUsuarioDto } from '../../services/usuarios.service';
+import { UsuariosStore } from '@features/admin/usuarios_abm/store/usuarios.store';
+import { UsuarioFormComponent } from '@features/admin/usuarios_abm/pages/usuario-form/usuario-form.component';
+import { CrearUsuarioDto, ActualizarUsuarioDto } from '@features/admin/usuarios_abm/services/usuarios.service';
 
 /**
  * Wrapper page para crear un usuario nuevo.

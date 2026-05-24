@@ -1,6 +1,6 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { AuthStore } from '../../store/auth.store';
+import { AuthStore } from '@store/auth.store';
 
 /**
  * Interceptor funcional de salida HTTP.

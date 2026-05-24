@@ -3,7 +3,7 @@ import { signalStore, withState, withMethods, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
-import { TurnosService } from '../../logueo_turnos/services/turnos.service';
+import { TurnosService } from '@features/personal/logueo_turnos/services/turnos.service';
 
 export interface TurnoProgramado {
   id?: number;

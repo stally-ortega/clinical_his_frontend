@@ -4,8 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { fromEvent, Subscription, merge } from 'rxjs';
 import { throttleTime, debounceTime, tap, catchError, switchMap, map } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { AuthStore } from '../../store/auth.store';
+import { environment } from '@env/environment';
+import { AuthStore } from '@store/auth.store';
 
 /**
  * SessionTimeoutService

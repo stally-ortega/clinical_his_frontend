@@ -1,0 +1,23 @@
+<div class="timeline">
+  @for (ev of evoluciones(); track ev.id) {
+    <article class="timeline-card">
+      <div class="timeline-marker"></div>
+      <div class="timeline-body">
+        <div class="timeline-header">
+          <span class="timeline-autor">{{ ev.autor }}</span>
+          <span class="timeline-fecha">{{ ev.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <h4 class="timeline-titulo">{{ ev.titulo }}</h4>
+        <p class="timeline-desc">{{ ev.descripcion }}</p>
+        <div class="timeline-footer">
+          <span class="estado-badge" [class]="estadoClass(ev.estado_paciente)">{{ ev.estado_paciente }}</span>
+        </div>
+      </div>
+    </article>
+  } @empty {
+    <div class="empty-state">
+      <span class="material-symbols-outlined empty-icon">assignment_ind</span>
+      <p>Sin evoluciones registradas.</p>
+    </div>
+  }
+</div>

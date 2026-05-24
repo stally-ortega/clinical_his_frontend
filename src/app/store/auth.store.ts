@@ -4,10 +4,10 @@ import { tapResponse } from '@ngrx/operators';
 import { signalStore, withState, withMethods, withComputed, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
-import { AuthService } from '../core/services/auth.service';
-import { AuthResponse, LoginPayload, Usuario } from '../core/models/auth.model';
-import { SessionTimeoutService } from '../core/services/session-timeout.service';
-import { WebSocketService } from '../core/services/websocket.service';
+import { AuthService } from '@core/services/auth.service';
+import { AuthResponse, LoginPayload, Usuario } from '@core/models/auth.model';
+import { SessionTimeoutService } from '@core/services/session-timeout.service';
+import { WebSocketService } from '@core/services/websocket.service';
 
 /** Forma del estado global de autenticación */
 export type AuthState = {

@@ -1,9 +1,9 @@
 import { Component, OnInit, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ConfiguracionStore } from '../../store/configuracion.store';
-import { ToastService } from '../../../../../core/services/toast.service';
-import { ConfiguracionGlobal, ActualizarConfiguracionDto } from '../../models/configuracion.interface';
+import { ConfiguracionStore } from '@features/admin/configuracion_global/store/configuracion.store';
+import { ToastService } from '@core/services/toast.service';
+import { ConfiguracionGlobal, ActualizarConfiguracionDto } from '@features/admin/configuracion_global/models/configuracion.interface';
 
 @Component({
   selector: 'app-panel-configuracion',

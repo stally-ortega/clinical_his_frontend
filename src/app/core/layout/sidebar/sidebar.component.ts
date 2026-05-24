@@ -1,8 +1,8 @@
 import { Component, inject, input, output, computed, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Router } from '@angular/router';
-import { AuthStore } from '../../../store/auth.store';
-import { ConfiguracionStore } from '../../../features/admin/configuracion_global/store/configuracion.store';
+import { AuthStore } from '@store/auth.store';
+import { ConfiguracionStore } from '@features/admin/configuracion_global/store/configuracion.store';
 
 @Component({
   selector: 'app-sidebar',

@@ -4,15 +4,16 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { PacientesStore } from '../../store/pacientes.store';
-import { PacientesService } from '../../services/pacientes.service';
-import { UbicacionesStore } from '../../../../admin/constructor_ubicaciones/store/ubicaciones.store';
-import { FormInputComponent } from '../../../../../shared/components/ui/form-input/form-input.component';
-import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
-import { SelectCatalogoComponent } from '../../../../../shared/components/ui/select-catalogo/select-catalogo.component';
-import { EavRendererComponent } from '../../../../../shared/components/ui/eav-renderer/eav-renderer.component';
-import { AtributoEAV } from '../../../../../core/models/eav.model';
-import { EavRendererService } from '../../../../../core/services/eav-renderer.service';
+import { PacientesStore } from '@features/clinical/pacientes/store/pacientes.store';
+import { PacientesService } from '@features/clinical/pacientes/services/pacientes.service';
+import { CrearPacienteDto } from '@core/models/paciente.model';
+import { UbicacionesStore } from '@features/admin/constructor_ubicaciones/store/ubicaciones.store';
+import { FormInputComponent } from '@shared/components/ui/form-input/form-input.component';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
+import { SelectCatalogoComponent } from '@shared/components/ui/select-catalogo/select-catalogo.component';
+import { EavRendererComponent } from '@shared/components/ui/eav-renderer/eav-renderer.component';
+import { AtributoEAV } from '@core/models/eav.model';
+import { EavRendererService } from '@core/services/eav-renderer.service';
 
 @Component({
   selector: 'app-paciente-create',
@@ -158,12 +159,13 @@ export class PacienteCreateComponent implements OnInit {
     }
 
     const raw = this.form.value;
-    const payload = {
+    const payload: CrearPacienteDto = {
       ...raw,
       edad: parseInt(raw.edad, 10),
       id_nomenclatura: parseInt(raw.id_nomenclatura, 10),
       id_tipo_dieta: parseInt(raw.id_tipo_dieta, 10),
       valores_ubicacion: this.eavService.extractPayload(this.eavForm),
+      sexo: raw.sexo as 'M' | 'F' | 'O',
     };
 
     if (this.modoEdicion) {

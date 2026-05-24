@@ -4,14 +4,13 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 import { pipe, switchMap, tap, forkJoin } from 'rxjs';
 
-import { EvolucionesService, Evolucion, EvolucionPayload } from '../services/evoluciones.service';
-import { NotasService, Nota, NotaPayload } from '../services/notas.service';
+import { EvolucionesService } from '@features/clinical/historia-clinica/services/evoluciones.service';
+import { NotasService } from '@features/clinical/historia-clinica/services/notas.service';
+import { Evolucion, CrearEvolucionDto, Nota, CrearNotaDto } from '@core/models/evolucion.model';
 
-// ─── State ───────────────────────────────────────────────────────────────────
 export type HistoriaState = {
   evoluciones: Evolucion[];
   notas: Nota[];
-  /** ID del paciente actualmente cargado (para recargar tras POST) */
   pacienteId: number | null;
   isLoading: boolean;
   error: string | null;
@@ -25,7 +24,6 @@ const initialState: HistoriaState = {
   error: null,
 };
 
-// ─── Store ───────────────────────────────────────────────────────────────────
 export const HistoriaStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
@@ -33,7 +31,6 @@ export const HistoriaStore = signalStore(
     const evolucionesSvc = inject(EvolucionesService);
     const notasSvc = inject(NotasService);
 
-    /** Carga ambas listas en paralelo para un paciente dado. */
     const cargarHistorial = rxMethod<number>(
       pipe(
         tap((id) => patchState(store, { isLoading: true, error: null, pacienteId: id })),
@@ -56,8 +53,7 @@ export const HistoriaStore = signalStore(
       ),
     );
 
-    /** Crea una evolución y recarga el historial completo. */
-    const agregarEvolucion = rxMethod<EvolucionPayload>(
+    const agregarEvolucion = rxMethod<CrearEvolucionDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true, error: null })),
         switchMap((payload) =>
@@ -78,8 +74,7 @@ export const HistoriaStore = signalStore(
       ),
     );
 
-    /** Crea una nota y recarga el historial completo. */
-    const agregarNota = rxMethod<NotaPayload>(
+    const agregarNota = rxMethod<CrearNotaDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true, error: null })),
         switchMap((payload) =>

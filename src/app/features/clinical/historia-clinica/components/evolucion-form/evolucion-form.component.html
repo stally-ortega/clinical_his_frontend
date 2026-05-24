@@ -1,0 +1,41 @@
+<form class="registro-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <p class="form-hint form-hint--primary">
+    <span class="material-symbols-outlined">medical_services</span>
+    Registra la evolución clínica y el plan médico del paciente.
+  </p>
+
+  <app-form-input
+    controlName="titulo"
+    label="Título de la evolución"
+    placeholder="Ej. Evaluación médica matutina">
+  </app-form-input>
+
+  <div class="native-select-group"
+    [class.error]="form.get('descripcion')?.invalid && form.get('descripcion')?.touched">
+    <label class="native-select-label">Descripción Clínica</label>
+    <textarea
+      formControlName="descripcion"
+      class="native-textarea"
+      rows="5"
+      placeholder="Redacte la evolución clínica detallada..."></textarea>
+    @if (form.get('descripcion')?.invalid && form.get('descripcion')?.touched) {
+      <span class="field-error">La descripción es requerida y debe tener al menos 5 caracteres.</span>
+    }
+  </div>
+
+  <app-select-catalogo
+    formControlName="estado_paciente"
+    [items]="estadoItems"
+    label="Estado Clínico"
+    placeholder="Seleccione un estado...">
+  </app-select-catalogo>
+
+  <div class="form-submit">
+    <app-button
+      type="submit"
+      text="Registrar Evolución"
+      variant="primary"
+      [isLoading]="isSaving()">
+    </app-button>
+  </div>
+</form>

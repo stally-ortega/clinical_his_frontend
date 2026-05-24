@@ -2,9 +2,9 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../../../core/services/auth.service';
-import { FormInputComponent } from '../../../../../shared/components/ui/form-input/form-input.component';
-import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
+import { AuthService } from '@core/services/auth.service';
+import { FormInputComponent } from '@shared/components/ui/form-input/form-input.component';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
 
 @Component({
   selector: 'app-olvide-password',

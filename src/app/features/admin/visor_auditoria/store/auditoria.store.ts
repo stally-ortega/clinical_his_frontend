@@ -3,7 +3,7 @@ import { signalStore, withState, withMethods, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, tap, switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
-import { AuditoriaService, AuditoriaLog, AuditoriaFiltros } from '../services/auditoria.service';
+import { AuditoriaService, AuditoriaLog, AuditoriaFiltros } from '@features/admin/visor_auditoria/services/auditoria.service';
 
 export type AuditoriaState = {
   logs: AuditoriaLog[];

@@ -2,10 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { vi } from 'vitest';
 import { AuthStore } from './auth.store';
-import { AuthService } from '../core/services/auth.service';
-import { SessionTimeoutService } from '../core/services/session-timeout.service';
-import { WebSocketService } from '../core/services/websocket.service';
-import { Usuario } from '../core/models/auth.model';
+import { AuthService } from '@core/services/auth.service';
+import { SessionTimeoutService } from '@core/services/session-timeout.service';
+import { WebSocketService } from '@core/services/websocket.service';
+import { Usuario } from '@core/models/auth.model';
 
 describe('AuthStore', () => {
   let store: InstanceType<typeof AuthStore>;

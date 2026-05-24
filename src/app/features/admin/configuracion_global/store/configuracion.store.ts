@@ -6,8 +6,8 @@ import { tapResponse } from '@ngrx/operators';
 import {
   ConfiguracionGlobal,
   ActualizarConfiguracionDto,
-} from '../models/configuracion.interface';
-import { ConfiguracionGlobalService } from '../services/configuracion.service';
+} from '@features/admin/configuracion_global/models/configuracion.interface';
+import { ConfiguracionGlobalService } from '@features/admin/configuracion_global/services/configuracion.service';
 
 export interface ConfiguracionState {
   configuraciones: ConfiguracionGlobal[];

@@ -3,7 +3,7 @@ import { HttpRequest, HttpEvent, HttpHandlerFn } from '@angular/common/http';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { authInterceptor } from './auth.interceptor';
-import { AuthStore } from '../../store/auth.store';
+import { AuthStore } from '@store/auth.store';
 
 describe('authInterceptor', () => {
   const createMockStore = (token: string | null) => ({

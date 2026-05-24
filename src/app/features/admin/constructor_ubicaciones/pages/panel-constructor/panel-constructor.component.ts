@@ -2,11 +2,11 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
-import { UbicacionesStore } from '../../store/ubicaciones.store';
-import { Nomenclatura, TipoUbicacion } from '../../services/ubicaciones.service';
-import { FormInputComponent } from '../../../../../shared/components/ui/form-input/form-input.component';
-import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
-import { ValorNodoFormComponent } from '../../components/valor-nodo-form/valor-nodo-form.component';
+import { UbicacionesStore } from '@features/admin/constructor_ubicaciones/store/ubicaciones.store';
+import { Nomenclatura, TipoUbicacion } from '@features/admin/constructor_ubicaciones/services/ubicaciones.service';
+import { FormInputComponent } from '@shared/components/ui/form-input/form-input.component';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
+import { ValorNodoFormComponent } from '@features/admin/constructor_ubicaciones/components/valor-nodo-form/valor-nodo-form.component';
 
 @Component({
   selector: 'app-panel-constructor',

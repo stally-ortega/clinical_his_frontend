@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { EavFormBuilderService } from './eav-form-builder.service';
-import { AtributoEAV } from '../models/eav.model';
+import { AtributoEAV } from '@core/models/eav.model';
 
 /**
  * Servicio orquestador del motor EAV.

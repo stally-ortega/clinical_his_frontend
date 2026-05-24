@@ -1,11 +1,11 @@
 import { Component, inject, OnInit, signal, effect, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MallaTurnosStore } from '../../store/malla-turnos.store';
-import { UsuariosService } from '../../../../admin/usuarios_abm/services/usuarios.service';
-import { Usuario } from '../../../../../core/models/auth.model';
-import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
-import { FormInputComponent } from '../../../../../shared/components/ui/form-input/form-input.component';
+import { MallaTurnosStore } from '@features/personal/malla_turnos/store/malla-turnos.store';
+import { UsuariosService } from '@features/admin/usuarios_abm/services/usuarios.service';
+import { Usuario } from '@core/models/auth.model';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
+import { FormInputComponent } from '@shared/components/ui/form-input/form-input.component';
 
 @Component({
   selector: 'app-malla-calendario',

@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CatalogosStore, CatalogoItem } from '../../../../features/admin/catalogos_maestros/store/catalogos.store';
+import { CatalogosStore, CatalogoItem } from '@features/admin/catalogos_maestros/store/catalogos.store';
 
 /**
  * Componente *Dumb* genérico de selección de catálogo maestro.
@@ -25,7 +25,7 @@ import { CatalogosStore, CatalogoItem } from '../../../../features/admin/catalog
       <label class="native-select-label">{{ label }}</label>
       <select [formControl]="control" class="native-select">
         <option [ngValue]="null">{{ placeholder }}</option>
-        @for (item of items(); track item.id) {
+        @for (item of itemsList(); track item.id) {
           <option [ngValue]="item.id">{{ item.nombre }}</option>
         }
       </select>
@@ -44,7 +44,8 @@ import { CatalogosStore, CatalogoItem } from '../../../../features/admin/catalog
   ],
 })
 export class SelectCatalogoComponent implements OnInit, ControlValueAccessor {
-  @Input({ required: true }) catalogo!: string;
+  @Input() catalogo?: string;
+  @Input() items: CatalogoItem[] | null = null;
   @Input() label = 'Seleccionar';
   @Input() placeholder = 'Seleccione una opción...';
 
@@ -56,7 +57,9 @@ export class SelectCatalogoComponent implements OnInit, ControlValueAccessor {
   private onTouched: () => void = () => {};
 
   ngOnInit(): void {
-    this.store.loadCatalogos({ tipo: this.catalogo, reset: true });
+    if (!this.items && this.catalogo) {
+      this.store.loadCatalogos({ tipo: this.catalogo, reset: true });
+    }
 
     this.control.valueChanges.pipe(takeUntilDestroyed()).subscribe((val) => {
       this.onChange(val);
@@ -64,9 +67,9 @@ export class SelectCatalogoComponent implements OnInit, ControlValueAccessor {
     });
   }
 
-  /** Señal computada que expone solo los ítems del catálogo solicitado */
-  items(): CatalogoItem[] {
-    return this.store.items();
+  /** Expone los ítems inyectados o los del store */
+  itemsList(): CatalogoItem[] {
+    return this.items ?? this.store.items();
   }
 
   // ── ControlValueAccessor ──

@@ -3,12 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { HistoriaStore } from '../../store/historia.store';
-import { AuthStore } from '../../../../../store/auth.store';
-import { CatalogosStore } from '../../../../admin/catalogos_maestros/store/catalogos.store';
-import { TimelineComponent, TimelineEvento } from '../../../../../shared/components/organisms/timeline/timeline.component';
-import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
-import { FormInputComponent } from '../../../../../shared/components/ui/form-input/form-input.component';
+import { HistoriaStore } from '@features/clinical/historia-clinica/store/historia.store';
+import { AuthStore } from '@store/auth.store';
+import { CatalogosStore } from '@features/admin/catalogos_maestros/store/catalogos.store';
+import { TimelineComponent, TimelineEvento } from '@shared/components/organisms/timeline/timeline.component';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
+import { FormInputComponent } from '@shared/components/ui/form-input/form-input.component';
 
 @Component({
   selector: 'app-historia-detalle',

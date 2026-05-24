@@ -1,8 +1,8 @@
 import { Component, inject, output, signal, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthStore } from '../../../store/auth.store';
-import { NotificacionesStore, Alerta } from '../../store/notificaciones.store';
+import { AuthStore } from '@store/auth.store';
+import { NotificacionesStore, Alerta } from '@core/store/notificaciones.store';
 
 @Component({
   selector: 'app-header',

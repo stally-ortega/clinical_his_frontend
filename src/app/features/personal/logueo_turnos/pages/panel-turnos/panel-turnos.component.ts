@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { AuthStore } from '../../../../../store/auth.store';
-import { TurnosStore } from '../../store/turnos.store';
-import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
+import { AuthStore } from '@store/auth.store';
+import { TurnosStore } from '@features/personal/logueo_turnos/store/turnos.store';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
 
 @Component({
   selector: 'app-panel-turnos',

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from '@env/environment';
 import { Catalogo, ApiResponse } from './catalogos.service';
 
 @Injectable({ providedIn: 'root' })

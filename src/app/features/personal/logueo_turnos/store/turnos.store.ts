@@ -3,7 +3,7 @@ import { signalStore, withState, withMethods, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, tap, switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
-import { TurnosService } from '../services/turnos.service';
+import { TurnosService } from '@features/personal/logueo_turnos/services/turnos.service';
 
 export type EstadoTurno = 'FUERA_TURNO' | 'EN_TURNO';
 

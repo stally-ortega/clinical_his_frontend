@@ -8,7 +8,7 @@ import {
   UsuarioAdmin,
   CrearUsuarioDto,
   ActualizarUsuarioDto,
-} from '../services/usuarios.service';
+} from '@features/admin/usuarios_abm/services/usuarios.service';
 
 export type UsuariosState = {
   usuarios: UsuarioAdmin[];

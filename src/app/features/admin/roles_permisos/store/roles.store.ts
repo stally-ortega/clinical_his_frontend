@@ -3,7 +3,7 @@ import { signalStore, withState, withMethods, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap, forkJoin } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
-import { RolesService, Rol, Permiso } from '../services/roles.service';
+import { RolesService, Rol, Permiso } from '@features/admin/roles_permisos/services/roles.service';
 
 export type RolesState = {
   roles: Rol[];

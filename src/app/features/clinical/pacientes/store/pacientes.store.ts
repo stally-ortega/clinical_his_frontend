@@ -5,28 +5,43 @@ import { tapResponse } from '@ngrx/operators';
 import { pipe, switchMap, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
-import { PacientesService, Paciente, PacientePayload } from '../services/pacientes.service';
-import { CatalogosService, Catalogo } from '../../../../core/services/catalogos.service';
+import { PacientesService } from '@features/clinical/pacientes/services/pacientes.service';
+import {
+  Paciente,
+  CrearPacienteDto,
+  ActualizarPacienteDto,
+  PacienteQueryParams,
+} from '@core/models/paciente.model';
+import { EstadoPaciente } from '@core/models/estado-paciente.enum';
 
 export type PacientesState = {
   pacientes: Paciente[];
   pacienteActivo: Paciente | null;
-  dietas: Catalogo[];
   isLoading: boolean;
   isSaving: boolean;
   error: string | null;
+  offset: number;
+  limit: number;
+  hasMore: boolean;
+  search: string;
+  estado: EstadoPaciente | null;
+  activo: boolean | null;
 };
 
 const initialState: PacientesState = {
   pacientes: [],
   pacienteActivo: null,
-  dietas: [],
   isLoading: false,
   isSaving: false,
   error: null,
+  offset: 0,
+  limit: 12,
+  hasMore: false,
+  search: '',
+  estado: null,
+  activo: true,
 };
 
-/** Normaliza un mensaje de error HTTP o runtime */
 function normalizeError(err: unknown): string {
   if (typeof err === 'object' && err !== null) {
     const e = err as { error?: { message?: string }; message?: string };
@@ -39,40 +54,38 @@ export const PacientesStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withComputed((store) => ({
-    pacientesActivos: computed(() => store.pacientes().filter((p) => p.estado !== 'EGRESADO')),
     totalPacientes: computed(() => store.pacientes().length),
   })),
   withMethods((store) => {
     const pacientesSvc = inject(PacientesService);
-    const catalogosSvc = inject(CatalogosService);
     const router = inject(Router);
 
     return {
       cargarPacientes: rxMethod<void>(
         pipe(
           tap(() => patchState(store, { isLoading: true, error: null })),
-          switchMap(() =>
-            pacientesSvc.getPacientesActivos().pipe(
+          switchMap(() => {
+            const params: PacienteQueryParams = {
+              search: store.search() || undefined,
+              estado: store.estado() ?? undefined,
+              activo: store.activo() ?? undefined,
+              offset: store.offset(),
+              limit: store.limit(),
+            };
+            return pacientesSvc.getPacientes(params).pipe(
               tapResponse({
-                next: (pacientes) => patchState(store, { pacientes, isLoading: false }),
+                next: (pacientes) => {
+                  const current = store.offset() === 0 ? pacientes : [...store.pacientes(), ...pacientes];
+                  patchState(store, {
+                    pacientes: current,
+                    hasMore: pacientes.length === store.limit(),
+                    isLoading: false,
+                  });
+                },
                 error: (err: unknown) => patchState(store, { error: normalizeError(err), isLoading: false }),
               })
-            )
-          )
-        )
-      ),
-
-      cargarDietas: rxMethod<void>(
-        pipe(
-          tap(() => patchState(store, { isLoading: true, error: null })),
-          switchMap(() =>
-            catalogosSvc.getCatalogos('dietas').pipe(
-              tapResponse({
-                next: (res) => patchState(store, { dietas: res.data, isLoading: false }),
-                error: (err: unknown) => patchState(store, { error: normalizeError(err), isLoading: false }),
-              })
-            )
-          )
+            );
+          })
         )
       ),
 
@@ -80,7 +93,36 @@ export const PacientesStore = signalStore(
         patchState(store, { pacienteActivo: paciente });
       },
 
-      registrar: rxMethod<PacientePayload>(
+      setSearch(query: string) {
+        patchState(store, { search: query, offset: 0, pacientes: [] });
+      },
+
+      setActivoFilter(activo: boolean | null) {
+        patchState(store, { activo, offset: 0, pacientes: [] });
+      },
+
+      setEstadoFilter(estado: EstadoPaciente | null) {
+        patchState(store, { estado, offset: 0, pacientes: [] });
+      },
+
+      loadNextPage() {
+        if (!store.isLoading() && store.hasMore()) {
+          patchState(store, { offset: store.offset() + store.limit() });
+        }
+      },
+
+      resetFilters() {
+        patchState(store, {
+          search: '',
+          estado: null,
+          activo: true,
+          offset: 0,
+          pacientes: [],
+          hasMore: false,
+        });
+      },
+
+      registrar: rxMethod<CrearPacienteDto>(
         pipe(
           tap(() => patchState(store, { isSaving: true, error: null })),
           switchMap((payload) =>
@@ -94,6 +136,20 @@ export const PacientesStore = signalStore(
                   router.navigate(['/app/pacientes']);
                 },
                 error: (err: unknown) => patchState(store, { error: normalizeError(err), isSaving: false }),
+              })
+            )
+          )
+        )
+      ),
+
+      cargarPacientePorId: rxMethod<number>(
+        pipe(
+          tap(() => patchState(store, { isLoading: true, error: null })),
+          switchMap((id) =>
+            pacientesSvc.getPacienteById(id).pipe(
+              tapResponse({
+                next: (paciente) => patchState(store, { pacienteActivo: paciente, isLoading: false }),
+                error: (err: unknown) => patchState(store, { error: normalizeError(err), isLoading: false }),
               })
             )
           )
@@ -114,7 +170,7 @@ export const PacientesStore = signalStore(
         )
       ),
 
-      actualizar: rxMethod<{ documento: string; payload: PacientePayload }>(
+      actualizar: rxMethod<{ documento: string; payload: ActualizarPacienteDto }>(
         pipe(
           tap(() => patchState(store, { isSaving: true, error: null })),
           switchMap(({ documento, payload }) =>

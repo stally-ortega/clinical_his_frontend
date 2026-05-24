@@ -1,5 +1,5 @@
 import { Directive, TemplateRef, ViewContainerRef, inject, effect } from '@angular/core';
-import { AuthStore } from '../../store/auth.store';
+import { AuthStore } from '@store/auth.store';
 
 /**
  * Directiva estructural que inserta o elimina elementos del DOM

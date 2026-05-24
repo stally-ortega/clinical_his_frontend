@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subscription } from 'rxjs';
-import { EavRendererService } from '../../../../core/services/eav-renderer.service';
-import { AtributoEAV, ValorEAV } from '../../../../core/models/eav.model';
+import { EavRendererService } from '@core/services/eav-renderer.service';
+import { AtributoEAV, ValorEAV } from '@core/models/eav.model';
 
 /**
  * Componente renderizador EAV (Entidad-Atributo-Valor).

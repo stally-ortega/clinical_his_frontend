@@ -1,11 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthStore } from '../../../store/auth.store';
-import { AuthService } from '../../../core/services/auth.service';
-import { FormInputComponent } from '../../../shared/components/ui/form-input/form-input.component';
-import { ButtonComponent } from '../../../shared/components/ui/button/button.component';
-import { Usuario } from '../../../core/models/auth.model';
+import { AuthStore } from '@store/auth.store';
+import { AuthService } from '@core/services/auth.service';
+import { FormInputComponent } from '@shared/components/ui/form-input/form-input.component';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
+import { Usuario } from '@core/models/auth.model';
 
 /** Validador personalizado: nueva_password coincide con confirmar_password */
 function passwordMatchValidator(control: AbstractControl) {

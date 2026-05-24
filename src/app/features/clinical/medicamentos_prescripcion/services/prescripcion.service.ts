@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { environment } from '../../../../../environments/environment';
-import { ApiResponse } from '../../../../core/services/catalogos.service';
+import { environment } from '@env/environment';
+import { ApiResponse } from '@core/services/catalogos.service';
 
 export interface PrescripcionPayload {
   id_paciente: number;

@@ -4,8 +4,8 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 import { pipe, switchMap, tap, catchError, of } from 'rxjs';
 
-import { KardexService, Prescripcion } from '../services/kardex.service';
-import { SyncService } from '../../../../core/offline/sync.service';
+import { KardexService, Prescripcion } from '@features/clinical/kardex/services/kardex.service';
+import { SyncService } from '@core/offline/sync.service';
 
 export type KardexState = {
   prescripciones: Prescripcion[];

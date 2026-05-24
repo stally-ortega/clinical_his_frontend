@@ -3,9 +3,9 @@ import { signalStore, withState, withMethods, patchState, withComputed } from '@
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, tap, switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
-import { UbicacionesService, TipoUbicacion, Nomenclatura, ValorUbicacion } from '../services/ubicaciones.service';
-import { ToastService } from '../../../../core/services/toast.service';
-import { parseErrorMessage } from '../../../../core/utils/error.util';
+import { UbicacionesService, TipoUbicacion, Nomenclatura, ValorUbicacion } from '@features/admin/constructor_ubicaciones/services/ubicaciones.service';
+import { ToastService } from '@core/services/toast.service';
+import { parseErrorMessage } from '@core/utils/error.util';
 
 export type UbicacionesState = {
   tiposDisponibles: TipoUbicacion[];

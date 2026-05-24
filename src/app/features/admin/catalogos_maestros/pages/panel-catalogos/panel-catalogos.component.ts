@@ -1,9 +1,9 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CatalogosStore, CatalogoItem } from '../../store/catalogos.store';
-import { ButtonComponent } from '../../../../../shared/components/ui/button/button.component';
-import { FormInputComponent } from '../../../../../shared/components/ui/form-input/form-input.component';
+import { CatalogosStore, CatalogoItem } from '@features/admin/catalogos_maestros/store/catalogos.store';
+import { ButtonComponent } from '@shared/components/ui/button/button.component';
+import { FormInputComponent } from '@shared/components/ui/form-input/form-input.component';
 
 @Component({
   selector: 'app-panel-catalogos',
