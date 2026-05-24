@@ -1,0 +1,77 @@
+<div class="page-header">
+  <h2 class="page-title">{{ isEdit() ? 'Editar Usuario' : 'Crear Usuario' }}</h2>
+  <p class="page-subtitle">{{ isEdit() ? 'Modifique los datos del personal' : 'Registre nuevo personal médico o administrativo' }}</p>
+</div>
+
+<div class="form-container glass-panel grain-overlay">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <div class="form-grid">
+      <app-form-input
+        controlName="documento"
+        label="Documento de Identidad"
+        placeholder="Ej. 123456789"
+        [onlyNumbers]="true"
+      ></app-form-input>
+
+      <app-form-input
+        controlName="nombres"
+        label="Nombres"
+        placeholder="Nombres completos"
+      ></app-form-input>
+
+      <app-form-input
+        controlName="apellidos"
+        label="Apellidos"
+        placeholder="Apellidos completos"
+      ></app-form-input>
+
+      <app-form-input
+        controlName="celular"
+        label="Celular"
+        placeholder="Ej. 3001234567"
+        [onlyNumbers]="true"
+      ></app-form-input>
+
+      <app-form-input
+        controlName="email"
+        label="Correo Electrónico"
+        type="email"
+        placeholder="correo@hospital.com"
+      ></app-form-input>
+
+      <app-form-input
+        controlName="clave"
+        label="Contraseña"
+        type="password"
+        placeholder="{{ isEdit() ? 'Dejar en blanco para no cambiar' : 'Mínimo 6 caracteres' }}"
+      ></app-form-input>
+
+      <div class="form-field">
+        <label class="form-label" for="rol_id">Rol / Perfil</label>
+        <select id="rol_id" class="form-input" formControlName="rol_id">
+          <option value="" disabled selected>Seleccionar rol...</option>
+          @for (rol of roles(); track rol.id) {
+            <option [value]="rol.id">{{ rol.nombre }}</option>
+          }
+        </select>
+        @if (form.get('rol_id')?.invalid && form.get('rol_id')?.touched) {
+          <span class="form-error">Rol requerido</span>
+        }
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <app-button
+        type="button"
+        variant="outline"
+        text="Cancelar"
+        (onClick)="onCancelar()"
+      ></app-button>
+      <app-button
+        type="submit"
+        variant="primary"
+        text="{{ isEdit() ? 'Guardar Cambios' : 'Crear Usuario' }}"
+      ></app-button>
+    </div>
+  </form>
+</div>

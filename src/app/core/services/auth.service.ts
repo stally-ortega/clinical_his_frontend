@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthResponse, LoginPayload, Usuario, RecuperacionPayload, CambioPasswordPayload } from '../models/auth.model';
+import { secureSet, secureGet, secureRemove } from '../utils/storage.util';
 
 const TOKEN_KEY = 'clinical_his_token';
 const USER_KEY = 'clinical_his_user';
@@ -40,26 +41,26 @@ export class AuthService {
     return this.http.patch<null>(`${this.apiUrl}/auth/cambiar-password`, payload);
   }
 
-  /** Persiste el token y los datos del usuario en localStorage */
+  /** Persiste el token y los datos del usuario en localStorage ofuscado */
   saveSession(token: string, user: Usuario): void {
-    localStorage.setItem(TOKEN_KEY, token);
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    secureSet(TOKEN_KEY, token);
+    secureSet(USER_KEY, JSON.stringify(user));
   }
 
   /** Elimina la sesión local (logout) */
   clearSession(): void {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
+    secureRemove(TOKEN_KEY);
+    secureRemove(USER_KEY);
   }
 
   /** Lee el token almacenado (puede ser null si no hay sesión) */
   getToken(): string | null {
-    return localStorage.getItem(TOKEN_KEY);
+    return secureGet(TOKEN_KEY);
   }
 
-  /** Reconstruye el objeto Usuario desde localStorage */
+  /** Reconstruye el objeto Usuario desde localStorage ofuscado */
   getStoredUser(): Usuario | null {
-    const raw = localStorage.getItem(USER_KEY);
+    const raw = secureGet(USER_KEY);
     if (!raw) return null;
     try {
       return JSON.parse(raw) as Usuario;

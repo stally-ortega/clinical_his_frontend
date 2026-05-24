@@ -4,6 +4,24 @@
 </div>
 
 <div class="panel-container glass-panel grain-overlay">
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input
+        type="text"
+        class="search-input"
+        [formControl]="searchControl"
+        placeholder="Buscar por documento, nombre o apellido..."
+      />
+    </div>
+    <app-button
+      variant="primary"
+      icon="person_add"
+      text="Crear Usuario"
+      (onClick)="onCrear()"
+    ></app-button>
+  </div>
+
   @if (store.isLoading()) {
     <p class="loading-state">Cargando usuarios...</p>
   } @else if (store.error()) {
@@ -17,11 +35,11 @@
             <th>Nombres y Apellidos</th>
             <th>Rol / Perfil</th>
             <th>Estado</th>
-            <th class="actions-col">Acciones de Seguridad</th>
+            <th class="actions-col">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          @for (user of store.usuarios(); track user.id) {
+          @for (user of store.usuariosFiltrados(); track user.id) {
             <tr [class.danger-row]="isBloqueado(user.bloqueado_hasta)">
               <td class="col-doc">{{ user.documento || '—' }}</td>
               <td class="col-name">{{ user.nombres }} {{ user.apellidos }}</td>
@@ -37,11 +55,18 @@
                 <div class="action-buttons">
                   <app-button
                     variant="outline"
+                    icon="edit"
+                    text="Editar"
+                    (click)="onEditar(user.id)"
+                  ></app-button>
+
+                  <app-button
+                    variant="outline"
                     icon="key"
                     text="Forzar Reset"
                     (click)="onForzarReset(user.id)"
                   ></app-button>
-                  
+
                   @if (isBloqueado(user.bloqueado_hasta)) {
                     <app-button
                       variant="outline"

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConfiguracionStore } from '../../store/configuracion.store';
 import { ToastService } from '../../../../../core/services/toast.service';
-import { ActualizarConfiguracionDto } from '../../models/configuracion.interface';
+import { ConfiguracionGlobal, ActualizarConfiguracionDto } from '../../models/configuracion.interface';
 
 @Component({
   selector: 'app-panel-configuracion',
@@ -36,20 +36,43 @@ export class PanelConfiguracionComponent implements OnInit {
     this.store.cargarConfiguraciones();
   }
 
-  actualizarValor(clave: string, nuevoValor: string): void {
-    this.valoresEditados[clave] = nuevoValor;
+  detectarTipo(item: ConfiguracionGlobal): 'boolean' | 'time' | 'number' | 'text' {
+    if (item.tipo) {
+      return item.tipo;
+    }
+
+    const valor = item.valor;
+
+    if (valor === 'true' || valor === 'false') {
+      return 'boolean';
+    }
+
+    if (/^\d{2}:\d{2}$/.test(valor)) {
+      return 'time';
+    }
+
+    if (/^\d+$/.test(valor)) {
+      return 'number';
+    }
+
+    return 'text';
   }
 
-  /** Toggle booleano: convierte checked a 'true'/'false' string */
-  actualizarBooleano(clave: string, checked: boolean): void {
-    this.valoresEditados[clave] = checked ? 'true' : 'false';
+  onChange(event: Event, item: ConfiguracionGlobal): void {
+    const target = event.target as HTMLInputElement;
+    const tipo = this.detectarTipo(item);
+
+    if (tipo === 'boolean') {
+      this.valoresEditados[item.clave] = target.checked ? 'true' : 'false';
+    } else {
+      this.valoresEditados[item.clave] = target.value;
+    }
   }
 
-  /** Lee el valor actual (editado o del store) como booleano para el checkbox */
-  esBooleanoActivo(clave: string, valorDefault: string): boolean {
-    const editado = this.valoresEditados[clave];
-    if (editado !== undefined) return editado === 'true';
-    return valorDefault === 'true';
+  isActivo(item: ConfiguracionGlobal): boolean {
+    const editado = this.valoresEditados[item.clave];
+    const valorActual = editado !== undefined ? editado : item.valor;
+    return valorActual === 'true';
   }
 
   hayCambios(): boolean {

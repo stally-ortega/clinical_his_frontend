@@ -17,9 +17,9 @@ export class ConfiguracionGlobalService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
 
-  obtenerConfiguraciones() {
-    return this.http.get<any>(`${this.apiUrl}/configuraciones`).pipe(
-      map((res) => res.data || res || [])
+  obtenerConfiguraciones(): Observable<ConfiguracionGlobal[]> {
+    return this.http.get<ApiResponse<ConfiguracionGlobal[]> | ConfiguracionGlobal[]>(`${this.apiUrl}/configuraciones`).pipe(
+      map((res) => (Array.isArray(res) ? res : res.data || []))
     );
   }
 

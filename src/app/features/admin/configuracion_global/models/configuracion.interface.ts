@@ -4,6 +4,7 @@ export interface ConfiguracionGlobal {
   clave: string;
   valor: string;
   descripcion?: string;
+  tipo?: 'boolean' | 'time' | 'number' | 'text';
 }
 
 export interface ActualizarConfiguracionDto {

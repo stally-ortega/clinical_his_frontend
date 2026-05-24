@@ -22,43 +22,43 @@
             <div class="form-group">
               <label class="form-label">{{ item.clave.replace('_', ' ') }}</label>
 
-              @switch (item.clave) {
-                @case ('EGRESO_AUTOMATICO_ACTIVO') {
+              @switch (detectarTipo(item)) {
+                @case ('boolean') {
                   <label class="switch">
                     <input
                       type="checkbox"
-                      [checked]="esBooleanoActivo(item.clave, item.valor)"
-                      (change)="actualizarBooleano(item.clave, $any($event).target.checked)"
+                      [checked]="isActivo(item)"
+                      (change)="onChange($event, item)"
                     />
                     <span class="switch-slider"></span>
                   </label>
                   <span class="switch-label">
-                    {{ esBooleanoActivo(item.clave, item.valor) ? 'Activo' : 'Inactivo' }}
+                    {{ isActivo(item) ? 'Activo' : 'Inactivo' }}
                   </span>
                 }
-                @case ('EGRESO_AUTOMATICO_HORA') {
+                @case ('time') {
                   <input
                     type="time"
                     class="form-control"
-                    [value]="valoresEditados[item.clave] || item.valor"
-                    (input)="actualizarValor(item.clave, $any($event).target.value)"
+                    [value]="valoresEditados[item.clave] ?? item.valor"
+                    (input)="onChange($event, item)"
                   />
                 }
-                @case ('DIAS_INACTIVIDAD_EGRESO') {
+                @case ('number') {
                   <input
                     type="number"
                     class="form-control"
                     min="1"
-                    [value]="valoresEditados[item.clave] || item.valor"
-                    (input)="actualizarValor(item.clave, $any($event).target.value)"
+                    [value]="valoresEditados[item.clave] ?? item.valor"
+                    (input)="onChange($event, item)"
                   />
                 }
                 @default {
                   <input
                     type="text"
                     class="form-control"
-                    [value]="valoresEditados[item.clave] || item.valor"
-                    (input)="actualizarValor(item.clave, $any($event).target.value)"
+                    [value]="valoresEditados[item.clave] ?? item.valor"
+                    (input)="onChange($event, item)"
                   />
                 }
               }
