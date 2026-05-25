@@ -106,6 +106,8 @@
           <span class="material-symbols-outlined">account_tree</span>
           <span class="nav-label">Constructor EAV</span>
         </a>
+      }
+      @if (authStore.isAdmin() || authStore.permisos().includes('VER_AUDITORIA')) {
         <a routerLink="/app/admin/auditoria" routerLinkActive="active" class="nav-item" title="Auditoría Global">
           <span class="material-symbols-outlined">history</span>
           <span class="nav-label">Auditoría Global</span>

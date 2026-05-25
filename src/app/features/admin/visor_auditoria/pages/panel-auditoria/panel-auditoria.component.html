@@ -3,127 +3,131 @@
     <h2 class="page-title">Registro de Auditoría del Sistema</h2>
     <p class="page-subtitle">Trazabilidad de eventos críticos, modificaciones EAV y accesos</p>
   </div>
+  <div class="header-actions">
+    <button
+      type="button"
+      class="btn-export"
+      (click)="exportarLogsJson()"
+      [disabled]="isExportando()"
+      title="Exportar logs a JSON"
+    >
+      <span class="material-symbols-outlined">download</span>
+      {{ isExportando() ? 'Generando...' : 'Exportar JSON' }}
+    </button>
+    @if (store.totalLogs() > 0) {
+      <div class="header-badge">
+        <span class="material-symbols-outlined">format_list_numbered</span>
+        {{ store.totalLogs() }} registros
+      </div>
+    }
+  </div>
 </div>
 
-<div class="audit-dashboard">
-  <!-- Filtros superiores -->
-  <div class="audit-filters glass-panel">
-    <div class="filter-group">
-      <input
-        type="text"
-        class="filter-input"
-        placeholder="Buscar por acción, tabla, usuario, registro..."
-        [ngModel]="store.filtros().search"
-        (ngModelChange)="onSearchChange($event)"
-      />
-      <span class="material-symbols-outlined filter-icon">search</span>
-    </div>
+<app-filtros-auditoria
+  [filtros]="store.filtros()"
+  (filtrosChange)="onFiltrosChange($event)"
+  (resetFiltros)="onResetFiltros()"
+/>
 
-    <div class="filter-group">
-      <label class="filter-label">Desde</label>
-      <input
-        type="date"
-        class="filter-input"
-        [ngModel]="store.filtros().startDate"
-        (ngModelChange)="onFechaChange('startDate', $event)"
-      />
-    </div>
-
-    <div class="filter-group">
-      <label class="filter-label">Hasta</label>
-      <input
-        type="date"
-        class="filter-input"
-        [ngModel]="store.filtros().endDate"
-        (ngModelChange)="onFechaChange('endDate', $event)"
-      />
-    </div>
+@if (store.isLoading() && store.logs().length === 0) {
+  <div class="loading-state">
+    <div class="loading-spinner"></div>
+    <p>Consultando base de datos forense...</p>
   </div>
+}
 
-  @if (store.isLoading() && store.logs().length === 0) {
-    <div class="loading-state">
-      <div class="loading-spinner"></div>
-      <p>Consultando base de datos forense...</p>
+<div
+  class="table-container glass-panel grain-overlay"
+  (scroll)="onTableScroll($event)"
+  [style.height.px]="containerHeight()"
+>
+  <table class="audit-table">
+    <thead>
+      <tr>
+        <th (click)="onSort('fecha_cambio')" class="sortable">
+          <span class="header-content">
+            Fecha / Hora
+            <span class="material-symbols-outlined sort-icon">{{ sortIcon('fecha_cambio') }}</span>
+          </span>
+        </th>
+        <th>Usuario</th>
+        <th (click)="onSort('accion')" class="sortable">
+          <span class="header-content">
+            Acción
+            <span class="material-symbols-outlined sort-icon">{{ sortIcon('accion') }}</span>
+          </span>
+        </th>
+        <th (click)="onSort('tabla_afectada')" class="sortable">
+          <span class="header-content">
+            Módulo / Tabla
+            <span class="material-symbols-outlined sort-icon">{{ sortIcon('tabla_afectada') }}</span>
+          </span>
+        </th>
+        <th>Detalles Recopilados</th>
+        <th>Registro Afectado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr [style.height.px]="topPadding()"></tr>
+
+      @for (log of visibleLogs(); track log.id) {
+        <tr
+          [class.danger-row]="log.accion === 'DELETE'"
+          (click)="abrirModal(log)"
+          class="clickable-row"
+          [style.height.px]="60"
+        >
+          <td class="col-date">{{ log.fecha_cambio | date:'dd/MM/yyyy, h:mm a' }}</td>
+          <td class="col-user">
+            @if (log.usuario) {
+              <span class="user-badge" title="{{ log.usuario.documento }}">
+                {{ log.usuario.nombres }} {{ log.usuario.apellidos }}
+              </span>
+            } @else {
+              <span class="user-badge">#{{ log.id_usuario }}</span>
+            }
+          </td>
+          <td class="col-action">
+            <span class="action-badge" [ngClass]="(log.accion | lowercase) ?? ''">{{ log.accion }}</span>
+          </td>
+          <td class="col-module">{{ log.tabla_afectada }}</td>
+          <td class="col-details">
+            <details class="json-details">
+              <summary>Ver payload</summary>
+              <div class="json-inline">
+                <pre>{{ log.valores_nuevos | json }}</pre>
+              </div>
+            </details>
+          </td>
+          <td class="col-record">#{{ log.id_registro_afectado }}</td>
+        </tr>
+      } @empty {
+        @if (!store.isLoading()) {
+          <tr>
+            <td colspan="6" class="empty-state">
+              <span class="material-symbols-outlined empty-icon">history_off</span>
+              <p>No se encontraron registros de auditoría que mostrar.</p>
+            </td>
+          </tr>
+        }
+      }
+
+      <tr [style.height.px]="bottomPadding()"></tr>
+    </tbody>
+  </table>
+
+  @if (store.isLoadingMore()) {
+    <div class="lazy-loading-indicator">
+      <span class="material-symbols-outlined spinning">progress_activity</span>
+      <span>Cargando más registros...</span>
     </div>
   }
 
-  <div class="table-container glass-panel grain-overlay" (scroll)="onTableScroll($event)">
-    <table class="audit-table">
-      <thead>
-        <tr>
-          <th (click)="onSort('fecha_cambio')" class="sortable">
-            <span class="header-content">
-              Fecha / Hora
-              <span class="material-symbols-outlined sort-icon">{{ sortIcon('fecha_cambio') }}</span>
-            </span>
-          </th>
-          <th>Usuario</th>
-          <th (click)="onSort('accion')" class="sortable">
-            <span class="header-content">
-              Acción
-              <span class="material-symbols-outlined sort-icon">{{ sortIcon('accion') }}</span>
-            </span>
-          </th>
-          <th (click)="onSort('tabla_afectada')" class="sortable">
-            <span class="header-content">
-              Módulo / Tabla
-              <span class="material-symbols-outlined sort-icon">{{ sortIcon('tabla_afectada') }}</span>
-            </span>
-          </th>
-          <th>Detalles Recopilados</th>
-          <th>Registro Afectado</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (log of store.logs(); track log.id) {
-          <tr [class.danger-row]="log.accion === 'DELETE'" (click)="abrirModal(log)" class="clickable-row">
-            <td class="col-date">{{ log.fecha_cambio | date:'dd/MM/yyyy, h:mm a' }}</td>
-            <td class="col-user">
-              @if (log.usuario) {
-                <span class="user-badge" title="{{ log.usuario.documento }}">
-                  {{ log.usuario.nombres }} {{ log.usuario.apellidos }}
-                </span>
-              } @else {
-                <span class="user-badge">#{{ log.id_usuario }}</span>
-              }
-            </td>
-            <td class="col-action">
-              <span class="action-badge" [ngClass]="(log.accion | lowercase) ?? ''">{{ log.accion }}</span>
-            </td>
-            <td class="col-module">{{ log.tabla_afectada }}</td>
-            <td class="col-details">
-              <div class="details-content">
-                {{ (log.valores_nuevos | json)?.slice(0, 80) }}...
-              </div>
-            </td>
-            <td class="col-record">#{{ log.id_registro_afectado }}</td>
-          </tr>
-        } @empty {
-          @if (!store.isLoading()) {
-            <tr>
-              <td colspan="6" class="empty-state">
-                <span class="material-symbols-outlined empty-icon">history_off</span>
-                <p>No se encontraron registros de auditoría que mostrar.</p>
-              </td>
-            </tr>
-          }
-        }
-      </tbody>
-    </table>
-
-    @if (store.isLoadingMore()) {
-      <div class="lazy-loading-indicator">
-        <span class="material-symbols-outlined spinning">progress_activity</span>
-        <span>Cargando más registros...</span>
-      </div>
-    }
-
-    @if (!store.hasMore() && store.logs().length > 0) {
-      <div class="lazy-loading-indicator no-more">
-        <span>No hay más registros</span>
-      </div>
-    }
-  </div>
+  @if (!store.hasMore() && store.logs().length > 0) {
+    <div class="lazy-loading-indicator no-more">
+      <span>No hay más registros</span>
+    </div>
+  }
 </div>
 
 <!-- Modal JSON -->

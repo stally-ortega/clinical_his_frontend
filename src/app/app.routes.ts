@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { permissionGuard } from './core/guards/permission.guard';
 import { activeShiftGuard } from './core/guards/active-shift.guard';
 
 export const routes: Routes = [
@@ -68,34 +69,44 @@ export const routes: Routes = [
       {
         path: 'admin/usuarios',
         loadChildren: () =>
-          import('./features/admin/usuarios_abm/usuarios_abm.routes').then(m => m.ROUTES)
+          import('./features/admin/usuarios_abm/usuarios_abm.routes').then(m => m.ROUTES),
+        canActivate: [permissionGuard],
+        data: { permission: 'GESTIONAR_USUARIOS' }
       },
       {
         path: 'admin/roles',
         loadChildren: () =>
-          import('./features/admin/roles_permisos/roles_permisos.routes').then(m => m.ROUTES)
+          import('./features/admin/roles_permisos/roles_permisos.routes').then(m => m.ROUTES),
+        canActivate: [permissionGuard],
+        data: { permission: 'CONFIGURAR_SISTEMA' }
       },
       {
         path: 'admin/catalogos',
         loadChildren: () =>
-          import('./features/admin/catalogos_maestros/catalogos_maestros.routes').then(m => m.ROUTES)
+          import('./features/admin/catalogos_maestros/catalogos_maestros.routes').then(m => m.ROUTES),
+        canActivate: [permissionGuard],
+        data: { permission: 'CONFIGURAR_SISTEMA' }
       },
       {
         path: 'admin/configuracion',
         loadComponent: () =>
           import('./features/admin/configuracion_global/pages/panel-configuracion/panel-configuracion.component').then(m => m.PanelConfiguracionComponent),
-        canActivate: [roleGuard],
-        data: { roles: ['ADMIN'] }
+        canActivate: [roleGuard, permissionGuard],
+        data: { roles: ['ADMIN'], permission: 'CONFIGURAR_SISTEMA' }
       },
       {
         path: 'admin/ubicaciones',
         loadChildren: () =>
-          import('./features/admin/constructor_ubicaciones/constructor_ubicaciones.routes').then(m => m.ROUTES)
+          import('./features/admin/constructor_ubicaciones/constructor_ubicaciones.routes').then(m => m.ROUTES),
+        canActivate: [permissionGuard],
+        data: { permission: 'CONFIGURAR_SISTEMA' }
       },
       {
         path: 'admin/auditoria',
         loadChildren: () =>
-          import('./features/admin/visor_auditoria/visor_auditoria.routes').then(m => m.ROUTES)
+          import('./features/admin/visor_auditoria/visor_auditoria.routes').then(m => m.ROUTES),
+        canActivate: [permissionGuard],
+        data: { permission: 'VER_AUDITORIA' }
       },
       // ── Fallback ───────────────────────────────────────────────────
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }

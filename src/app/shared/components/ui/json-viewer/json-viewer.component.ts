@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -6,7 +6,8 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './json-viewer.component.html',
-  styleUrl: './json-viewer.component.scss'
+  styleUrl: './json-viewer.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JsonViewerComponent {
   readonly data = input.required<unknown>();

@@ -1,0 +1,45 @@
+<div class="filtros-auditoria glass-panel" [formGroup]="form">
+  <div class="filtro-grupo">
+    <span class="material-symbols-outlined filtro-icon">search</span>
+    <input
+      type="text"
+      class="filtro-input"
+      placeholder="Buscar por acción, tabla, usuario, registro..."
+      formControlName="search"
+    />
+  </div>
+
+  <div class="filtro-grupo">
+    <label class="filtro-label">Desde</label>
+    <input type="date" class="filtro-input" formControlName="startDate" />
+  </div>
+
+  <div class="filtro-grupo">
+    <label class="filtro-label">Hasta</label>
+    <input type="date" class="filtro-input" formControlName="endDate" />
+  </div>
+
+  <div class="filtro-grupo">
+    <label class="filtro-label">Módulo</label>
+    <select class="filtro-input" formControlName="modulo">
+      @for (opt of moduloOptions; track opt.value) {
+        <option [value]="opt.value">{{ opt.label }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="filtro-grupo">
+    <label class="filtro-label">ID Usuario</label>
+    <input
+      type="text"
+      class="filtro-input"
+      placeholder="Ej: 123"
+      formControlName="usuarioId"
+    />
+  </div>
+
+  <button type="button" class="btn-reset" (click)="onReset()">
+    <span class="material-symbols-outlined">restart_alt</span>
+    Limpiar
+  </button>
+</div>

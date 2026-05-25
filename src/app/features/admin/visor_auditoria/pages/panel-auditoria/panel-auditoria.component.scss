@@ -1,5 +1,62 @@
 .page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.875rem;
+  border: 1px solid rgba(174, 179, 181, 0.25);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--on-surface);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, opacity 0.2s;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--primary);
+    color: #ffffff;
+  }
+
+  .material-symbols-outlined {
+    font-size: 18px;
+  }
+}
+
+.header-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(14, 165, 233, 0.1);
+  color: #0369a1;
+  border: 1px solid rgba(14, 165, 233, 0.2);
+  border-radius: var(--radius-full);
+  padding: 0.4rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  .material-symbols-outlined {
+    font-size: 18px;
+  }
 }
 
 .page-title {
@@ -81,7 +138,7 @@
 }
 
 .table-container {
-  max-height: 70vh;
+  height: 500px;
   overflow-y: auto;
   overflow-x: auto;
   background: rgba(255, 255, 255, 0.70);
@@ -356,6 +413,53 @@
     color: var(--on-surface-variant);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+  }
+}
+
+.json-details {
+  summary {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--primary);
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::before {
+      content: '▸';
+      font-size: 0.7rem;
+      transition: transform 0.2s;
+    }
+  }
+
+  &[open] summary::before {
+    transform: rotate(90deg);
+  }
+}
+
+.json-inline {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(174, 179, 181, 0.1);
+  max-height: 120px;
+  overflow-y: auto;
+
+  pre {
+    margin: 0;
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: var(--on-surface-variant);
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 }
 

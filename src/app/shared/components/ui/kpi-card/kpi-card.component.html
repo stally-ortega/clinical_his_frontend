@@ -1,0 +1,12 @@
+<div class="kpi-card {{ colorClass }}">
+  <div class="kpi-header">
+    <div class="kpi-icon">
+      <span class="material-symbols-outlined">{{ icon }}</span>
+    </div>
+    @if (tendencia) {
+      <span class="kpi-tendencia" [class.negativa]="tendencia.startsWith('-')">{{ tendencia }}</span>
+    }
+  </div>
+  <div class="kpi-valor">{{ valor }}</div>
+  <div class="kpi-subtitulo">{{ subtitulo }}</div>
+</div>

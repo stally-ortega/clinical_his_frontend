@@ -1,0 +1,78 @@
+.filtros-auditoria {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  border-radius: var(--radius-lg);
+}
+
+.filtro-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1 1 160px;
+  min-width: 140px;
+}
+
+.filtro-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.filtro-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(174, 179, 181, 0.25);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+  color: var(--on-surface);
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(0, 106, 106, 0.08);
+  }
+}
+
+.filtro-icon {
+  position: absolute;
+  margin-top: 1.75rem;
+  margin-left: 0.65rem;
+  font-size: 1.1rem;
+  color: var(--on-surface-variant);
+  pointer-events: none;
+}
+
+.filtro-grupo:has(.filtro-icon) .filtro-input {
+  padding-left: 2.25rem;
+}
+
+.btn-reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid rgba(174, 179, 181, 0.25);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.08);
+    color: #dc2626;
+  }
+
+  .material-symbols-outlined {
+    font-size: 1rem;
+  }
+}

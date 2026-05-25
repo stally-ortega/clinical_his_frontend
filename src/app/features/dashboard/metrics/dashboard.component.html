@@ -3,26 +3,60 @@
     <h2 class="page-title">Panel de Control</h2>
     <p class="page-subtitle">Vista general del estado clínico y operativo del hospital</p>
   </div>
-  <div class="header-badge">
-    <span class="material-symbols-outlined">monitoring</span>
-    Tiempo real
+  <div class="header-actions">
+    <button
+      type="button"
+      class="btn-export"
+      (click)="exportarMetricasCsv()"
+      [disabled]="isExportando()"
+      title="Exportar métricas a CSV"
+    >
+      <span class="material-symbols-outlined">download</span>
+      {{ isExportando() ? 'Generando...' : 'Exportar CSV' }}
+    </button>
+    <div class="header-badge">
+      <span class="material-symbols-outlined">monitoring</span>
+      @if (store.lastUpdated()) {
+        <span>Actualizado {{ store.lastUpdated() | date:'shortTime' }}</span>
+      } @else {
+        <span>Tiempo real</span>
+      }
+    </div>
   </div>
 </div>
 
 <div class="metrics-grid">
-  @for (metrica of metricas; track metrica.titulo) {
-    <div class="metric-card glass-panel grain-overlay" [ngClass]="metrica.colorClass">
-      <div class="card-icon-wrapper">
-        <span class="material-symbols-outlined card-icon">{{ metrica.icon }}</span>
-      </div>
-      <div class="card-body">
-        <p class="card-label">{{ metrica.titulo }}</p>
-        <span class="card-value">{{ metrica.valor }}</span>
-        <p class="card-sub">{{ metrica.subtitulo }}</p>
-      </div>
-      <div class="card-glow"></div>
-    </div>
+  @for (metrica of store.metricas(); track metrica.titulo) {
+    <app-kpi-card
+      [icon]="metrica.icon"
+      [titulo]="metrica.titulo"
+      [valor]="metrica.valor"
+      [subtitulo]="metrica.subtitulo"
+      [colorClass]="metrica.colorClass"
+      [tendencia]="metrica.tendencia"
+    />
   }
+</div>
+
+<!-- Gráficos con defer para reducir TTI -->
+<div class="charts-section">
+  <div class="chart-card glass-panel">
+    <h3 class="chart-title"><span class="material-symbols-outlined">bar_chart</span> Ingresos Semanales</h3>
+    @defer (on viewport) {
+      <app-bar-chart [data]="barChartData" ariaLabel="Ingresos de pacientes por día de la semana" />
+    } @placeholder {
+      <div class="chart-placeholder">Cargando gráfico...</div>
+    }
+  </div>
+
+  <div class="chart-card glass-panel">
+    <h3 class="chart-title"><span class="material-symbols-outlined">show_chart</span> Ocupación de Camas</h3>
+    @defer (on viewport) {
+      <app-line-chart [data]="lineChartData" ariaLabel="Ocupación de camas por hora" />
+    } @placeholder {
+      <div class="chart-placeholder">Cargando gráfico...</div>
+    }
+  </div>
 </div>
 
 <!-- Sección de acciones rápidas -->
