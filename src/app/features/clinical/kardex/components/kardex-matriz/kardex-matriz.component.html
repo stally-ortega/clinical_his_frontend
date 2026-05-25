@@ -1,0 +1,61 @@
+<div class="kardex-matriz-wrapper">
+  @if (isLoading()) {
+    <div class="matriz-loading">
+      <div class="loading-spinner"></div>
+      <span>Cargando matriz de medicación...</span>
+    </div>
+  }
+
+  @if (!isLoading() && prescripciones().length === 0) {
+    <div class="matriz-empty">
+      <span class="material-symbols-outlined">medication</span>
+      <p>No hay prescripciones activas para este período.</p>
+    </div>
+  }
+
+  @if (prescripciones().length > 0) {
+    <div class="matriz-scroll-container">
+      <table class="kardex-table">
+        <thead>
+          <tr>
+            <th class="sticky-col">Medicamento</th>
+            @for (hora of horas; track hora) {
+              <th>{{ hora.toString().padStart(2, '0') }}:00</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of prescripciones(); track p.id) {
+            <tr>
+              <td class="sticky-col med-name">
+                <strong>{{ p.medicamento }}</strong>
+                <span class="med-dosis">{{ p.dosis }} {{ p.medida_dosis }}</span>
+              </td>
+              @for (hora of horas; track hora) {
+                <td class="cell-dosis">
+                  @if (getCelda(p, hora); as dosis) {
+                    <div
+                      class="dosis-badge"
+                      [class.aplicada]="dosis.estado_dosis === 'APLICADA'"
+                      [class.pendiente]="dosis.estado_dosis === 'PENDIENTE'"
+                      [class.no-aplicada]="dosis.estado_dosis === 'NO_APLICADA'"
+                      [title]="dosis.estado_dosis + (dosis.fecha_hora_aplicacion ? ' - ' + (dosis.fecha_hora_aplicacion | date:'shortTime') : '')"
+                    >
+                      @if (dosis.estado_dosis === 'PENDIENTE' && puedeAplicar()) {
+                        <button class="btn-aplicar" (click)="onAplicar(dosis.id)"></button>
+                      } @else {
+                        <span class="dosis-dot"></span>
+                      }
+                    </div>
+                  } @else {
+                    <span class="cell-empty">—</span>
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

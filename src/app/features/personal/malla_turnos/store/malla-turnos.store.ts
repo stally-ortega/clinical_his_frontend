@@ -4,15 +4,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { TurnosService } from '@features/personal/logueo_turnos/services/turnos.service';
-
-export interface TurnoProgramado {
-  id?: number;
-  id_usuario: number;
-  nombre_usuario?: string;
-  fecha_inicio: string;
-  fecha_fin: string;
-  tipo_turno: string;
-}
+import { TurnoProgramado } from '@core/models/turno.model';
 
 export type MallaTurnosState = {
   turnosProgramados: TurnoProgramado[];
@@ -63,29 +55,25 @@ export const MallaTurnosStore = signalStore(
           switchMap(({ mes, anio }) =>
             turnosService.getMallaMensual(mes, anio).pipe(
               tapResponse({
-                next: (res: TurnoProgramado[] | { data?: TurnoProgramado[] }) => {
-                  const data = (res as { data?: TurnoProgramado[] }).data || res || [];
+                next: (res) => {
+                  const data = res.data ?? [];
                   patchState(store, { turnosProgramados: Array.isArray(data) ? data : [], isLoading: false });
                 },
-                error: (err) => patchState(store, { error: 'Error al cargar malla de turnos', isLoading: false }),
+                error: () => patchState(store, { error: 'Error al cargar malla de turnos', isLoading: false }),
               })
             )
           )
         )
       ),
 
-      asignarTurno: rxMethod<{ id_usuario: number; fecha_inicio: string; fecha_fin: string; tipo_turno: string }>(
+      asignarTurno: rxMethod<{ id_usuario: number; fecha_inicio: string; fecha_fin: string; tipo_turno: import('@core/models/turno.model').TipoTurno }>(
         pipe(
           tap(() => patchState(store, { isSaving: true, error: null, successMessage: null })),
           switchMap((payload) =>
             turnosService.programarTurno(payload).pipe(
               tapResponse({
-                next: (res: unknown) => {
+                next: () => {
                   patchState(store, { isSaving: false, successMessage: 'Turno programado correctamente' });
-                  // Recargamos el mes actual
-                  const mes = store.mesActual();
-                  const anio = store.anioActual();
-                  // No podemos despachar recursivamente pero idealmente exponemos esto
                 },
                 error: (err: { error?: { message?: string }; message?: string }) => patchState(store, { error: err.error?.message || 'Error al programar turno', isSaving: false }),
               })

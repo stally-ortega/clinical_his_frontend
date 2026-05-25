@@ -1,18 +1,21 @@
-import { Component, inject, OnInit, signal, effect, computed } from '@angular/core';
+import { Component, inject, OnInit, signal, effect, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MallaTurnosStore } from '@features/personal/malla_turnos/store/malla-turnos.store';
 import { UsuariosService } from '@features/admin/usuarios_abm/services/usuarios.service';
 import { Usuario } from '@core/models/auth.model';
+import { TipoTurno } from '@core/models/turno.model';
 import { ButtonComponent } from '@shared/components/ui/button/button.component';
 import { FormInputComponent } from '@shared/components/ui/form-input/form-input.component';
+import { HasPermissionDirective } from '@shared/directives/has-permission.directive';
 
 @Component({
   selector: 'app-malla-calendario',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonComponent, FormInputComponent],
+  imports: [CommonModule, ReactiveFormsModule, ButtonComponent, FormInputComponent, HasPermissionDirective],
   templateUrl: './malla-calendario.component.html',
-  styleUrl: './malla-calendario.component.scss'
+  styleUrl: './malla-calendario.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MallaCalendarioComponent implements OnInit {
   readonly store = inject(MallaTurnosStore);
@@ -34,7 +37,7 @@ export class MallaCalendarioComponent implements OnInit {
 
   formTurno: FormGroup = this.fb.group({
     id_usuario: ['', Validators.required],
-    tipo_turno: ['MANANA', Validators.required],
+    tipo_turno: ['MANANA' as TipoTurno, Validators.required],
     fecha_inicio: ['', Validators.required],
     fecha_fin: ['', Validators.required]
   });

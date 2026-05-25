@@ -1,0 +1,106 @@
+.task-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  &.completed {
+    opacity: 0.65;
+    border-left: 4px solid var(--color-success);
+  }
+
+  &:not(.completed) {
+    border-left: 4px solid var(--color-warning);
+  }
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-status {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--border-radius);
+  background: var(--surface-border);
+  color: var(--text-secondary);
+
+  &.pending {
+    background: rgba(234, 179, 8, 0.15);
+    color: var(--color-warning);
+  }
+}
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+
+  .material-symbols-outlined {
+    font-size: 0.9rem;
+  }
+}
+
+.task-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.task-desc {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-color);
+}
+
+.task-patient,
+.task-assignee {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.task-footer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.completion-input {
+  flex: 1;
+
+  .obs-input {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--border-radius);
+    background: var(--surface-ground);
+    color: var(--text-color);
+    font-size: 0.85rem;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}

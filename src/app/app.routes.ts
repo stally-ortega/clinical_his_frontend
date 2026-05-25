@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { activeShiftGuard } from './core/guards/active-shift.guard';
 
 export const routes: Routes = [
   {
@@ -27,7 +28,8 @@ export const routes: Routes = [
       },
       {
         path: 'dashboard/tareas',
-        loadChildren: () => import('./features/dashboard/tareas/tareas.routes').then(m => m.ROUTES)
+        loadChildren: () => import('./features/dashboard/tareas/tareas.routes').then(m => m.ROUTES),
+        canActivate: [activeShiftGuard]
       },
       // ── Clínico ────────────────────────────────────────────────────
       {
@@ -38,7 +40,8 @@ export const routes: Routes = [
       {
         path: 'kardex/:id',
         loadChildren: () =>
-          import('./features/clinical/kardex/kardex.routes').then(m => m.KARDEX_ROUTES)
+          import('./features/clinical/kardex/kardex.routes').then(m => m.KARDEX_ROUTES),
+        canActivate: [activeShiftGuard]
       },
       {
         path: 'prescribir/:idPaciente',

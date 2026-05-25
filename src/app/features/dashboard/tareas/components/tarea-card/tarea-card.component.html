@@ -1,0 +1,40 @@
+<article class="task-card glass-panel grain-overlay" [class.completed]="tarea().estado === 'COMPLETADO'"
+  [attr.title]="!puedeCompletar() ? tooltipDisabled() : null">
+  <header class="task-header">
+    <span class="task-status" [class.pending]="tarea().estado === 'PENDIENTE'">
+      {{ tarea().estado }}
+    </span>
+    <div class="task-meta">
+      <span class="material-symbols-outlined">event</span>
+      {{ tarea().fecha_hora_programada | date:'short' }}
+    </div>
+  </header>
+
+  <div class="task-body">
+    <h4 class="task-desc">{{ tarea().descripcion }}</h4>
+    <p class="task-patient">Paciente #{{ tarea().id_paciente }}</p>
+    <p class="task-assignee">Asignado a: {{ tarea().id_usuario_asignado ? 'Usuario #' + tarea().id_usuario_asignado : 'Pool General' }}</p>
+  </div>
+
+  @if (tarea().estado === 'PENDIENTE') {
+    <div class="task-footer">
+      <div class="completion-input">
+        <input
+          type="text"
+          placeholder="Observaciones de cierre..."
+          class="obs-input"
+          [value]="observaciones"
+          (input)="onObservacionesChange($event)"
+          [disabled]="!puedeCompletar()"
+        />
+      </div>
+      <app-button
+        text="Completar"
+        icon="check_circle"
+        variant="outline"
+        [disabled]="!puedeCompletar()"
+        (onClick)="onCompletar()"
+      ></app-button>
+    </div>
+  }
+</article>

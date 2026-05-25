@@ -3,8 +3,11 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PacientesStore } from '@features/clinical/pacientes/store/pacientes.store';
 import { EvolucionesStore } from '@features/clinical/historia-clinica/store/evoluciones.store';
+import { NotasStore } from '@features/clinical/historia-clinica/store/notas.store';
 import { EvolucionFormComponent } from '@features/clinical/historia-clinica/components/evolucion-form/evolucion-form.component';
 import { EvolucionesTimelineComponent } from '@features/clinical/historia-clinica/components/evoluciones-timeline/evoluciones-timeline.component';
+import { NotaEnfermeriaFormComponent } from '@features/clinical/historia-clinica/components/nota-enfermeria-form/nota-enfermeria-form.component';
+import { NotasTimelineComponent } from '@features/clinical/historia-clinica/components/notas-timeline/notas-timeline.component';
 import { ButtonComponent } from '@shared/components/ui/button/button.component';
 import { ConfirmDialogComponent } from '@shared/components/ui/confirm-dialog/confirm-dialog.component';
 import { EstadoPaciente } from '@core/models/estado-paciente.enum';
@@ -23,6 +26,8 @@ type Tab = 'evoluciones' | 'kardex' | 'notas';
     ConfirmDialogComponent,
     EvolucionFormComponent,
     EvolucionesTimelineComponent,
+    NotaEnfermeriaFormComponent,
+    NotasTimelineComponent,
     HasPermissionDirective,
   ],
   templateUrl: './paciente-detalle.component.html',
@@ -31,6 +36,7 @@ type Tab = 'evoluciones' | 'kardex' | 'notas';
 export class PacienteDetalleComponent implements OnInit {
   readonly pacientesStore = inject(PacientesStore);
   readonly evolucionesStore = inject(EvolucionesStore);
+  readonly notasStore = inject(NotasStore);
   private readonly authStore = inject(AuthStore);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -70,6 +76,7 @@ export class PacienteDetalleComponent implements OnInit {
     this.pacienteId.set(idParam);
     this.pacientesStore.cargarPacientePorId(idParam);
     this.evolucionesStore.cargarEvoluciones(idParam);
+    this.notasStore.cargarNotas(idParam);
   }
 
   setTab(tab: Tab): void {
@@ -102,6 +109,17 @@ export class PacienteDetalleComponent implements OnInit {
   cancelarConfirmacion(): void {
     this.confirmacionAbierta.set(false);
     this.datosEvolucionPendientes.set(null);
+  }
+
+  onSubmitNota(data: { titulo: string; descripcion: string }): void {
+    const id = this.pacienteId();
+    if (id == null) return;
+    this.notasStore.agregarNota({
+      id_paciente: id,
+      ...data,
+      autor: this.autorActual,
+      fecha: new Date().toISOString(),
+    });
   }
 
   private get autorActual(): string {

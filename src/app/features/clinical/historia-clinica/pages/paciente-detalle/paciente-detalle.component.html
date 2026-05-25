@@ -57,6 +57,7 @@
     [class.tab-btn--active]="activeTab() === 'kardex'"
     (click)="setTab('kardex')">Kardex</button>
   <button
+    *appHasPermission="'VER_NOTAS_ENFERMERIA'"
     class="tab-btn"
     [class.tab-btn--active]="activeTab() === 'notas'"
     (click)="setTab('notas')">Notas</button>
@@ -104,12 +105,19 @@
     </div>
   }
   @case ('notas') {
-    <div class="tab-panel tab-panel--center">
-      <p class="tab-placeholder">Notas de Enfermería</p>
-      <app-button
-        text="Ver Historia Clínica"
-        variant="outline"
-        [routerLink]="['/app/pacientes', pacienteId(), 'historia']"></app-button>
+    <div class="tab-panel">
+      <div class="panel-section">
+        <app-nota-enfermeria-form
+          [disabled]="!puedeRegistrarEvolucion()"
+          (submitNota)="onSubmitNota($event)"></app-nota-enfermeria-form>
+      </div>
+
+      <div class="panel-section">
+        <h3 class="section-title">Bitácora de Enfermería</h3>
+        <app-notas-timeline
+          [notas]="notasStore.notas()"
+          [isLoading]="notasStore.isLoading()"></app-notas-timeline>
+      </div>
     </div>
   }
 }

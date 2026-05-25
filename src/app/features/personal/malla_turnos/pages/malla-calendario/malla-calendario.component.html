@@ -9,7 +9,7 @@
         <app-button variant="outline" icon="chevron_right" (click)="navegarMes(1)"></app-button>
       </div>
 
-      <div class="header-actions">
+      <div class="header-actions" *appHasPermission="'PROGRAMAR_TURNOS'">
         <app-button variant="primary" text="Programar Turno" icon="event_available" (click)="abrirProgramacion()"></app-button>
       </div>
     </header>
@@ -52,7 +52,7 @@
 
   <!-- Panel Lateral (Formulario) -->
   @if (showForm()) {
-    <aside class="side-panel glass-panel">
+    <aside class="side-panel glass-panel" *appHasPermission="'PROGRAMAR_TURNOS'">
       <div class="panel-header">
         <h3>Programar Turno</h3>
         <button class="close-btn" (click)="cerrarProgramacion()">

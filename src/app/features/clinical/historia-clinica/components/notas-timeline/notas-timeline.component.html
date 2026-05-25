@@ -1,0 +1,35 @@
+<div class="notas-timeline">
+  @if (isLoading()) {
+    <div class="timeline-skeleton">
+      <span>Cargando notas de enfermería...</span>
+    </div>
+  }
+
+  @if (!isLoading() && notas().length === 0) {
+    <div class="timeline-empty">
+      <span class="material-symbols-outlined">assignment</span>
+      <p>No hay notas de enfermería registradas.</p>
+    </div>
+  }
+
+  @for (nota of notas(); track nota.id) {
+    <article class="timeline-item nota-item">
+      <div class="item-marker">
+        <span class="material-symbols-outlined">healing</span>
+      </div>
+      <div class="item-body">
+        <header class="item-header">
+          <h4 class="item-title">{{ nota.titulo }}</h4>
+          <time class="item-time">{{ formatoFechaHora(nota.fecha) }}</time>
+        </header>
+        <p class="item-description">{{ nota.descripcion }}</p>
+        <footer class="item-footer">
+          <span class="item-author">
+            <span class="material-symbols-outlined">person</span>
+            {{ nota.autor }}
+          </span>
+        </footer>
+      </div>
+    </article>
+  }
+</div>

@@ -2,6 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
+import {
+  TurnoActivo,
+  TurnoProgramado,
+  IniciarTurnoDto,
+  FinalizarTurnoDto,
+  ProgramarTurnoDto,
+  TurnoApiResponse,
+} from '@core/models/turno.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,19 +18,19 @@ export class TurnosService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
 
-  iniciarTurno(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/turnos/iniciar`, {});
+  iniciarTurno(dto?: IniciarTurnoDto): Observable<TurnoApiResponse<TurnoActivo>> {
+    return this.http.post<TurnoApiResponse<TurnoActivo>>(`${this.apiUrl}/turnos/iniciar`, dto ?? {});
   }
 
-  finalizarTurno(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/turnos/finalizar`, {});
+  finalizarTurno(dto?: FinalizarTurnoDto): Observable<TurnoApiResponse<TurnoActivo>> {
+    return this.http.post<TurnoApiResponse<TurnoActivo>>(`${this.apiUrl}/turnos/finalizar`, dto ?? {});
   }
 
-  getMallaMensual(mes: number, anio: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/turnos/malla?mes=${mes}&anio=${anio}`);
+  getMallaMensual(mes: number, anio: number): Observable<TurnoApiResponse<TurnoProgramado[]>> {
+    return this.http.get<TurnoApiResponse<TurnoProgramado[]>>(`${this.apiUrl}/turnos/malla?mes=${mes}&anio=${anio}`);
   }
 
-  programarTurno(payload: { id_usuario: number, fecha_inicio: string, fecha_fin: string, tipo_turno: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/turnos/programar`, payload);
+  programarTurno(payload: ProgramarTurnoDto): Observable<TurnoApiResponse<TurnoProgramado>> {
+    return this.http.post<TurnoApiResponse<TurnoProgramado>>(`${this.apiUrl}/turnos/programar`, payload);
   }
 }

@@ -2,25 +2,32 @@ import { Component, OnInit, inject, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { KardexStore } from '@features/clinical/kardex/store/kardex.store';
+import { KardexStore, KardexFiltro } from '@features/clinical/kardex/store/kardex.store';
+import { TurnosStore } from '@features/personal/logueo_turnos/store/turnos.store';
 import { ButtonComponent } from '@shared/components/ui/button/button.component';
+import { KardexMatrizComponent } from '@features/clinical/kardex/components/kardex-matriz/kardex-matriz.component';
 
 @Component({
   selector: 'app-kardex-paciente',
   standalone: true,
-  imports: [CommonModule, ButtonComponent],
+  imports: [CommonModule, ButtonComponent, KardexMatrizComponent],
   templateUrl: './kardex-paciente.component.html',
   styleUrl: './kardex-paciente.component.scss'
 })
 export class KardexPacienteComponent implements OnInit {
-  // Services & Store
   readonly store = inject(KardexStore);
+  readonly turnosStore = inject(TurnosStore);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
-  // State
   pacienteId = signal<number | null>(null);
   isOffline = signal<boolean>(!navigator.onLine);
+
+  filtros: { key: KardexFiltro; label: string }[] = [
+    { key: 'HOY', label: 'Hoy' },
+    { key: 'AYER', label: 'Ayer' },
+    { key: 'PENDIENTES', label: 'Solo pendientes' },
+  ];
 
   @HostListener('window:offline')
   setOffline() {
@@ -40,6 +47,10 @@ export class KardexPacienteComponent implements OnInit {
     } else {
       this.router.navigate(['/app/pacientes']);
     }
+  }
+
+  cambiarFiltro(filtro: KardexFiltro): void {
+    this.store.setFiltro(filtro);
   }
 
   aplicarDosis(idDosis: number): void {

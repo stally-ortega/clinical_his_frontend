@@ -1,22 +1,26 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { TareasStore } from '@features/dashboard/tareas/store/tareas.store';
+import { TurnosStore } from '@features/personal/logueo_turnos/store/turnos.store';
 import { AuthStore } from '@store/auth.store';
 import { FormInputComponent } from '@shared/components/ui/form-input/form-input.component';
 import { ButtonComponent } from '@shared/components/ui/button/button.component';
+import { TareaCardComponent } from '@features/dashboard/tareas/components/tarea-card/tarea-card.component';
 
 @Component({
   selector: 'app-panel-tareas',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormInputComponent, ButtonComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormInputComponent, ButtonComponent, TareaCardComponent],
   templateUrl: './panel-tareas.component.html',
-  styleUrl: './panel-tareas.component.scss'
+  styleUrl: './panel-tareas.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PanelTareasComponent implements OnInit {
+export class PanelTareasComponent implements OnInit, OnDestroy {
   public store = inject(TareasStore);
   public authStore = inject(AuthStore);
+  public turnosStore = inject(TurnosStore);
   private fb = inject(FormBuilder);
 
   form: FormGroup = this.fb.group({
@@ -25,11 +29,13 @@ export class PanelTareasComponent implements OnInit {
     fecha_hora_programada: ['', Validators.required]
   });
 
-  // Trackear observación temporal por tarea en un mapa reactivo en el componente
-  observacionesCierre: { [key: number]: string } = {};
-
   ngOnInit(): void {
     this.store.cargarTareas();
+    this.store.iniciarPolling(30000);
+  }
+
+  ngOnDestroy(): void {
+    this.store.detenerPolling();
   }
 
   onSubmit(): void {
@@ -45,17 +51,14 @@ export class PanelTareasComponent implements OnInit {
       fecha_hora_programada: new Date(val.fecha_hora_programada).toISOString()
     };
 
-    // Agregar y resetear si el control es exitoso
     this.store.agregarTarea(payload);
     this.form.reset();
   }
 
-  onCompletar(id: number): void {
-    const ob = this.observacionesCierre[id] || '';
-    this.store.marcarCompletada({ id, observaciones: ob });
-  }
-
-  setObservacion(id: number, event: Event): void {
-    this.observacionesCierre[id] = (event.target as HTMLInputElement)?.value || '';
+  onCompletar({ id, observaciones }: { id: number; observaciones: string }): void {
+    if (!this.turnosStore.hasTurnoActivo()) {
+      return;
+    }
+    this.store.marcarCompletada({ id, observaciones });
   }
 }

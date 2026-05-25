@@ -3,9 +3,21 @@
   <div class="header-left">
     <app-button icon="arrow_back" variant="outline" (onClick)="goBack()"></app-button>
     <div>
-      <h2 class="page-title">Kardex de Medicación - Hoy</h2>
+      <h2 class="page-title">Kardex de Medicación</h2>
       <p class="page-subtitle">Paciente #{{ pacienteId() }}</p>
     </div>
+  </div>
+
+  <div class="filtros-kardex">
+    @for (f of filtros; track f.key) {
+      <button
+        class="filtro-btn"
+        [class.active]="store.filtro() === f.key"
+        (click)="cambiarFiltro(f.key)"
+      >
+        {{ f.label }}
+      </button>
+    }
   </div>
 </div>
 
@@ -20,10 +32,10 @@
 }
 
 <!-- Loading & Error -->
-@if (store.isLoading() && store.prescripciones().length === 0) {
+@if (store.isLoading() && !store.tieneDatos()) {
   <div class="loading-state">
     <div class="loading-spinner"></div>
-    <p>Cargando prescripciones activas...</p>
+    <p>Cargando kardex...</p>
   </div>
 }
 @if (store.error()) {
@@ -33,67 +45,73 @@
   </div>
 }
 
-<!-- Prescripciones Grid Layout -->
-<section class="kardex-board">
-  @for (prescripcion of store.prescripciones(); track prescripcion.id) {
-    <article class="kardex-card glass-panel grain-overlay">
-      
-      <!-- Detalle principal de la prescripción -->
-      <header class="card-header">
-        <h3 class="med-name">{{ prescripcion.medicamento }}</h3>
-        <div class="med-vitals">
-          <span class="med-badge">
-            <span class="material-symbols-outlined icon-small">vaccines</span>
-            {{ prescripcion.dosis }} {{ prescripcion.medida_dosis }}
-          </span>
-          <span class="med-badge outline">
-            {{ prescripcion.via_aplicacion }}
-          </span>
-        </div>
-        <p class="med-frequency">Frecuencia: Cada {{ prescripcion.frecuencia_horas }}h</p>
-      </header>
-      
-      <!-- Sub-sección: Dosis programadas -->
-      <div class="dosis-list">
-        @for (dosis of prescripcion.dosis_programadas; track dosis.id) {
-          <div class="dosis-item" [class.dosis-item--aplicada]="dosis.estado_dosis === 'APLICADA'">
-            
-            <div class="dosis-time">
-              <span class="material-symbols-outlined icon-time">schedule</span>
-              {{ dosis.fecha_hora_programada | date:'HH:mm' }}
-            </div>
-            
-            <div class="dosis-actions">
-              @if (dosis.estado_dosis === 'APLICADA') {
-                <span class="badge-success">
-                  <span class="material-symbols-outlined icon-small">check_circle</span>
-                  Administrado
-                </span>
-                <span class="time-applied">{{ dosis.fecha_hora_aplicacion | date:'HH:mm' }}</span>
-              } @else {
-                <app-button
-                  text="Aplicar"
-                  variant="outline"
-                  [isLoading]="store.isLoading()"
-                  (onClick)="aplicarDosis(dosis.id)">
-                </app-button>
-              }
-            </div>
-            
-          </div>
-        } @empty {
-          <div class="empty-dosis">No hay dosis programadas para hoy.</div>
-        }
-      </div>
+<!-- Matriz de Medicación con @defer -->
+@defer (on viewport) {
+  <section class="kardex-section">
+    <h3 class="section-title">Matriz de Medicación</h3>
+    <app-kardex-matriz
+      [prescripciones]="store.prescripcionesFiltradas()"
+      [isLoading]="store.isLoading()"
+      [puedeAplicar]="turnosStore.hasTurnoActivo()"
+      (aplicarDosis)="aplicarDosis($event)"
+    ></app-kardex-matriz>
+  </section>
+} @placeholder {
+  <div class="defer-placeholder">
+    <div class="loading-spinner"></div>
+    <p>Cargando matriz de medicación...</p>
+  </div>
+}
 
-    </article>
-  } @empty {
-    @if (!store.isLoading()) {
-      <div class="empty-state glass-panel">
-        <span class="material-symbols-outlined empty-icon">medication_liquid</span>
-        <h3>Sin medicación para hoy</h3>
-        <p>Este paciente no tiene prescripciones activas en el horario consultado.</p>
+<!-- Resumen de Tareas, Notas y Evoluciones -->
+@if (store.tieneDatos()) {
+  <section class="kardex-resumen">
+    @if (store.tareas().length > 0) {
+      <div class="resumen-card glass-panel">
+        <h4 class="resumen-title">
+          <span class="material-symbols-outlined">assignment</span>
+          Tareas Pendientes ({{ store.tareas().length }})
+        </h4>
+        <ul class="resumen-list">
+          @for (t of store.tareas(); track t.id) {
+            <li>{{ t.descripcion }} — <time>{{ t.fecha_hora_programada | date:'shortTime' }}</time></li>
+          }
+        </ul>
       </div>
     }
-  }
-</section>
+
+    @if (store.notas().length > 0) {
+      <div class="resumen-card glass-panel">
+        <h4 class="resumen-title">
+          <span class="material-symbols-outlined">healing</span>
+          Últimas Notas ({{ store.notas().length }})
+        </h4>
+        <ul class="resumen-list">
+          @for (n of store.notas().slice(0, 3); track n.id) {
+            <li>
+              <strong>{{ n.titulo }}</strong> — {{ n.descripcion | slice:0:60 }}...
+              <span class="resumen-meta">{{ n.autor }} — {{ n.fecha | date:'short' }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+
+    @if (store.evoluciones().length > 0) {
+      <div class="resumen-card glass-panel">
+        <h4 class="resumen-title">
+          <span class="material-symbols-outlined">medical_services</span>
+          Últimas Evoluciones ({{ store.evoluciones().length }})
+        </h4>
+        <ul class="resumen-list">
+          @for (e of store.evoluciones().slice(0, 3); track e.id) {
+            <li>
+              <strong>{{ e.titulo }}</strong> — {{ e.descripcion | slice:0:60 }}...
+              <span class="resumen-meta">{{ e.autor }} — {{ e.fecha | date:'short' }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </section>
+}

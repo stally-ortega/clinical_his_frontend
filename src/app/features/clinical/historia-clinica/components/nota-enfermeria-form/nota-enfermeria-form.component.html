@@ -1,0 +1,45 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="nota-form" [class.disabled]="disabled()">
+  @if (disabled()) {
+    <div class="nota-disabled-overlay">
+      <p>No se pueden registrar notas para un paciente egresado.</p>
+    </div>
+  }
+
+  <div class="form-group">
+    <label for="nota-titulo">Título</label>
+    <input
+      id="nota-titulo"
+      type="text"
+      formControlName="titulo"
+      placeholder="Ej. Control de signos vitales"
+      [disabled]="disabled()"
+    />
+    @if (form.get('titulo')?.invalid && form.get('titulo')?.touched) {
+      <span class="field-error">El título es obligatorio (3-120 caracteres).</span>
+    }
+  </div>
+
+  <div class="form-group">
+    <label for="nota-descripcion">Descripción</label>
+    <textarea
+      id="nota-descripcion"
+      formControlName="descripcion"
+      rows="4"
+      placeholder="Describa la observación de enfermería..."
+      [disabled]="disabled()"
+    ></textarea>
+    <div class="char-counter">{{ form.get('descripcion')?.value?.length || 0 }} / 2000</div>
+    @if (form.get('descripcion')?.invalid && form.get('descripcion')?.touched) {
+      <span class="field-error">La descripción es obligatoria (mín. 10 caracteres, máx. 2000).</span>
+    }
+  </div>
+
+  <div class="form-actions">
+    <app-button
+      text="Guardar Nota"
+      variant="primary"
+      type="submit"
+      [disabled]="disabled() || form.invalid"
+    ></app-button>
+  </div>
+</form>
