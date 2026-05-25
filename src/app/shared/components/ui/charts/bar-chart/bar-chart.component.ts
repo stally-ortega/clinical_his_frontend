@@ -5,8 +5,13 @@ import {
   ElementRef,
   ViewChild,
   AfterViewInit,
+  OnDestroy,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Chart } from 'chart.js';
+import '../chart.registry';
 import { ChartData } from '@features/dashboard/metrics/models/dashboard-metrics.interface';
 
 @Component({
@@ -17,85 +22,97 @@ import { ChartData } from '@features/dashboard/metrics/models/dashboard-metrics.
   styleUrl: './bar-chart.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BarChartComponent implements AfterViewInit {
+export class BarChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
 
   @Input({ required: true }) data!: ChartData;
   @Input() ariaLabel = 'Gráfico de barras';
   @Input() height = 300;
 
+  private chart?: Chart;
+
   ngAfterViewInit(): void {
-    this.draw();
+    this.createChart();
   }
 
-  private draw(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['data'] && this.chart) {
+      this.updateChart();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.chart?.destroy();
+    this.chart = undefined;
+  }
+
+  private createChart(): void {
     const canvas = this.canvasRef.nativeElement;
     const ctx = canvas.getContext('2d');
     if (!ctx || !this.data?.labels?.length) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
+    const parent = canvas.parentElement;
+    const width = parent ? parent.clientWidth : canvas.clientWidth || 600;
+
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${this.height}px`;
+    canvas.width = width * dpr;
     canvas.height = this.height * dpr;
-    ctx.scale(dpr, dpr);
 
-    const padding = 40;
-    const chartWidth = rect.width - padding * 2;
-    const chartHeight = this.height - padding * 2;
-    const labels = this.data.labels;
     const dataset = this.data.datasets[0];
-    const values = dataset?.data ?? [];
-    if (!values.length) return;
 
-    const max = Math.max(...values, 1);
-    const barWidth = (chartWidth / values.length) * 0.6;
-    const gap = (chartWidth / values.length) * 0.4;
-
-    // Background
-    ctx.clearRect(0, 0, rect.width, this.height);
-
-    // Grid lines
-    ctx.strokeStyle = 'rgba(0,0,0,0.05)';
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= 5; i++) {
-      const y = padding + (chartHeight / 5) * i;
-      ctx.beginPath();
-      ctx.moveTo(padding, y);
-      ctx.lineTo(padding + chartWidth, y);
-      ctx.stroke();
-    }
-
-    // Bars
-    const colors = Array.isArray(dataset.backgroundColor)
-      ? dataset.backgroundColor
-      : Array(values.length).fill(dataset.backgroundColor ?? '#0d9488');
-
-    values.forEach((value, i) => {
-      const x = padding + gap / 2 + i * (barWidth + gap);
-      const barHeight = (value / max) * chartHeight;
-      const y = padding + chartHeight - barHeight;
-
-      ctx.fillStyle = colors[i] ?? '#0d9488';
-      ctx.beginPath();
-      ctx.roundRect(x, y, barWidth, barHeight, 4);
-      ctx.fill();
+    this.chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: this.data.labels,
+        datasets: [
+          {
+            label: dataset?.label ?? '',
+            data: dataset?.data ?? [],
+            backgroundColor: dataset?.backgroundColor ?? '#0d9488',
+            borderRadius: 4,
+            barPercentage: 0.6,
+          },
+        ],
+      },
+      options: {
+        responsive: false,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            padding: 10,
+            cornerRadius: 6,
+            displayColors: false,
+          },
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: '#6b7280', font: { size: 12 } },
+            border: { display: false },
+          },
+          y: {
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            ticks: { color: '#6b7280', font: { size: 12 } },
+            border: { display: false },
+            beginAtZero: true,
+          },
+        },
+        animation: { duration: 800, easing: 'easeOutQuart' },
+      },
     });
+  }
 
-    // Labels
-    ctx.fillStyle = '#6b7280';
-    ctx.font = '12px sans-serif';
-    ctx.textAlign = 'center';
-    labels.forEach((label, i) => {
-      const x = padding + gap / 2 + i * (barWidth + gap) + barWidth / 2;
-      ctx.fillText(label, x, this.height - 10);
-    });
-
-    // Y-axis labels
-    ctx.textAlign = 'right';
-    for (let i = 0; i <= 5; i++) {
-      const value = Math.round((max / 5) * (5 - i));
-      const y = padding + (chartHeight / 5) * i + 4;
-      ctx.fillText(value.toString(), padding - 8, y);
-    }
+  private updateChart(): void {
+    if (!this.chart || !this.data) return;
+    const dataset = this.data.datasets[0];
+    this.chart.data.labels = this.data.labels;
+    this.chart.data.datasets[0].data = dataset?.data ?? [];
+    this.chart.data.datasets[0].label = dataset?.label ?? '';
+    this.chart.data.datasets[0].backgroundColor = dataset?.backgroundColor ?? '#0d9488';
+    this.chart.update();
   }
 }

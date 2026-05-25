@@ -27,7 +27,7 @@ export class KardexMatrizComponent {
   getCelda(p: Prescripcion, hora: number): DosisProgramada | null {
     return p.dosis_programadas?.find((d) => {
       const fecha = new Date(d.fecha_hora_programada);
-      return fecha.getHours() === hora;
+      return fecha.getUTCHours() === hora;
     }) ?? null;
   }
 

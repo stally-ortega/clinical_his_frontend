@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { NO_ERRORS_SCHEMA, Directive, Input } from '@angular/core';
 import { vi } from 'vitest';
 import { PacienteDetalleComponent } from './paciente-detalle.component';
 import { ActivatedRoute, Router, provideRouter } from '@angular/router';
@@ -8,6 +8,15 @@ import { RouterLink } from '@angular/router';
 import { PacientesStore } from '@features/clinical/pacientes/store/pacientes.store';
 import { EvolucionesStore } from '@features/clinical/historia-clinica/store/evoluciones.store';
 import { AuthStore } from '@store/auth.store';
+import { HasPermissionDirective } from '@shared/directives/has-permission.directive';
+
+@Directive({
+  selector: '[appHasPermission]',
+  standalone: true,
+})
+class StubHasPermissionDirective {
+  @Input() appHasPermission!: string;
+}
 
 describe('PacienteDetalleComponent', () => {
   const createMockActivatedRoute = (idParam: string | null) => ({
@@ -45,10 +54,11 @@ describe('PacienteDetalleComponent', () => {
         { provide: AuthStore, useValue: mockAuthStore },
       ],
       schemas: [NO_ERRORS_SCHEMA],
-    }).overrideComponent(PacienteDetalleComponent, {
-      set: {
-        imports: [CommonModule, RouterLink],
-      },
+    });
+
+    TestBed.overrideComponent(PacienteDetalleComponent, {
+      remove: { imports: [HasPermissionDirective] },
+      add: { imports: [StubHasPermissionDirective] },
     });
 
     await TestBed.compileComponents();

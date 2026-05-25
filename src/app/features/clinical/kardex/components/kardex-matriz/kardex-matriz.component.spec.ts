@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { vi } from 'vitest';
 import { KardexMatrizComponent } from './kardex-matriz.component';
 import { Prescripcion } from '@features/clinical/kardex/services/kardex.service';
 
@@ -120,7 +121,7 @@ describe('KardexMatrizComponent', () => {
     fixture.componentRef.setInput('puedeAplicar', true);
     fixture.detectChanges();
 
-    const spy = jest.spyOn(component.aplicarDosis, 'emit');
+    const spy = vi.spyOn(component.aplicarDosis, 'emit');
     component.onAplicar(101);
     expect(spy).toHaveBeenCalledWith(101);
   });
@@ -130,7 +131,7 @@ describe('KardexMatrizComponent', () => {
     fixture.componentRef.setInput('puedeAplicar', false);
     fixture.detectChanges();
 
-    const spy = jest.spyOn(component.aplicarDosis, 'emit');
+    const spy = vi.spyOn(component.aplicarDosis, 'emit');
     component.onAplicar(101);
     expect(spy).not.toHaveBeenCalled();
   });
@@ -140,7 +141,7 @@ describe('KardexMatrizComponent', () => {
     fixture.componentRef.setInput('puedeAplicar', true);
     fixture.detectChanges();
 
-    const spy = jest.spyOn(component.aplicarDosis, 'emit');
+    const spy = vi.spyOn(component.aplicarDosis, 'emit');
     component.onAplicar(undefined);
     expect(spy).not.toHaveBeenCalled();
   });

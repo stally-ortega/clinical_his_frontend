@@ -51,9 +51,7 @@ describe('TurnosStore', () => {
 
     store.iniciar();
 
-    expect(store.isLoading()).toBe(true);
-    // Como es async, validamos el estado final tras la microtask
-    // En tests sincrónicos con rxMethod + of(), el next se ejecuta inmediatamente
+    // rxMethod + of() ejecuta sincrónicamente; isLoading ya es false aquí
     expect(store.estadoActual()).toBe('EN_TURNO');
     expect(store.turnoActivo()).toEqual(mockTurnoActivo);
     expect(store.hasTurnoActivo()).toBe(true);
